@@ -3,35 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>FRIENDLYFIRE CO.</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    
     <script src="https://js.stripe.com/v3/"></script>
 
     <style>
         /* --- RESET & BASE --- */
         :root { --red: #ff3a3a; --bg-pongo: #2e4a1e; --loader-bg: #ffffff; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; outline: none; touch-action: manipulation; }
-        
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
-            font-family: 'Press Start 2P', cursive; 
-            background: var(--bg-pongo) url('sfondo2.jpg') repeat fixed center; 
-            background-size: 450px; 
-            overscroll-behavior: none; position: fixed; 
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; touch-action: manipulation; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Press Start 2P', cursive; background: var(--bg-pongo) url('sfondo_pongo.PNG') repeat fixed center; background-size: 450px; overscroll-behavior: none; position: fixed; }
 
-        /* --- LOADER V103 (STABILE) --- */
-        #loader-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--loader-bg); 
-            z-index: 999999; 
-            display: flex; flex-direction: column; 
-            justify-content: center; align-items: center;
-            padding: 20px;
-        }
+        /* LOADER V103 */
+        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--loader-bg); z-index: 999999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
         .loader-top { width: 100%; display: flex; justify-content: center; flex: 0 0 auto; margin-bottom: -40px; position: relative; z-index: 10; }
         .logo-wrapper { position: relative; display: inline-block; max-width: 90%; }
         .loader-brand-img { width: 280px; height: auto; object-fit: contain; display: block; }
@@ -43,51 +26,40 @@
         .loading-text { font-family: 'Press Start 2P', cursive; font-size: 10px; letter-spacing: 2px; color: #000; margin-bottom: 10px; text-transform: uppercase; transition: opacity 0.2s; } 
         .pixel-bar-container { width: 160px; height: 16px; background: #fff; border: 3px solid #000; border-radius: 10px; padding: 3px; box-shadow: 4px 4px 0 rgba(0,0,0,0.1); }
         .pixel-bar-fill { height: 100%; width: 0%; background-color: #32cd32; border-radius: 4px; transition: width 0.05s linear; }
-        #start-btn { visibility: visible; opacity: 0; pointer-events: none; margin-top: 20px; z-index: 200; transform: scale(1); transition: opacity 0s; /* Instant */ }
+        #start-btn { visibility: visible; opacity: 0; pointer-events: none; margin-top: 20px; z-index: 200; transform: scale(1); }
         #start-btn.visible { opacity: 1; pointer-events: auto; }
         .loader-footer { display: flex; flex-direction: column; align-items: center; text-align: center; flex: 0 0 auto; margin-top: 40px; }
         .copyright-mark { width: 40px; height: auto; margin-bottom: 10px; display: block; }
         .copyright-text { font-family: Arial, sans-serif; font-weight: bold; font-size: 9px; color: #000; line-height: 1.4; opacity: 0.7; }
 
-        /* --- UI ELEMENTS --- */
+        /* UI ELEMENTS */
         header { display: flex; justify-content: space-between; align-items: flex-start; padding: 15px 25px; position: absolute; top: 0; left: 0; right: 0; z-index: 10000; pointer-events: none; }
         @keyframes pongo-stretch { 0% { transform: scale(1); } 30% { transform: scale(1.25, 0.75); } 40% { transform: scale(0.75, 1.25); } 50% { transform: scale(1.15, 0.85); } 65% { transform: scale(0.95, 1.05); } 75% { transform: scale(1.05, 0.95); } 100% { transform: scale(1); } }
         .pongo-btn { width: 70px; height: 70px; object-fit: contain; cursor: pointer; pointer-events: auto; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5)); transition: transform 0.2s; }
         .pongo-btn:hover, .pongo-btn:active { animation: pongo-stretch 0.6s ease-in-out; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.5)); }
-        
         .tank-wrapper { position: relative; pointer-events: auto; z-index: 10002; }
         #tank-badge { position: absolute; top: 5px; right: 0; background: var(--red); color: white; border: 2px solid #000; font-size: 8px; padding: 4px; border-radius: 50%; min-width: 22px; text-align: center; display: none; pointer-events: none; z-index: 10003; }
-        
         #shop-slider { width: 100vw; height: 100%; display: flex; overflow-x: scroll; scroll-snap-type: x mandatory; scroll-behavior: smooth; touch-action: pan-x; -webkit-overflow-scrolling: touch; }
-        #shop-slider.dragging-mode { scroll-snap-type: none !important; scroll-behavior: auto !important; overflow-x: auto; }
         #shop-slider::-webkit-scrollbar { display: none; }
         .shop-page { min-width: 100vw; height: 100%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); padding: 110px 15px 150px 15px; gap: 10px; scroll-snap-align: start; }
-        
-        .item-card { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 100; touch-action: none; will-change: transform, left, top; transform: translateZ(0); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.2s; }
+        .item-card { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 100; touch-action: none; transform: translateZ(0); transition: transform 0.3s; }
         .item-card.dragging { position: fixed; z-index: 99999; opacity: 1; transition: none !important; transform: scale(1.2); filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5)); pointer-events: none; }
-        .item-card.sucked { transition: transform 0.5s ease-in, opacity 0.2s ease-in 0.3s !important; transform: scale(0) !important; opacity: 0 !important; }
+        .item-card.sucked { transform: scale(0) !important; opacity: 0 !important; transition: transform 0.5s, opacity 0.2s 0.3s; }
         .item-card img { width: 85px; pointer-events: none; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.6)); margin-bottom: 5px; }
-        .clean-tag { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif; font-weight: 800; font-size: 8px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); margin-top: 2px; pointer-events: none; text-transform: uppercase; background: transparent; border: none; }
+        .clean-tag { font-family: -apple-system, sans-serif; font-weight: 800; font-size: 8px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); margin-top: 2px; text-transform: uppercase; }
         .item-card.sold-out { filter: grayscale(1); opacity: 0.8; pointer-events: none !important; }
-
-        #app-footer { position: fixed; bottom: 0; left: 0; right: 0; background: transparent; border-top: none; height: 60px; display: flex; align-items: center; justify-content: center; z-index: 20000; pointer-events: none; }
+        #app-footer { position: fixed; bottom: 0; left: 0; right: 0; background: transparent; height: 60px; display: flex; align-items: center; justify-content: center; z-index: 20000; pointer-events: none; }
         .footer-logo { width: 160px; pointer-events: auto; cursor: pointer; display: block; padding: 15px; margin: -15px; }
-        .footer-logo:active { opacity: 0.7; }
-
         #cart-popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 320px; background: #fff; border: 3px double #000; border-radius: 4px; padding: 0 0 15px 0; z-index: 90000; box-shadow: 15px 15px 0 rgba(0,0,0,0.8); text-align: center; }
-        .popup-header { background: repeating-linear-gradient(45deg, #ccc, #ccc 2px, #fff 2px, #fff 4px); border-bottom: 2px solid #000; padding: 8px; margin-bottom: 10px; color: #000; font-size: 10px; font-family: -apple-system, sans-serif; font-weight: 800; letter-spacing: 1px; }
+        .popup-header { background: repeating-linear-gradient(45deg, #ccc, #ccc 2px, #fff 2px, #fff 4px); border-bottom: 2px solid #000; padding: 8px; margin-bottom: 10px; color: #000; font-size: 10px; font-weight: 800; letter-spacing: 1px; }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 50000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; text-align: center; }
         .mac-window { width: 90%; max-width: 350px; background: #fff; border: 3px double #000; border-radius: 4px; padding: 0 0 15px 0; box-shadow: 0 0 50px rgba(255,255,255,0.1); text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .mac-title-bar { width: 100%; background: repeating-linear-gradient(45deg, #ccc, #ccc 2px, #fff 2px, #fff 4px); border-bottom: 2px solid #000; padding: 8px; margin-bottom: 15px; color: #000; font-size: 10px; font-family: -apple-system, sans-serif; font-weight: 800; }
+        .mac-title-bar { width: 100%; background: repeating-linear-gradient(45deg, #ccc, #ccc 2px, #fff 2px, #fff 4px); border-bottom: 2px solid #000; padding: 8px; margin-bottom: 15px; color: #000; font-size: 10px; font-weight: 800; }
         .btn-pixel { background: #000; color: #fff; border: 2px solid #000; padding: 14px; font-family: 'Press Start 2P'; font-size: 8px; cursor: pointer; box-shadow: 3px 3px 0 #999; margin: 8px 0; width: 90%; text-transform: uppercase; }
         .btn-pixel:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #999; }
         .input-pixel { border: 2px solid #000; background: #fff; color: #000; padding: 10px; font-family: sans-serif; font-weight: bold; font-size: 10px; width: 90%; margin: 8px 0; }
         .newsletter-row { display: flex; align-items: center; gap: 8px; width: 90%; margin: 5px 0 15px 0; font-family: 'Press Start 2P'; font-size: 8px; color: #000; cursor: pointer; text-align: left; }
         .newsletter-row input { accent-color: #000; cursor: pointer; width: 15px; height: 15px; }
-        .db-panel { width: 90%; height: 250px; overflow-y: scroll; background: #fff; border: 2px solid #000; margin-bottom: 10px; padding: 5px; color: #000; text-align: left; }
-        .db-row { display: flex; align-items: center; gap: 5px; border-bottom: 1px solid #ccc; padding: 5px 0; }
-        @keyframes pacman-spit { 0% { transform: scale(1); } 40% { transform: scale(0.8, 1.2) translateY(-10px); } 60% { transform: scale(1.1, 0.9) rotate(5deg); } 100% { transform: scale(1); } }
-        .pacman { animation: pacman-spit 0.5s ease-out; }
     </style>
 </head>
 <body>
@@ -96,7 +68,8 @@
         <div class="loader-top">
             <div class="logo-wrapper">
                 <img src="logo_ff_loader.png" alt="Friendlyfire" class="loader-brand-img">
-          </div>
+                <img src="tm_logo.png" alt="TM" class="tm-badge">
+            </div>
         </div>
         <div class="loader-center">
             <div class="gif-wrapper"><img id="loader-gif" src="loadernob.gif" alt="Loading..."></div>
@@ -154,10 +127,6 @@
             </div>
             <div id="av-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-bottom:15px; width:90%;"></div>
             <input type="text" class="input-pixel" placeholder="NICKNAME">
-            <div style="margin-top:10px; text-align:center;">
-                <p style="font-size:6px; color:#000; margin-bottom:8px;">WIN ALONE. ALL RIGHTS RESERVED ©</p>
-                <img src="brand_name.png" style="width:120px;">
-            </div>
             <button class="btn-pixel" onclick="closeAll()">BACK</button>
         </div>
     </div>
@@ -169,9 +138,6 @@
             <button class="btn-pixel" onclick="window.open('https://instagram.com/fuocoamico')">INSTAGRAM</button>
             <button class="btn-pixel">WHATSAPP</button>
             <button class="btn-pixel" onclick="openPage('ov-newsletter')">NEWSLETTER</button>
-            <div style="margin:20px 0;">
-                <img src="brand_name.png" style="width:110px;">
-            </div>
             <button class="btn-pixel" onclick="closeAll()">CLOSE</button>
         </div>
     </div>
@@ -180,8 +146,13 @@
         <div class="mac-window">
             <div class="mac-title-bar">JOIN THE CLUB</div>
             <p style="font-size:8px; margin:10px;">ISCRIVITI PER NEWS E SCONTI.</p>
-            <input type="email" id="news-email-input" class="input-pixel" placeholder="YOUR E-MAIL">
-            <button class="btn-pixel" onclick="subscribeNewsletter()">SUBSCRIBE</button>
+            
+            <form name="newsletter" method="POST" data-netlify="true" style="width:100%; display:flex; flex-direction:column; align-items:center;">
+                <input type="hidden" name="form-name" value="newsletter">
+                <input type="email" name="email" class="input-pixel" placeholder="YOUR E-MAIL" required>
+                <button type="submit" class="btn-pixel">SUBSCRIBE</button>
+            </form>
+            
             <button class="btn-pixel" style="background:transparent; color:#000; border:none; box-shadow:none;" onclick="closeAll()">CLOSE</button>
         </div>
     </div>
@@ -192,13 +163,19 @@
             <div style="text-align:left; width:90%; font-size:8px; margin-bottom:10px;">
                 TOTAL: <span id="checkout-total">0</span>€
             </div>
-            <input type="text" class="input-pixel" placeholder="FULL NAME">
-            <input type="email" id="checkout-email" class="input-pixel" placeholder="E-MAIL">
-            <input type="text" class="input-pixel" placeholder="ADDRESS">
             
-            <button id="stripe-pay-btn" class="btn-pixel" style="background:#5469d4; border-color:#5469d4; margin-top:10px;" onclick="processStripePayment()">
-                PAGA CON CARTA (STRIPE)
-            </button>
+            <form id="payment-form" name="orders" method="POST" data-netlify="true" style="width:100%; display:flex; flex-direction:column; align-items:center;">
+                <input type="hidden" name="form-name" value="orders">
+                <input type="text" name="name" class="input-pixel" placeholder="FULL NAME" required>
+                <input type="email" name="email" class="input-pixel" placeholder="E-MAIL" required>
+                <input type="text" name="address" class="input-pixel" placeholder="ADDRESS" required>
+                <input type="hidden" name="cart_items" id="hidden-cart-items">
+                <input type="hidden" name="total_price" id="hidden-total-price">
+                
+                <button type="button" id="stripe-pay-btn" class="btn-pixel" style="background:#5469d4; border-color:#5469d4; margin-top:10px;" onclick="processStripePayment()">
+                    PAGA CON CARTA
+                </button>
+            </form>
             
             <button class="btn-pixel" style="background:transparent; color:#000; border:none; box-shadow:none;" onclick="closeAll()">CANCEL</button>
         </div>
@@ -207,21 +184,14 @@
     <div id="ov-db" class="overlay">
         <div class="mac-window" style="max-width:95%;">
             <div class="mac-title-bar">TITANIUM DB</div>
-            <input id="db-bg-input" class="input-pixel" placeholder="MAIN BG URL..." style="margin-bottom:5px;">
-            <input id="db-loader-bg-input" class="input-pixel" placeholder="LOADER BG URL..." style="margin-bottom:10px;">
             <div class="db-panel" id="db-list"></div>
-            <div style="display:flex; gap:5px; width:90%; flex-wrap: wrap;">
-                <button class="btn-pixel" style="width:48%;" onclick="addItem()">+ ADD</button>
-                <button class="btn-pixel" style="width:48%; background: green;" onclick="saveDB()">SAVE</button>
-                <button class="btn-pixel" style="width:100%; background: #555; margin-top:0;" onclick="resetDB()">RESET ALL</button>
-            </div>
             <button class="btn-pixel" onclick="closeAll()">EXIT</button>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURAZIONE PAGAMENTI ---
-        // Sostituisci con la tua chiave pubblica di Stripe (inizia con pk_test_...)
+        // --- 1. CONFIGURAZIONE STRIPE ---
+        // INCOLLA QUI LA TUA CHIAVE PUBBLICA DI STRIPE (Inizia con pk_test_...)
         const stripe = Stripe('pk_test_TUO_CODICE_QUI'); 
 
         let inventory = [
@@ -246,45 +216,38 @@
             try {
                 const savedInv = localStorage.getItem('ff_inventory');
                 if (savedInv) inventory = JSON.parse(savedInv);
-                const savedMainBg = localStorage.getItem('ff_bg_main');
-                if (savedMainBg) document.body.style.backgroundImage = `url('${savedMainBg}')`;
             } catch(e) { localStorage.clear(); }
             renderShop(); startLoaderSequence();
         });
 
-        // --- NEWSLETTER LOGIC ---
-        function subscribeNewsletter() {
-            const email = document.getElementById('news-email-input').value;
-            if(email && email.includes('@')) {
-                // QUI ANDREBBE LA CHIAMATA API A MAILCHIMP/BREVO
-                // Per ora simuliamo il successo
-                alert("WELCOME TO THE FAMILY! " + email);
-                localStorage.setItem('ff_newsletter_user', email);
-                closeAll();
-            } else {
-                alert("INVALID EMAIL");
-            }
-        }
-
-        // --- STRIPE PAYMENT LOGIC ---
+        // --- 2. LOGICA PAGAMENTI ---
         function processStripePayment() {
             const total = cart.reduce((s,i)=>s+inventory[i].price,0);
             if(total <= 0) { alert("CART EMPTY"); return; }
+
+            // Salva i dati dell'ordine nel form nascosto per Netlify Database
+            const itemNames = cart.map(i => inventory[i].name).join(", ");
+            document.getElementById('hidden-cart-items').value = itemNames;
+            document.getElementById('hidden-total-price').value = total + " EUR";
+
+            // Qui dovremmo inviare il form a Netlify, ma per ora facciamo l'alert di Stripe
+            // In un'app reale, qui chiami il backend per creare la sessione Stripe
             
-            // Simulazione: In un'app reale qui chiami il tuo server per creare una sessione Stripe
-            alert("REDIRECTING TO STRIPE... (Mode: Test)");
-            console.log("Processing payment for: " + total + "EUR");
+            alert("REDIRECTING TO STRIPE... (Total: " + total + "€)");
             
-            // Esempio di codice reale per redirect (richiede Backend):
-            // stripe.redirectToCheckout({ sessionId: 'session_id_from_server' });
+            // Esempio fittizio di redirect (non funzionerà senza backend reale):
+            // stripe.redirectToCheckout({ sessionId: '...' });
+            
+            // Per ora simuliamo l'invio dati al database Netlify
+            document.getElementById('payment-form').submit();
         }
 
+        // --- 3. LOADER LOGIC ---
         function startLoaderSequence() {
             const fillBar = document.getElementById('pixel-bar-fill');
             const startBtn = document.getElementById('start-btn');
             const loadingMsg = document.getElementById('loading-msg');
             const loaderOverlay = document.getElementById('loader-overlay');
-
             let fillLevel = 0;
             const interval = setInterval(() => {
                 fillLevel += 1; 
@@ -297,7 +260,6 @@
                     }, 400);
                 } else { fillBar.style.width = fillLevel + '%'; }
             }, 40);
-
             startBtn.onclick = () => { playSfx(); loaderOverlay.style.display = 'none'; };
         }
 
@@ -308,7 +270,6 @@
             const page = document.getElementById(id);
             if(page) {
                 page.style.display='flex';
-                // Aggiorna totale se apri checkout
                 if(id === 'ov-checkout') {
                     const total = cart.reduce((s,i)=>s+inventory[i].price,0);
                     document.getElementById('checkout-total').innerText = total;
@@ -361,7 +322,7 @@
 
         document.querySelector('.footer-logo').onclick = () => { dbClicks++; playSfx(); if(dbClicks === 3) { setTimeout(() => { const pwd = prompt("ADMIN ACCESS"); if(pwd === "FRIENDLYFIRE26") initDB(); else alert("WRONG"); }, 100); dbClicks = 0; } setTimeout(() => dbClicks = 0, 800); };
         
-        function initDB() { const db = document.getElementById('ov-db'); closeAll(); db.style.display = 'flex'; const l = document.getElementById('db-list'); l.innerHTML=''; document.getElementById('db-bg-input').value = localStorage.getItem('ff_bg_main') || ''; inventory.forEach((t,i)=>{ l.innerHTML+=`<div class="db-row"><span style="font-size:8px;">#${i}</span><input id="d-n-${i}" value="${t.name}" class="input-pixel" placeholder="Name" style="width:50px;"><input id="d-i-${i}" value="${t.img}" class="input-pixel" placeholder="IMG" style="width:50px;"><input id="d-p-${i}" value="${t.price}" class="input-pixel" style="width:30px;" placeholder="€"><input id="d-s-${i}" value="${t.stock}" type="number" class="input-pixel" style="width:30px;" placeholder="Stk"><button onclick="removeItem(${i})" style="background:red; color:white; border:none; cursor:pointer;">X</button></div>`; }); }
+        function initDB() { const db = document.getElementById('ov-db'); closeAll(); db.style.display = 'flex'; const l = document.getElementById('db-list'); l.innerHTML=''; inventory.forEach((t,i)=>{ l.innerHTML+=`<div class="db-row"><span style="font-size:8px;">#${i}</span><input id="d-n-${i}" value="${t.name}" class="input-pixel" placeholder="Name" style="width:50px;"><input id="d-i-${i}" value="${t.img}" class="input-pixel" placeholder="IMG" style="width:50px;"><input id="d-p-${i}" value="${t.price}" class="input-pixel" style="width:30px;" placeholder="€"><input id="d-s-${i}" value="${t.stock}" type="number" class="input-pixel" style="width:30px;" placeholder="Stk"><button onclick="removeItem(${i})" style="background:red; color:white; border:none; cursor:pointer;">X</button></div>`; }); }
         function addItem() { inventory.push({name:'NEW', img:'image_tee.PNG', price:0, stock:1}); initDB(); }
         function removeItem(i) { inventory.splice(i,1); initDB(); }
         function resetDB() { if(confirm("FACTORY RESET?")) { localStorage.clear(); location.reload(); } }
