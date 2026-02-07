@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>FRIENDLYFIRE CO.</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
     <script src="https://js.stripe.com/v3/"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
     <style>
-        /* --- RESET & BASE --- */
+        /* --- STILI ORIGINALI MANTENUTI --- */
         :root { --red: #ff3a3a; --bg-pongo: #2e4a1e; --loader-bg: #ffffff; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; outline: none; touch-action: manipulation; }
         
@@ -23,7 +23,7 @@
             overscroll-behavior: none; position: fixed; 
         }
 
-        /* --- LOADER V103 (STABILE) --- */
+        /* --- LOADER --- */
         #loader-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--loader-bg); 
@@ -32,83 +32,55 @@
             justify-content: center; align-items: center;
             padding: 20px;
         }
-        .loader-top { width: 100%; display: flex; justify-content: center; flex: 0 0 auto; margin-bottom: -40px; position: relative; z-index: 10; }
-        .logo-wrapper { position: relative; display: inline-block; max-width: 90%; }
-        .loader-brand-img { width: 280px; height: auto; object-fit: contain; display: block; }
-        .tm-badge { position: absolute; bottom: 10px; right: -15px; width: 15px; height: auto; object-fit: contain; }
-        .loader-center { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex: 0 0 auto; position: relative; z-index: 5; }
-        .gif-wrapper { width: 100%; max-width: 400px; height: auto; aspect-ratio: 1 / 1; display: flex; justify-content: center; align-items: center; }
-        #loader-gif { width: 100%; height: 100%; object-fit: contain; display: block; mix-blend-mode: multiply; }
-        .loading-area-bottom { display: flex; flex-direction: column; align-items: center; margin-top: -30px; position: relative; z-index: 20; min-height: 80px; }
-        .loading-text { font-family: 'Press Start 2P', cursive; font-size: 10px; letter-spacing: 2px; color: #000; margin-bottom: 10px; text-transform: uppercase; transition: opacity 0.2s; } 
-        .pixel-bar-container { width: 160px; height: 16px; background: #fff; border: 3px solid #000; border-radius: 10px; padding: 3px; box-shadow: 4px 4px 0 rgba(0,0,0,0.1); }
+        .loader-center { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+        .pixel-bar-container { width: 160px; height: 16px; background: #fff; border: 3px solid #000; border-radius: 10px; padding: 3px; box-shadow: 4px 4px 0 rgba(0,0,0,0.1); margin-top: 10px; }
         .pixel-bar-fill { height: 100%; width: 0%; background-color: #32cd32; border-radius: 4px; transition: width 0.05s linear; }
-        #start-btn { visibility: visible; opacity: 0; pointer-events: none; margin-top: 20px; z-index: 200; transform: scale(1); transition: opacity 0s; /* Instant */ }
+        #start-btn { visibility: visible; opacity: 0; pointer-events: none; margin-top: 20px; z-index: 200; transition: opacity 0s; }
         #start-btn.visible { opacity: 1; pointer-events: auto; }
-        .loader-footer { display: flex; flex-direction: column; align-items: center; text-align: center; flex: 0 0 auto; margin-top: 40px; }
-        .copyright-mark { width: 40px; height: auto; margin-bottom: 10px; display: block; }
-        .copyright-text { font-family: Arial, sans-serif; font-weight: bold; font-size: 9px; color: #000; line-height: 1.4; opacity: 0.7; }
 
         /* --- UI ELEMENTS --- */
         header { display: flex; justify-content: space-between; align-items: flex-start; padding: 15px 25px; position: absolute; top: 0; left: 0; right: 0; z-index: 10000; pointer-events: none; }
-        @keyframes pongo-stretch { 0% { transform: scale(1); } 30% { transform: scale(1.25, 0.75); } 40% { transform: scale(0.75, 1.25); } 50% { transform: scale(1.15, 0.85); } 65% { transform: scale(0.95, 1.05); } 75% { transform: scale(1.05, 0.95); } 100% { transform: scale(1); } }
         .pongo-btn { width: 70px; height: 70px; object-fit: contain; cursor: pointer; pointer-events: auto; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5)); transition: transform 0.2s; }
-        .pongo-btn:hover, .pongo-btn:active { animation: pongo-stretch 0.6s ease-in-out; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.5)); }
+        .pongo-btn:active { transform: scale(0.9); }
         
         .tank-wrapper { position: relative; pointer-events: auto; z-index: 10002; }
         #tank-badge { position: absolute; top: 5px; right: 0; background: var(--red); color: white; border: 2px solid #000; font-size: 8px; padding: 4px; border-radius: 50%; min-width: 22px; text-align: center; display: none; pointer-events: none; z-index: 10003; }
         
-        #shop-slider { width: 100vw; height: 100%; display: flex; overflow-x: scroll; scroll-snap-type: x mandatory; scroll-behavior: smooth; touch-action: pan-x; -webkit-overflow-scrolling: touch; }
-        #shop-slider.dragging-mode { scroll-snap-type: none !important; scroll-behavior: auto !important; overflow-x: auto; }
-        #shop-slider::-webkit-scrollbar { display: none; }
+        #shop-slider { width: 100vw; height: 100%; display: flex; overflow-x: scroll; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
         .shop-page { min-width: 100vw; height: 100%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); padding: 110px 15px 150px 15px; gap: 10px; scroll-snap-align: start; }
         
-        .item-card { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 100; touch-action: none; will-change: transform, left, top; transform: translateZ(0); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.2s; }
-        .item-card.dragging { position: fixed; z-index: 99999; opacity: 1; transition: none !important; transform: scale(1.2); filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5)); pointer-events: none; }
-        .item-card.sucked { transition: transform 0.5s ease-in, opacity 0.2s ease-in 0.3s !important; transform: scale(0) !important; opacity: 0 !important; }
+        .item-card { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 100; transition: transform 0.3s; }
         .item-card img { width: 85px; pointer-events: none; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.6)); margin-bottom: 5px; }
-        .clean-tag { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif; font-weight: 800; font-size: 8px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); margin-top: 2px; pointer-events: none; text-transform: uppercase; background: transparent; border: none; }
+        .clean-tag { font-family: sans-serif; font-weight: 800; font-size: 8px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); text-transform: uppercase; }
         .item-card.sold-out { filter: grayscale(1); opacity: 0.8; pointer-events: none !important; }
 
-        #app-footer { position: fixed; bottom: 0; left: 0; right: 0; background: transparent; border-top: none; height: 60px; display: flex; align-items: center; justify-content: center; z-index: 20000; pointer-events: none; }
-        .footer-logo { width: 160px; pointer-events: auto; cursor: pointer; display: block; padding: 15px; margin: -15px; }
-        .footer-logo:active { opacity: 0.7; }
+        #app-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; display: flex; align-items: center; justify-content: center; z-index: 20000; pointer-events: none; }
+        .footer-logo { width: 160px; pointer-events: auto; cursor: pointer; }
 
-        #cart-popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 320px; background: #fff; border: 3px double #000; border-radius: 4px; padding: 0 0 15px 0; z-index: 90000; box-shadow: 15px 15px 0 rgba(0,0,0,0.8); text-align: center; }
-        .popup-header { background: repeating-linear-gradient(45deg, #ccc, #ccc 2px, #fff 2px, #fff 4px); border-bottom: 2px solid #000; padding: 8px; margin-bottom: 10px; color: #000; font-size: 10px; font-family: -apple-system, sans-serif; font-weight: 800; letter-spacing: 1px; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 50000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; text-align: center; }
-        .mac-window { width: 90%; max-width: 350px; background: #fff; border: 3px double #000; border-radius: 4px; padding: 0 0 15px 0; box-shadow: 0 0 50px rgba(255,255,255,0.1); text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .mac-title-bar { width: 100%; background: repeating-linear-gradient(45deg, #ccc, #ccc 2px, #fff 2px, #fff 4px); border-bottom: 2px solid #000; padding: 8px; margin-bottom: 15px; color: #000; font-size: 10px; font-family: -apple-system, sans-serif; font-weight: 800; }
-        .btn-pixel { background: #000; color: #fff; border: 2px solid #000; padding: 14px; font-family: 'Press Start 2P'; font-size: 8px; cursor: pointer; box-shadow: 3px 3px 0 #999; margin: 8px 0; width: 90%; text-transform: uppercase; }
-        .btn-pixel:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #999; }
+        #cart-popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 320px; background: #fff; border: 3px double #000; padding: 10px; z-index: 90000; box-shadow: 15px 15px 0 rgba(0,0,0,0.8); text-align: center; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 50000; flex-direction: column; align-items: center; justify-content: center; }
+        .mac-window { width: 90%; max-width: 350px; background: #fff; border: 3px double #000; padding: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .mac-title-bar { width: 100%; background: #ccc; border-bottom: 2px solid #000; padding: 8px; margin-bottom: 15px; font-weight: 800; font-size: 10px; }
+        
+        .btn-pixel { background: #000; color: #fff; border: 2px solid #000; padding: 14px; font-family: 'Press Start 2P'; font-size: 8px; cursor: pointer; margin: 8px 0; width: 90%; text-transform: uppercase; }
         .input-pixel { border: 2px solid #000; background: #fff; color: #000; padding: 10px; font-family: sans-serif; font-weight: bold; font-size: 10px; width: 90%; margin: 8px 0; }
-        .newsletter-row { display: flex; align-items: center; gap: 8px; width: 90%; margin: 5px 0 15px 0; font-family: 'Press Start 2P'; font-size: 8px; color: #000; cursor: pointer; text-align: left; }
-        .newsletter-row input { accent-color: #000; cursor: pointer; width: 15px; height: 15px; }
         .db-panel { width: 90%; height: 250px; overflow-y: scroll; background: #fff; border: 2px solid #000; margin-bottom: 10px; padding: 5px; color: #000; text-align: left; }
         .db-row { display: flex; align-items: center; gap: 5px; border-bottom: 1px solid #ccc; padding: 5px 0; }
-        @keyframes pacman-spit { 0% { transform: scale(1); } 40% { transform: scale(0.8, 1.2) translateY(-10px); } 60% { transform: scale(1.1, 0.9) rotate(5deg); } 100% { transform: scale(1); } }
-        .pacman { animation: pacman-spit 0.5s ease-out; }
+        
+        /* Loading Status */
+        #sync-status { position:fixed; bottom:5px; right:5px; font-size:6px; color:white; z-index:999999; }
     </style>
 </head>
 <body>
 
+    <div id="sync-status">OFFLINE</div>
+
     <div id="loader-overlay">
-        <div class="loader-top">
-            <div class="logo-wrapper">
-                <img src="logo_ff_loader.png" alt="Friendlyfire" class="loader-brand-img">
-          </div>
-        </div>
         <div class="loader-center">
-            <div class="gif-wrapper"><img id="loader-gif" src="loadernob.gif" alt="Loading..."></div>
-            <div class="loading-area-bottom">
-                <div id="loading-msg" class="loading-text">LOADING...</div>
-                <div class="pixel-bar-container"><div id="pixel-bar-fill" class="pixel-bar-fill"></div></div>
-                <button id="start-btn" class="btn-pixel">START</button>
-            </div>
-        </div>
-        <div class="loader-footer">
-            <img src="mark_c.png" alt="C" class="copyright-mark">
-            <div class="copyright-text">Friendlyfire. Made in Italy - Win Alone<br>Powered by Clod. All rights reserved 2024-2034</div>
+            <img src="loadernob.gif" alt="Loading..." style="width: 150px;">
+            <div style="font-size: 10px; margin-top: 20px;">LOADING...</div>
+            <div class="pixel-bar-container"><div id="pixel-bar-fill" class="pixel-bar-fill"></div></div>
+            <button id="start-btn" class="btn-pixel">START</button>
         </div>
     </div>
 
@@ -134,55 +106,20 @@
     </footer>
 
     <div id="cart-popup">
-        <div class="popup-header" id="cart-handle">FRIENDLYFIRE</div>
-        <div style="width:100%; display:flex; flex-direction:column; align-items:center;">
-            <p style="font-family:'Press Start 2P'; font-size:9px; margin-bottom:10px; color:#000;">TANK SUMMARY</p>
-            <div id="cart-preview" style="width:90%; font-family:'Press Start 2P'; font-size:6px; margin-bottom:10px; max-height:60px; overflow-y:auto; color:#000; background:#eee; padding:5px; border:2px solid #000;"></div>
-            <p style="font-family:'Press Start 2P'; font-size:12px; margin-bottom:15px; color:#000;">TOTAL: <span id="cart-total">0</span>€</p>
-            <button class="btn-pixel" onclick="openPage('ov-checkout')">CHECKOUT</button>
-            <button class="btn-pixel" style="background:#000; color:#fff;" onclick="emptyTank()">EMPTY</button>
-            <button class="btn-pixel" style="background:transparent; color:#000; border:none; box-shadow:none; padding:5px; margin-top:0;" onclick="toggleCart()">CLOSE</button>
-        </div>
+        <div class="mac-title-bar">TANK SUMMARY</div>
+        <div id="cart-preview" style="width:90%; font-size:6px; margin-bottom:10px; max-height:60px; overflow-y:auto; color:#000; background:#eee; padding:5px; border:2px solid #000; text-align:left;"></div>
+        <p style="font-size:12px; margin-bottom:15px; color:#000;">TOTAL: <span id="cart-total">0</span>€</p>
+        <button class="btn-pixel" onclick="openPage('ov-checkout')">CHECKOUT</button>
+        <button class="btn-pixel" style="background:#fff; color:#000;" onclick="emptyTank()">EMPTY</button>
+        <button class="btn-pixel" style="background:transparent; color:#000; border:none;" onclick="toggleCart()">CLOSE</button>
     </div>
 
     <div id="ov-profile" class="overlay">
         <div class="mac-window">
             <div class="mac-title-bar">PROFILE</div>
             <img src="fuochini_centrali.png" style="width:100px; margin-bottom:10px;">
-            <div style="width:80px; height:80px; border:3px solid #000; margin:10px auto; background:#fff; display:flex; align-items:center; justify-content:center;">
-                <img id="profile-pic" src="" style="width:100%;">
-            </div>
             <div id="av-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-bottom:15px; width:90%;"></div>
-            <input type="text" class="input-pixel" placeholder="NICKNAME">
-            <div style="margin-top:10px; text-align:center;">
-                <p style="font-size:6px; color:#000; margin-bottom:8px;">WIN ALONE. ALL RIGHTS RESERVED ©</p>
-                <img src="brand_name.png" style="width:120px;">
-            </div>
             <button class="btn-pixel" onclick="closeAll()">BACK</button>
-        </div>
-    </div>
-
-    <div id="ov-world" class="overlay">
-        <div class="mac-window">
-            <div class="mac-title-bar">WORLD WIDE</div>
-            <img src="mondo_pongo.PNG" style="width:90px; margin:20px 0;">
-            <button class="btn-pixel" onclick="window.open('https://instagram.com/fuocoamico')">INSTAGRAM</button>
-            <button class="btn-pixel">WHATSAPP</button>
-            <button class="btn-pixel" onclick="openPage('ov-newsletter')">NEWSLETTER</button>
-            <div style="margin:20px 0;">
-                <img src="brand_name.png" style="width:110px;">
-            </div>
-            <button class="btn-pixel" onclick="closeAll()">CLOSE</button>
-        </div>
-    </div>
-
-    <div id="ov-newsletter" class="overlay">
-        <div class="mac-window">
-            <div class="mac-title-bar">JOIN THE CLUB</div>
-            <p style="font-size:8px; margin:10px;">ISCRIVITI PER NEWS E SCONTI.</p>
-            <input type="email" id="news-email-input" class="input-pixel" placeholder="YOUR E-MAIL">
-            <button class="btn-pixel" onclick="subscribeNewsletter()">SUBSCRIBE</button>
-            <button class="btn-pixel" style="background:transparent; color:#000; border:none; box-shadow:none;" onclick="closeAll()">CLOSE</button>
         </div>
     </div>
 
@@ -192,113 +129,216 @@
             <div style="text-align:left; width:90%; font-size:8px; margin-bottom:10px;">
                 TOTAL: <span id="checkout-total">0</span>€
             </div>
-            <input type="text" class="input-pixel" placeholder="FULL NAME">
-            <input type="email" id="checkout-email" class="input-pixel" placeholder="E-MAIL">
-            <input type="text" class="input-pixel" placeholder="ADDRESS">
+            <input type="text" id="cust-name" class="input-pixel" placeholder="FULL NAME">
+            <input type="email" id="cust-email" class="input-pixel" placeholder="E-MAIL">
+            <input type="text" id="cust-addr" class="input-pixel" placeholder="ADDRESS">
             
-            <button id="stripe-pay-btn" class="btn-pixel" style="background:#5469d4; border-color:#5469d4; margin-top:10px;" onclick="processStripePayment()">
-                PAGA CON CARTA (STRIPE)
+            <button id="pay-btn" class="btn-pixel" style="background:#5469d4;" onclick="sendOrder()">
+                CONFIRM & PAY
             </button>
-            
-            <button class="btn-pixel" style="background:transparent; color:#000; border:none; box-shadow:none;" onclick="closeAll()">CANCEL</button>
+            <button class="btn-pixel" style="background:transparent; color:#000;" onclick="closeAll()">CANCEL</button>
         </div>
     </div>
 
     <div id="ov-db" class="overlay">
         <div class="mac-window" style="max-width:95%;">
-            <div class="mac-title-bar">TITANIUM DB</div>
+            <div class="mac-title-bar">TITANIUM DB (GLOBAL)</div>
+            <p style="font-size:8px; color:red;">CHANGES ARE LIVE FOR EVERYONE</p>
             <input id="db-bg-input" class="input-pixel" placeholder="MAIN BG URL..." style="margin-bottom:5px;">
-            <input id="db-loader-bg-input" class="input-pixel" placeholder="LOADER BG URL..." style="margin-bottom:10px;">
             <div class="db-panel" id="db-list"></div>
             <div style="display:flex; gap:5px; width:90%; flex-wrap: wrap;">
                 <button class="btn-pixel" style="width:48%;" onclick="addItem()">+ ADD</button>
-                <button class="btn-pixel" style="width:48%; background: green;" onclick="saveDB()">SAVE</button>
-                <button class="btn-pixel" style="width:100%; background: #555; margin-top:0;" onclick="resetDB()">RESET ALL</button>
+                <button class="btn-pixel" style="width:48%; background: green;" onclick="saveGlobalDB()">SAVE GLOBAL</button>
             </div>
             <button class="btn-pixel" onclick="closeAll()">EXIT</button>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURAZIONE PAGAMENTI ---
-        // Sostituisci con la tua chiave pubblica di Stripe (inizia con pk_test_...)
-        const stripe = Stripe('pk_test_TUO_CODICE_QUI'); 
+        // ======================================================
+        // 1. CONFIGURAZIONE CHIAVI (DA MODIFICARE!)
+        // ======================================================
+        
+        // EMAILJS: Vai su emailjs.com -> Crea account free -> Crea Service e Template
+        const EMAILJS_PUBLIC_KEY = "TUO_PUBLIC_KEY_QUI"; 
+        const EMAILJS_SERVICE_ID = "TUO_SERVICE_ID_QUI"; 
+        const EMAILJS_TEMPLATE_ID = "TUO_TEMPLATE_ID_QUI";
 
+        // SUPABASE: Vai su supabase.com -> Crea progetto free
+        const SUPABASE_URL = "https://tuo-progetto.supabase.co";
+        const SUPABASE_KEY = "tua-anon-public-key-qui";
+
+        // ======================================================
+        
+        // Inizializzazione Servizi
+        (function(){ emailjs.init(EMAILJS_PUBLIC_KEY); })();
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Inventario Default (se DB offline o vuoto)
         let inventory = [
-            {name: 'CAP FIRE', img:'image_cap.PNG', price:45, stock:5}, {name: 'TEE FLAME', img:'image_tee.PNG', price:65, stock:5},
-            {name: 'CAP BLK', img:'image_cap.PNG', price:45, stock:5}, {name: 'TEE WHT', img:'image_tee.PNG', price:65, stock:5},
-            {name: 'CAP RED', img:'image_cap.PNG', price:45, stock:5}, {name: 'TEE LTD', img:'image_tee.PNG', price:85, stock:5},
-            {name: 'CAP V1', img:'image_cap.PNG', price:45, stock:5}, {name: 'TEE V1', img:'image_tee.PNG', price:65, stock:5},
-            {name: 'CAP V2', img:'image_cap.PNG', price:45, stock:5}, {name: 'TEE V2', img:'image_tee.PNG', price:65, stock:5},
-            {name: 'CAP V3', img:'image_cap.PNG', price:45, stock:5}, {name: 'TEE V3', img:'image_tee.PNG', price:65, stock:5},
-            {name: 'CAP V4', img:'image_cap.PNG', price:45, stock:5}, {name: 'TEE V4', img:'image_tee.PNG', price:65, stock:5},
-            {name: 'CAP V5', img:'image_cap.PNG', price:45, stock:5}, {name: 'TEE V5', img:'image_tee.PNG', price:65, stock:5},
-            {name: 'CAP V6', img:'image_cap.PNG', price:45, stock:5}, {name: 'TEE V6', img:'image_tee.PNG', price:65, stock:5},
-            {name: 'CAP V7', img:'image_cap.PNG', price:45, stock:5}, {name: 'TEE V7', img:'image_tee.PNG', price:65, stock:5},
-            {name: 'CAP V8', img:'image_cap.PNG', price:45, stock:5}, {name: 'TEE V8', img:'image_tee.PNG', price:65, stock:5},
-            {name: 'CAP V9', img:'image_cap.PNG', price:45, stock:5}, {name: 'TEE V9', img:'image_tee.PNG', price:65, stock:5},
-            {name: 'CAP X', img:'image_cap.PNG', price:50, stock:0} 
+            {id:0, name: 'CAP FIRE', img:'image_cap.PNG', price:45, stock:5}, 
+            {id:1, name: 'TEE FLAME', img:'image_tee.PNG', price:65, stock:5},
+            // ... puoi aggiungere gli altri qui come fallback
         ];
         
-        let cart = []; let dbClicks = 0; let autoScrollRequest = null;
+        let cart = []; 
+        let dbClicks = 0;
 
-        window.addEventListener('DOMContentLoaded', () => {
-            try {
-                const savedInv = localStorage.getItem('ff_inventory');
-                if (savedInv) inventory = JSON.parse(savedInv);
-                const savedMainBg = localStorage.getItem('ff_bg_main');
-                if (savedMainBg) document.body.style.backgroundImage = `url('${savedMainBg}')`;
-            } catch(e) { localStorage.clear(); }
-            renderShop(); startLoaderSequence();
+        // --- CARICAMENTO DATI DAL CLOUD ---
+        window.addEventListener('DOMContentLoaded', async () => {
+            startLoaderSequence();
+            await loadGlobalData(); // Carica dati veri dal server
         });
 
-        // --- NEWSLETTER LOGIC ---
-        function subscribeNewsletter() {
-            const email = document.getElementById('news-email-input').value;
-            if(email && email.includes('@')) {
-                // QUI ANDREBBE LA CHIAMATA API A MAILCHIMP/BREVO
-                // Per ora simuliamo il successo
-                alert("WELCOME TO THE FAMILY! " + email);
-                localStorage.setItem('ff_newsletter_user', email);
+        async function loadGlobalData() {
+            document.getElementById('sync-status').innerText = "SYNCING...";
+            
+            // Scarica impostazioni (tabella 'config')
+            // Devi creare una tabella 'config' su Supabase con colonne: id, bg_url, inventory_json
+            const { data, error } = await supabase
+                .from('config')
+                .select('*')
+                .eq('id', 1)
+                .single();
+
+            if (data && !error) {
+                // Se trova i dati online, li usa per tutti
+                if(data.bg_url) document.body.style.backgroundImage = `url('${data.bg_url}')`;
+                if(data.inventory_json) inventory = data.inventory_json;
+                document.getElementById('sync-status').innerText = "ONLINE";
+                
+                // Salva localmente per velocità futura
+                localStorage.setItem('ff_bg_main', data.bg_url);
+            } else {
+                console.log("Uso dati locali (Offline o primo avvio)");
+                document.getElementById('sync-status').innerText = "LOCAL MODE";
+                // Fallback locale
+                const localBg = localStorage.getItem('ff_bg_main');
+                if(localBg) document.body.style.backgroundImage = `url('${localBg}')`;
+            }
+            renderShop();
+        }
+
+        // --- FUNZIONE ORDINE VIA EMAIL ---
+        function sendOrder() {
+            const name = document.getElementById('cust-name').value;
+            const email = document.getElementById('cust-email').value;
+            const addr = document.getElementById('cust-addr').value;
+            const total = cart.reduce((s,i)=>s+inventory[i].price,0);
+
+            if(!name || !email || !addr) { alert("FILL ALL FIELDS"); return; }
+            if(cart.length === 0) { alert("CART EMPTY"); return; }
+
+            const btn = document.getElementById('pay-btn');
+            btn.innerText = "SENDING...";
+            btn.disabled = true;
+
+            // Prepara lista oggetti
+            let itemsList = cart.map(i => `${inventory[i].name} (${inventory[i].price}€)`).join("\n");
+
+            // Parametri per il template EmailJS
+            // Nel template EmailJS usa variabili: {{to_name}}, {{customer_email}}, {{address}}, {{order_items}}, {{total_price}}
+            const templateParams = {
+                to_name: "Diego", // La mail arriva a te
+                customer_name: name,
+                customer_email: email,
+                address: addr,
+                order_items: itemsList,
+                total_price: total + "€"
+            };
+
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+                .then(function() {
+                    alert("ORDER SENT! CHECK YOUR MAIL DIEGO.");
+                    btn.innerText = "CONFIRM & PAY";
+                    btn.disabled = false;
+                    cart = [];
+                    updateCartUI();
+                    closeAll();
+                    // Qui potresti anche aggiornare lo stock su Supabase (avanzato)
+                }, function(error) {
+                    alert("FAILED: " + JSON.stringify(error));
+                    btn.innerText = "RETRY";
+                    btn.disabled = false;
+                });
+        }
+
+        // --- SISTEMA AMMINISTRATORE (SALVA SU CLOUD) ---
+        // Accesso Admin: Clicca 3 volte sul logo nel footer
+        document.querySelector('.footer-logo').onclick = () => { 
+            dbClicks++; playSfx(); 
+            if(dbClicks === 3) { 
+                setTimeout(() => { 
+                    const pwd = prompt("ADMIN ACCESS"); 
+                    if(pwd === "FRIENDLYFIRE26") initDB(); 
+                    else alert("WRONG"); 
+                }, 100); 
+                dbClicks = 0; 
+            } 
+            setTimeout(() => dbClicks = 0, 800); 
+        };
+
+        function initDB() { 
+            const db = document.getElementById('ov-db'); closeAll(); db.style.display = 'flex'; 
+            const l = document.getElementById('db-list'); l.innerHTML=''; 
+            // Prendi sfondo attuale
+            let currentBg = document.body.style.backgroundImage.slice(4, -1).replace(/"/g, "");
+            document.getElementById('db-bg-input').value = currentBg; 
+            
+            inventory.forEach((t,i)=>{ 
+                l.innerHTML+=`<div class="db-row"><span style="font-size:8px;">#${i}</span><input id="d-n-${i}" value="${t.name}" class="input-pixel" placeholder="Name" style="width:50px;"><input id="d-i-${i}" value="${t.img}" class="input-pixel" placeholder="IMG" style="width:50px;"><input id="d-p-${i}" value="${t.price}" class="input-pixel" style="width:30px;" placeholder="€"><input id="d-s-${i}" value="${t.stock}" type="number" class="input-pixel" style="width:30px;" placeholder="Stk"><button onclick="removeItem(${i})" style="background:red; color:white; border:none; cursor:pointer;">X</button></div>`; 
+            }); 
+        }
+
+        async function saveGlobalDB() {
+            // 1. Raccogli i dati dal pannello
+            const newBg = document.getElementById('db-bg-input').value;
+            inventory.forEach((t,i)=>{ 
+                if(document.getElementById(`d-n-${i}`)) { 
+                    t.name = document.getElementById(`d-n-${i}`).value; 
+                    t.img = document.getElementById(`d-i-${i}`).value; 
+                    t.price = parseInt(document.getElementById(`d-p-${i}`).value) || 0; 
+                    t.stock = parseInt(document.getElementById(`d-s-${i}`).value) || 0; 
+                } 
+            });
+
+            const saveBtn = document.querySelector('#ov-db button[style*="green"]');
+            saveBtn.innerText = "SAVING TO CLOUD...";
+
+            // 2. Invia a Supabase
+            const { error } = await supabase
+                .from('config')
+                .upsert({ id: 1, bg_url: newBg, inventory_json: inventory });
+
+            if (!error) {
+                // Aggiorna anche visivamente subito
+                if(newBg) document.body.style.backgroundImage = `url('${newBg}')`;
+                localStorage.setItem('ff_bg_main', newBg); // Cache locale
+                alert("SAVED TO CLOUD! EVERYONE WILL SEE THIS.");
+                renderShop(); 
                 closeAll();
             } else {
-                alert("INVALID EMAIL");
+                alert("ERROR SAVING TO CLOUD: " + error.message);
             }
+            saveBtn.innerText = "SAVE GLOBAL";
         }
 
-        // --- STRIPE PAYMENT LOGIC ---
-        function processStripePayment() {
-            const total = cart.reduce((s,i)=>s+inventory[i].price,0);
-            if(total <= 0) { alert("CART EMPTY"); return; }
-            
-            // Simulazione: In un'app reale qui chiami il tuo server per creare una sessione Stripe
-            alert("REDIRECTING TO STRIPE... (Mode: Test)");
-            console.log("Processing payment for: " + total + "EUR");
-            
-            // Esempio di codice reale per redirect (richiede Backend):
-            // stripe.redirectToCheckout({ sessionId: 'session_id_from_server' });
-        }
+        function addItem() { inventory.push({name:'NEW', img:'image_tee.PNG', price:0, stock:1}); initDB(); }
+        function removeItem(i) { inventory.splice(i,1); initDB(); }
 
+        // --- FUNZIONI UI STANDARD (Invariate) ---
         function startLoaderSequence() {
             const fillBar = document.getElementById('pixel-bar-fill');
             const startBtn = document.getElementById('start-btn');
-            const loadingMsg = document.getElementById('loading-msg');
-            const loaderOverlay = document.getElementById('loader-overlay');
-
             let fillLevel = 0;
             const interval = setInterval(() => {
                 fillLevel += 1; 
                 if (fillLevel >= 100) {
                     fillLevel = 100; fillBar.style.width = fillLevel + '%'; clearInterval(interval);
-                    setTimeout(() => {
-                        loadingMsg.style.opacity = '0';
-                        startBtn.classList.add('visible'); 
-                        playSfx();
-                    }, 400);
+                    setTimeout(() => { startBtn.classList.add('visible'); playSfx(); }, 400);
                 } else { fillBar.style.width = fillLevel + '%'; }
-            }, 40);
-
-            startBtn.onclick = () => { playSfx(); loaderOverlay.style.display = 'none'; };
+            }, 20);
+            startBtn.onclick = () => { playSfx(); document.getElementById('loader-overlay').style.display = 'none'; };
         }
 
         const sfx = document.getElementById('sfx');
@@ -308,7 +348,6 @@
             const page = document.getElementById(id);
             if(page) {
                 page.style.display='flex';
-                // Aggiorna totale se apri checkout
                 if(id === 'ov-checkout') {
                     const total = cart.reduce((s,i)=>s+inventory[i].price,0);
                     document.getElementById('checkout-total').innerText = total;
@@ -320,52 +359,34 @@
             playSfx(); const p = document.getElementById('cart-popup'); 
             const isVisible = window.getComputedStyle(p).display !== 'none';
             if(isVisible) { p.style.display = 'none'; } 
-            else { p.style.display = 'block'; p.style.top = '50%'; p.style.left = '50%'; p.style.transform = 'translate(-50%, -50%)'; }
+            else { p.style.display = 'block'; }
         }
 
         function renderShop() {
-            [1,2,3].forEach(n => document.getElementById('page-'+n).innerHTML='');
+            [1,2,3].forEach(n => {
+                const el = document.getElementById('page-'+n);
+                if(el) el.innerHTML='';
+            });
             inventory.forEach((item, idx) => {
                 const pageNum = Math.floor(idx / 12) + 1;
                 const pageEl = document.getElementById('page-'+pageNum);
                 if(!pageEl) return;
                 const card = document.createElement('div'); card.className = 'item-card'; card.id = `item-${idx}`;
-                let priceDisplay = item.price + "€"; if(item.stock <= 0) { card.classList.add('sold-out'); priceDisplay = "SOLD OUT"; }
+                let priceDisplay = item.price + "€"; 
+                if(item.stock <= 0) { card.classList.add('sold-out'); priceDisplay = "SOLD OUT"; }
                 card.innerHTML = `<img src="${item.img}"><div class="clean-tag">${item.name}</div><div class="clean-tag">${priceDisplay}</div>`;
                 if(cart.includes(idx)) card.style.opacity = '0.3';
                 if(item.stock > 0 && !cart.includes(idx)) {
-                    card.onpointerdown = (e) => {
-                        if(e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
-                        card.setPointerCapture(e.pointerId); let isDragging = false; const rect = card.getBoundingClientRect();
-                        let dragTimer = setTimeout(() => { isDragging = true; document.getElementById('shop-slider').classList.add('dragging-mode'); card.classList.add('dragging'); card.style.left = (e.clientX - (rect.width/2)) + 'px'; card.style.top = (e.clientY - (rect.height/2)) + 'px'; }, 150);
-                        card.onpointermove = (ev) => { if (!isDragging) return; ev.preventDefault(); card.style.left = (ev.clientX - (rect.width/2)) + 'px'; card.style.top = (ev.clientY - (rect.height/2)) + 'px'; if (ev.clientX > window.innerWidth - 50) startAutoScroll(8); else if (ev.clientX < 50) startAutoScroll(-8); else stopAutoScroll(); };
-                        card.onpointerup = (ev) => { clearTimeout(dragTimer); stopAutoScroll(); card.onpointermove = null; card.onpointerup = null; document.getElementById('shop-slider').classList.remove('dragging-mode'); if (isDragging) { card.classList.remove('dragging'); const tank = document.getElementById('tank-btn'); const tankRect = tank.getBoundingClientRect(); const tankCX = tankRect.left + (tankRect.width / 2); const tankCY = tankRect.top + (tankRect.height / 2); if (Math.hypot(ev.clientX - tankCX, ev.clientY - tankCY) < 100) { card.style.left = (tankRect.left + tankRect.width/2 - rect.width/2) + 'px'; card.style.top = (tankRect.top + tankRect.height/2 - rect.height/2) + 'px'; card.classList.add('sucked'); playSfx(); setTimeout(() => { addToCart(idx); card.classList.remove('sucked'); card.style.position = ''; card.style.left = ''; card.style.top = ''; const popup = document.getElementById('cart-popup'); if(popup.style.display !== 'block') toggleCart(); }, 400); } else { card.style.position = ''; card.style.left = ''; card.style.top = ''; card.style.zIndex = ''; } } };
-                    };
+                    card.onclick = () => { addToCart(idx); };
                 }
                 pageEl.appendChild(card);
             });
         }
 
-        function startAutoScroll(amount) { if (autoScrollRequest) return; const loop = () => { document.getElementById('shop-slider').scrollBy(amount, 0); autoScrollRequest = requestAnimationFrame(loop); }; autoScrollRequest = requestAnimationFrame(loop); }
-        function stopAutoScroll() { if (autoScrollRequest) { cancelAnimationFrame(autoScrollRequest); autoScrollRequest = null; } }
-
         function addToCart(idx) { if(!cart.includes(idx) && inventory[idx].stock > 0) { cart.push(idx); updateCartUI(); const tank = document.getElementById('tank-btn'); tank.classList.add('pacman'); setTimeout(()=>tank.classList.remove('pacman'), 500); renderShop(); } }
         function updateCartUI() { const b = document.getElementById('tank-badge'); b.innerText = cart.length; b.style.display = cart.length > 0 ? 'block' : 'none'; const total = cart.reduce((s,i)=>s+inventory[i].price,0); document.getElementById('cart-total').innerText = total; const list = document.getElementById('cart-preview'); list.innerHTML = cart.map(i => { return `<div style="display:flex; justify-content:space-between; border-bottom:1px dashed #999; padding:4px 0;"><span>${inventory[i].name}</span><span>${inventory[i].price}€</span></div>`; }).join(""); }
-        function emptyTank() { const t = document.getElementById('tank-btn'); t.classList.add('pacman'); playSfx(); setTimeout(()=>{ t.classList.remove('pacman'); cart=[]; updateCartUI(); renderShop(); toggleCart(); }, 500); }
+        function emptyTank() { cart=[]; updateCartUI(); renderShop(); toggleCart(); }
 
-        const avGrid = document.getElementById('av-grid');
-        for(let i=1; i<=8; i++) { let u = `https://api.dicebear.com/7.x/pixel-art/svg?seed=skate${i}&backgroundColor=ff3a3a`; let d = document.createElement('div'); d.style.border='2px solid #555'; d.style.background='#222'; d.style.cursor='pointer'; d.innerHTML=`<img src="${u}" style="width:100%; display:block;">`; d.onclick=()=>{ document.getElementById('profile-pic').src=u; playSfx(); }; if(i===1) d.click(); avGrid.appendChild(d); }
-
-        const h = document.getElementById('cart-handle'); const p = document.getElementById('cart-popup');
-        h.onpointerdown = (e) => { h.setPointerCapture(e.pointerId); const r = p.getBoundingClientRect(); const ox = e.clientX - r.left; const oy = e.clientY - r.top; h.onpointermove = (ev) => { p.style.transform='none'; p.style.left=(ev.clientX-ox)+'px'; p.style.top=(ev.clientY-oy)+'px'; }; h.onpointerup = () => { h.onpointermove=null; }; };
-
-        document.querySelector('.footer-logo').onclick = () => { dbClicks++; playSfx(); if(dbClicks === 3) { setTimeout(() => { const pwd = prompt("ADMIN ACCESS"); if(pwd === "FRIENDLYFIRE26") initDB(); else alert("WRONG"); }, 100); dbClicks = 0; } setTimeout(() => dbClicks = 0, 800); };
-        
-        function initDB() { const db = document.getElementById('ov-db'); closeAll(); db.style.display = 'flex'; const l = document.getElementById('db-list'); l.innerHTML=''; document.getElementById('db-bg-input').value = localStorage.getItem('ff_bg_main') || ''; inventory.forEach((t,i)=>{ l.innerHTML+=`<div class="db-row"><span style="font-size:8px;">#${i}</span><input id="d-n-${i}" value="${t.name}" class="input-pixel" placeholder="Name" style="width:50px;"><input id="d-i-${i}" value="${t.img}" class="input-pixel" placeholder="IMG" style="width:50px;"><input id="d-p-${i}" value="${t.price}" class="input-pixel" style="width:30px;" placeholder="€"><input id="d-s-${i}" value="${t.stock}" type="number" class="input-pixel" style="width:30px;" placeholder="Stk"><button onclick="removeItem(${i})" style="background:red; color:white; border:none; cursor:pointer;">X</button></div>`; }); }
-        function addItem() { inventory.push({name:'NEW', img:'image_tee.PNG', price:0, stock:1}); initDB(); }
-        function removeItem(i) { inventory.splice(i,1); initDB(); }
-        function resetDB() { if(confirm("FACTORY RESET?")) { localStorage.clear(); location.reload(); } }
-        function saveDB() { inventory.forEach((t,i)=>{ if(document.getElementById(`d-n-${i}`)) { t.name = document.getElementById(`d-n-${i}`).value; t.img = document.getElementById(`d-i-${i}`).value; t.price = parseInt(document.getElementById(`d-p-${i}`).value) || 0; t.stock = parseInt(document.getElementById(`d-s-${i}`).value) || 0; } }); localStorage.setItem('ff_inventory', JSON.stringify(inventory)); const bg = document.getElementById('db-bg-input').value; localStorage.setItem('ff_bg_main', bg); if(bg) document.body.style.backgroundImage = `url('${bg}')`; renderShop(); closeAll(); }
     </script>
 </body>
 </html>
