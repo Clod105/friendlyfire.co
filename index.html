@@ -11,7 +11,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <style>
-        /* --- 1. CORE --- */
+        /* --- 1. CORE & RESET --- */
         :root { --red: #ff3a3a; --bg-pongo: #2e4a1e; --white: #ffffff; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
         
@@ -19,12 +19,13 @@
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Press Start 2P', cursive; 
             background-color: var(--bg-pongo);
+            /* Sfondo di default caricato subito */
             background-image: url('sfondo2.jpg');
             background-position: center center; background-repeat: no-repeat; background-size: cover;
             overscroll-behavior: none; position: fixed; 
         }
 
-        /* --- 2. LOADER --- */
+        /* --- 2. LOADER CSS (SISTEMA DI SICUREZZA) --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: var(--white); z-index: 999999; 
@@ -35,31 +36,38 @@
         .gif-wrapper { width: 280px; height: 280px; display: flex; justify-content: center; align-items: center; }
         #loader-gif { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transform: scale(1.1); }
         .loading-area-bottom { display: flex; flex-direction: column; align-items: center; margin-top: 20px; width: 100%; height: 120px; justify-content: flex-start; }
+        
+        /* Animazione CSS indipendente dal codice JS */
         .pixel-bar-container { width: 180px; height: 16px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 6px 6px 0 rgba(0,0,0,0.1); margin-bottom: 10px; }
         .pixel-bar-fill { height: 100%; width: 0%; background-color: #32cd32; animation: fillBar 2s linear forwards; }
         @keyframes fillBar { 0% { width: 0%; } 90% { width: 90%; } 100% { width: 100%; } }
+
         .loading-text { font-size: 10px; color: #000; margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; animation: hideText 0.1s linear 2s forwards; }
         @keyframes hideText { to { opacity: 0; visibility: hidden; } }
+
         #start-btn { 
-            opacity: 0; pointer-events: none; background: #000; color: #fff; border: 2px solid #000; 
-            padding: 14px 30px; font-family: 'Press Start 2P'; font-size: 10px; cursor: pointer; 
-            text-transform: uppercase; margin-top: 10px; box-shadow: 4px 4px 0 #999; 
+            opacity: 0; pointer-events: none; 
+            background: #000; color: #fff; border: 2px solid #000; 
+            padding: 14px 30px; font-family: 'Press Start 2P'; font-size: 10px; 
+            cursor: pointer; text-transform: uppercase; margin-top: 10px;
+            box-shadow: 4px 4px 0 #999; 
             animation: showBtn 0.5s ease-out 2s forwards, blink 1s infinite 2.5s; 
         }
         @keyframes showBtn { to { opacity: 1; pointer-events: auto; } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+
         .loader-footer { position: absolute; bottom: 20px; width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
         .copyright-mark { width: 30px; height: auto; margin-bottom: 5px; opacity: 0.8; }
         .copyright-text { font-family: Arial, sans-serif; font-weight: bold; font-size: 8px; color: #000; opacity: 0.6; line-height: 1.4; }
 
-        /* --- 3. HEADER & PONGO --- */
+        /* --- 3. HEADER --- */
         header { display: flex; justify-content: space-between; align-items: flex-start; padding: 15px 20px; position: absolute; top: 0; left: 0; right: 0; z-index: 2000; pointer-events: none; }
         
         .pongo-btn { width: 70px; height: 70px; object-fit: contain; cursor: pointer; pointer-events: auto; filter: drop-shadow(0 4px 2px rgba(0,0,0,0.4)); transition: transform 0.1s; }
         
-        /* Animazione Attivata via JS */
-        .pongo-anim { animation: pongo-squash 0.4s ease-out; }
-        @keyframes pongo-squash { 
+        /* Animazione Gelatina */
+        .pongo-anim { animation: pongo 0.3s ease-out; }
+        @keyframes pongo { 
             0% { transform: scale(1); } 30% { transform: scale(1.25, 0.75); } 
             50% { transform: scale(0.85, 1.15); } 70% { transform: scale(1.05, 0.95); } 100% { transform: scale(1); } 
         }
@@ -67,7 +75,7 @@
         .tank-wrapper { position: relative; pointer-events: auto; }
         #tank-badge { position: absolute; top: 0; right: -5px; background: var(--red); color: white; border: 2px solid #000; font-size: 9px; padding: 3px 6px; border-radius: 50%; display: none; z-index: 10003; }
 
-        /* --- 4. SHOP & PHYSICS --- */
+        /* --- 4. SHOP GRID & PHYSICS --- */
         #shop-slider { width: 100vw; height: 100%; display: flex; overflow-x: scroll; overflow-y: hidden; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; z-index: 1; }
         #shop-slider.free-flow { scroll-snap-type: none !important; scroll-behavior: auto !important; }
         #shop-slider::-webkit-scrollbar { display: none; }
@@ -76,14 +84,15 @@
         
         .item-card { 
             display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 100; 
-            touch-action: pan-y; /* Cruciale per Drag */
+            touch-action: pan-y; /* Permette scroll, ma il JS intercetta il drag */
             transform: translateZ(0); cursor: grab; 
         }
         .item-card img { width: 90px; pointer-events: none; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); transition: transform 0.2s; }
-        .item-card:active img { transform: scale(0.95) rotate(-2deg); }
+        .item-card:active img { transform: scale(0.9) rotate(-2deg); } /* Feedback Tocco */
         .clean-tag { font-family: sans-serif; font-weight: 800; font-size: 9px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.9); margin-top: 5px; text-transform: uppercase; text-align: center; }
         
-        .ghost-card { position: fixed; z-index: 999999; pointer-events: none; display: flex; flex-direction: column; align-items: center; transform: scale(1.2) rotate(5deg); opacity: 0.9; filter: drop-shadow(0 30px 50px rgba(0,0,0,0.6)); }
+        /* GHOST */
+        .ghost-card { position: fixed; z-index: 999999; pointer-events: none; display: flex; flex-direction: column; align-items: center; transform: scale(1.2) rotate(5deg); opacity: 0.95; filter: drop-shadow(0 30px 50px rgba(0,0,0,0.6)); }
         .ghost-card img { width: 100px; } .ghost-card .clean-tag { display: none; }
 
         /* --- 5. FOOTER & ADMIN --- */
@@ -95,12 +104,12 @@
         }
         .footer-logo { 
             width: 150px; cursor: pointer; 
-            pointer-events: auto; /* Fondamentale per i click */
+            pointer-events: auto; /* FIX: Rende il logo cliccabile sopra tutto */
             transition: transform 0.1s; 
         }
-        .footer-logo:active { transform: scale(0.95); }
+        .footer-logo:active { transform: scale(0.9); }
 
-        /* --- 6. OVERLAYS & WINDOWS --- */
+        /* --- 6. OVERLAYS --- */
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 50000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .mac-window { width: 90%; max-width: 360px; background: #fff; border: 3px double #000; padding: 0 0 15px 0; box-shadow: 15px 15px 0 rgba(0,0,0,0.5); text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; }
         .mac-title-bar { width: 100%; background: repeating-linear-gradient(45deg, #ccc, #ccc 2px, #fff 2px, #fff 4px); border-bottom: 2px solid #000; padding: 10px; margin-bottom: 10px; color: #000; font-size: 10px; font-weight: 800; letter-spacing: 1px; touch-action: none; cursor: move; }
@@ -141,9 +150,9 @@
     <audio id="sfx-gnam" src="suono_gnam.mp3" preload="auto"></audio>
 
     <header>
-        <img src="mondo_pongo.PNG" class="pongo-btn" onclick="handleHeaderClick(this, 'ov-world')">
-        <img src="fuochini_centrali.png" class="pongo-btn" onclick="handleHeaderClick(this, 'ov-profile')">
-        <div class="tank-wrapper" onclick="handleHeaderClick(document.getElementById('tank-btn'), 'ov-cart')">
+        <img src="mondo_pongo.PNG" class="pongo-btn" onclick="pongoClick(this, 'ov-world')">
+        <img src="fuochini_centrali.png" class="pongo-btn" onclick="pongoClick(this, 'ov-profile')">
+        <div class="tank-wrapper" onclick="pongoClick(document.getElementById('tank-btn'), 'ov-cart')">
             <img src="tank_header.PNG" class="pongo-btn" id="tank-btn">
             <div id="tank-badge">0</div>
         </div>
@@ -156,7 +165,7 @@
     </div>
 
     <footer id="app-footer">
-        <img src="brand_name.png" class="footer-logo" onclick="triggerAdmin()">
+        <img src="brand_name.png" class="footer-logo" onclick="adminTrigger()">
     </footer>
 
     <div id="ov-cart" class="overlay">
@@ -193,19 +202,6 @@
         </div>
     </div>
 
-    <div id="ov-newsletter" class="overlay">
-        <div class="mac-window">
-            <div class="mac-title-bar">JOIN THE CLUB</div>
-            <p style="font-size:9px; margin:15px; line-height:1.5;">SUBSCRIBE FOR EXCLUSIVE DROPS.</p>
-            <div style="width:100%; display:flex; flex-direction:column; align-items:center;">
-                <input type="text" id="newsletter-name" class="input-pixel" placeholder="YOUR NAME" style="width:85%; margin-bottom:5px;">
-                <input type="email" id="newsletter-email" class="input-pixel" placeholder="E-MAIL" style="width:85%; margin-bottom:10px;" required>
-                <button class="btn-pixel" onclick="subscribeNewsletter()">SUBSCRIBE</button>
-            </div>
-            <button class="btn-pixel" style="background:transparent; color:#000; border:none; box-shadow:none;" onclick="closeAll()">CLOSE</button>
-        </div>
-    </div>
-
     <div id="ov-profile" class="overlay">
         <div class="mac-window">
             <div class="mac-title-bar">PROFILE</div>
@@ -221,10 +217,17 @@
     <div id="ov-world" class="overlay">
         <div class="mac-window">
             <div class="mac-title-bar">WORLD</div>
-            <img src="mondo_pongo.PNG" style="width:120px; margin:20px;">
-            <button class="btn-pixel" onclick="window.open('https://instagram.com/friendlyfire')">INSTAGRAM</button>
-            <button class="btn-pixel" onclick="openOv('ov-newsletter')">NEWSLETTER</button>
-            <button class="btn-pixel" onclick="closeAll()">BACK</button>
+            <img src="mondo_pongo.PNG" style="width:80px; margin:15px;">
+            <p style="font-size:9px; margin:5px; line-height:1.5;">SUBSCRIBE FOR DROPS.</p>
+            
+            <div style="width:100%; display:flex; flex-direction:column; align-items:center; margin-bottom:15px;">
+                <input type="text" id="newsletter-name" class="input-pixel" placeholder="NAME" style="width:85%; margin-bottom:5px;">
+                <input type="email" id="newsletter-email" class="input-pixel" placeholder="E-MAIL" style="width:85%; margin-bottom:10px;">
+                <button class="btn-pixel" id="news-btn" onclick="subscribeNewsletter()">JOIN CLUB</button>
+            </div>
+
+            <button class="btn-pixel" style="background:#E1306C; border-color:#E1306C;" onclick="window.open('https://instagram.com/friendlyfire')">INSTAGRAM</button>
+            <button class="btn-pixel" style="background:transparent; color:#000; border:none; box-shadow:none;" onclick="closeAll()">BACK</button>
         </div>
     </div>
 
@@ -255,7 +258,6 @@
         let cart = [], autoScrollSpeed = 0, dbClicks = 0, scrollLoopId = null;
         let currentBg = 'sfondo2.jpg';
 
-        // CHIAVI (EmailJS + Stripe + Supabase)
         const emailPublic = "BThMV2knP0VG0s4nr";
         const emailService = "service_4scv4hn";
         const emailTemplate = "template_8opoo1v";
@@ -273,24 +275,21 @@
                 const sbKey = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y';
                 supabase = supabase.createClient(sbUrl, sbKey);
                 emailjs.init(emailPublic);
-                loadDB();
+                loadDB(); // Async
             } catch(e) { console.log("Offline Mode", e); }
         };
 
-        // --- 3. FUNZIONI HEADER & ANIMAZIONI (FIXED) ---
-        function handleHeaderClick(el, overlayId) {
-            // 1. Suono
+        // --- 3. HEADER & ADMIN LOGIC ---
+        function pongoClick(el, overlayId) {
             playSfx();
-            // 2. Animazione Pongo
             el.classList.remove('pongo-anim');
             void el.offsetWidth; // Force Reflow
             el.classList.add('pongo-anim');
-            // 3. Apri Finestra
             if(overlayId) openOv(overlayId);
         }
 
-        function triggerAdmin() {
-            playSfx(); // Feedback sonoro anche qui
+        function adminTrigger() {
+            playSfx(); 
             dbClicks++;
             if(dbClicks >= 5) {
                 if(prompt("PASSWORD")==="FRIENDLYFIRE26") openDB();
@@ -333,7 +332,7 @@
             });
         }
 
-        // --- 5. PHYSICS ENGINE (SWAP + DRAG) ---
+        // --- 5. PHYSICS ENGINE (V87 RESTORED) ---
         function getPointerPosition(e) { return e.touches ? {x:e.touches[0].clientX, y:e.touches[0].clientY} : {x:e.clientX, y:e.clientY}; }
 
         function attachPhysics(el, item, originalIndex) {
@@ -344,11 +343,14 @@
             const onStart = (e) => {
                 if(cart.some(c => c.id === item.id)) return;
                 let pos = getPointerPosition(e); startX = pos.x; startY = pos.y;
+
+                // Timer 200ms: Se tieni premuto, inizi a trascinare
                 timer = setTimeout(() => {
                     isDragging = true;
                     if(navigator.vibrate) navigator.vibrate(40);
                     slider.classList.add('free-flow');
                     startAutoScrollLoop();
+
                     ghost = el.cloneNode(true);
                     ghost.classList.add('ghost-card');
                     ghost.style.left = (startX - 45) + 'px'; ghost.style.top = (startY - 60) + 'px';
@@ -359,12 +361,16 @@
 
             const onMove = (e) => {
                 let pos = getPointerPosition(e);
+                // Se mi muovo prima del timer, è uno scroll normale: cancella il drag
                 if(!isDragging) { 
                     if(Math.abs(pos.x - startX)>10 || Math.abs(pos.y - startY)>10) clearTimeout(timer); 
                     return; 
                 }
-                if(e.cancelable) e.preventDefault();
+                if(e.cancelable) e.preventDefault(); // Stop scroll pagina se sto draggando
+
                 if(ghost) { ghost.style.left = (pos.x - 45) + 'px'; ghost.style.top = (pos.y - 60) + 'px'; }
+                
+                // Edge Scroll (Cambio Pagina)
                 let edge = window.innerWidth * 0.15;
                 if (pos.x > window.innerWidth - edge) autoScrollSpeed = 15;
                 else if (pos.x < edge) autoScrollSpeed = -15;
@@ -380,7 +386,7 @@
                     let elemBelow = document.elementFromPoint(pos.x, pos.y);
                     if(ghost) ghost.style.display='flex';
 
-                    // TANK
+                    // 1. TANK
                     if (elemBelow && (elemBelow.id === 'tank-btn' || elemBelow.closest('.tank-wrapper'))) {
                          if(ghost) {
                             ghost.style.transition = "all 0.4s"; ghost.style.transform = "scale(0)"; 
@@ -390,7 +396,7 @@
                         }
                         return;
                     }
-                    // SWAP
+                    // 2. SWAP
                     let targetCard = elemBelow ? elemBelow.closest('.item-card') : null;
                     if(targetCard && targetCard !== el) {
                         let targetId = parseInt(targetCard.id.split('-')[1]);
@@ -400,7 +406,7 @@
                             inventory[originalIndex] = inventory[targetIdx];
                             inventory[targetIdx] = temp;
                             if(ghost) ghost.remove();
-                            renderShop(); playSfx();
+                            renderShop(); playSfx(); // Suono scambio
                             return;
                         }
                     }
@@ -439,7 +445,7 @@
         }
 
         async function processStripeRedirect() { if(cart.length===0) { alert("TANK EMPTY"); return; } const name = document.getElementById('ship-name').value; const email = document.getElementById('ship-email').value; const addr = document.getElementById('ship-address').value; if(!name || !email || !addr) { alert("FILL DETAILS"); return; } let lineItems = []; for(let item of cart) { if(!item.stripeId || item.stripeId.length<5) { alert("PRODUCT ERROR: "+item.name); return; } lineItems.push({ price: item.stripeId, quantity: 1 }); } const { error } = await stripe.redirectToCheckout({ mode: 'payment', lineItems: lineItems, customerEmail: email, shippingAddressCollection: { allowedCountries: ['IT','US','FR','DE','ES'] }, successUrl: window.location.href + '?success=true', cancelUrl: window.location.href, }); if(error) alert(error.message); }
-        async function subscribeNewsletter() { let email = document.getElementById('newsletter-email').value; let name = document.getElementById('newsletter-name').value || "Friend"; if(!email || !email.includes('@')) { alert("INVALID EMAIL"); return; } let btn = document.querySelector('#ov-newsletter button'); btn.innerText = "WAIT..."; try { if(supabase) await supabase.from('newsletter').insert([{ email: email }]); await emailjs.send(emailService, emailTemplate, { to_name: name, user_email: email, message: "Welcome!" }); alert("WELCOME!"); closeAll(); } catch(e) { console.error(e); alert("YOU ARE IN!"); closeAll(); } btn.innerText = "SUBSCRIBE"; }
+        async function subscribeNewsletter() { let email = document.getElementById('newsletter-email').value; let name = document.getElementById('newsletter-name').value || "Friend"; if(!email || !email.includes('@')) { alert("INVALID EMAIL"); return; } let btn = document.getElementById('news-btn'); btn.innerText = "WAIT..."; try { if(supabase) await supabase.from('newsletter').insert([{ email: email }]); await emailjs.send(emailService, emailTemplate, { to_name: name, user_email: email, message: "Welcome!" }); alert("WELCOME!"); closeAll(); } catch(e) { console.error(e); alert("YOU ARE IN!"); closeAll(); } btn.innerText = "JOIN CLUB"; }
         async function saveAllChanges() { if(!supabase) return; let updates = []; inventory.forEach((t, i) => { if(document.getElementById(`dn-${t.id}`)) { updates.push({ id: t.id, name: document.getElementById(`dn-${t.id}`).value, img: document.getElementById(`di-${t.id}`).value, price: parseInt(document.getElementById(`dp-${t.id}`).value), stripeId: document.getElementById(`ds-${t.id}`).value, sizes: document.getElementById(`dz-${t.id}`).value }); } }); await supabase.from('products').upsert(updates); let newBg = document.getElementById('db-bg-url').value; if(newBg) await supabase.from('settings').upsert({ id: 1, bg_url: newBg }).catch(()=>{}); alert("SAVED!"); location.reload(); }
         async function createNewItem() { if(!supabase) return; let newId = inventory.length > 0 ? Math.max(...inventory.map(i=>i.id)) + 1 : 0; await supabase.from('products').insert([{ id: newId, name: 'NEW', img: 'logo_ff_loader.png', price: 0, stripeId: '', sizes: 'ONE SIZE' }]); alert("CREATED! RELOAD."); location.reload(); }
         async function deleteItemDB(id) { if(!confirm("DELETE?")) return; await supabase.from('products').delete().eq('id', id); location.reload(); }
