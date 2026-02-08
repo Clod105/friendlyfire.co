@@ -27,7 +27,7 @@
         /* --- LOADER (Z-INDEX MASSIMO) --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background-color: var(--white); z-index: 9999999; /* Altissimo */
+            background-color: var(--white); z-index: 9999999; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
         }
         .loader-brand-img { width: 260px; max-width: 80%; margin-bottom: 10px; }
@@ -53,15 +53,15 @@
         .copyright-mark { width: 30px; height: auto; margin-bottom: 5px; opacity: 0.8; }
         .copyright-text { font-family: Arial, sans-serif; font-weight: bold; font-size: 8px; color: #000; opacity: 0.6; line-height: 1.4; }
 
-        /* --- HEADER & UI --- */
+        /* --- HEADER --- */
         header { 
             display: flex; justify-content: space-between; align-items: flex-start; padding: 15px 20px; 
             position: absolute; top: 0; left: 0; right: 0; 
-            z-index: 5000; pointer-events: none; /* Icone ricevono click, il resto no */
+            z-index: 5000; pointer-events: none; 
         }
         .pongo-btn { 
             width: 70px; height: 70px; object-fit: contain; cursor: pointer; 
-            pointer-events: auto; /* IMPORTANTE */
+            pointer-events: auto; 
             filter: drop-shadow(0 4px 2px rgba(0,0,0,0.4)); transition: transform 0.1s; 
         }
         .pongo-anim { animation: pongo 0.3s ease-out; }
@@ -72,7 +72,7 @@
 
         /* --- SHOP GRID --- */
         #shop-slider { width: 100vw; height: 100%; display: flex; overflow-x: scroll; overflow-y: hidden; scroll-snap-type: x mandatory; z-index: 1; }
-        #shop-slider.free-flow { scroll-snap-type: none !important; } /* Attivato durante drag */
+        #shop-slider.free-flow { scroll-snap-type: none !important; }
         #shop-slider::-webkit-scrollbar { display: none; }
         
         .shop-page { 
@@ -85,7 +85,6 @@
         .item-card { 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             position: relative; z-index: 100; transform: translateZ(0); 
-            /* Permette lo scroll nativo finché non parte il drag JS */
             touch-action: pan-y; 
         }
         .item-card img { width: 90px; pointer-events: none; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); transition: transform 0.2s; }
@@ -108,6 +107,7 @@
         
         .btn-pixel { background: #000; color: #fff; border: 2px solid #000; padding: 14px; font-family: 'Press Start 2P'; font-size: 9px; cursor: pointer; margin: 6px; width: 85%; transition: transform 0.1s; }
         .btn-pixel:active { transform: translate(2px, 2px); }
+        .checkout-group { width: 85%; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
         .input-pixel { border: 2px solid #000; padding: 12px; font-family: sans-serif; font-weight: bold; width: 85%; font-size: 11px; margin-bottom: 10px; background: #eee; outline: none; }
         .db-row { display: flex; gap: 4px; width: 95%; margin: 4px 0; align-items: center; justify-content: center; border-bottom: 1px dashed #ccc; padding-bottom: 2px; }
 
@@ -124,7 +124,7 @@
         <div class="gif-wrapper"><img id="loader-gif" src="loadernob.gif"></div>
         <div class="loading-area-bottom">
             <div class="pixel-bar-container"><div class="pixel-bar-fill"></div></div>
-            <button id="start-btn" onclick="destroyLoader()">START</button>
+            <button id="start-btn" onclick="document.getElementById('loader-overlay').style.display='none'; document.getElementById('sfx-gnam').play().catch(()=>{});">START</button>
         </div>
         <div class="loader-footer">
             <img src="mark_c.png" alt="C" class="copyright-mark">
@@ -153,140 +153,51 @@
         <img src="brand_name.png" class="footer-logo" onclick="adminTrigger()">
     </footer>
 
-    <div id="ov-cart" class="overlay"><div class="mac-window"><div class="mac-title-bar draggable-handle">TANK</div><div id="cart-list" style="max-height:150px; overflow-y:auto; padding:10px;"></div><div style="margin:10px;">TOTAL: <span id="cart-total">0</span>€</div><button class="btn-pixel" onclick="openOv('ov-checkout')">CHECKOUT</button><button class="btn-pixel" onclick="emptyCart()">EMPTY</button><button class="btn-pixel" onclick="closeAll()">CLOSE</button></div></div>
+    <div id="ov-cart" class="overlay"><div class="mac-window"><div class="mac-title-bar draggable-handle">YOUR TANK</div><div id="cart-list" style="max-height:160px; overflow-y:auto; background:#f0f0f0; border:2px solid #000; width:85%; margin:10px auto; padding:8px; font-size:10px; text-align:left;"></div><div style="margin:15px; font-weight:bold; font-size:12px;">TOTAL: <span id="cart-total">0</span>€</div><button class="btn-pixel" onclick="openOv('ov-checkout')">GO TO CHECKOUT</button><button class="btn-pixel" style="background:#555;" onclick="emptyCart()">EMPTY TANK</button><button class="btn-pixel" style="background:transparent; color:#000; border:none; box-shadow:none;" onclick="closeAll()">CLOSE</button></div></div>
     
-    <div id="ov-checkout" class="overlay"><div class="mac-window"><div class="mac-title-bar draggable-handle">CHECKOUT</div><div id="checkout-items-list" style="width:85%; max-height:100px; overflow-y:auto; padding:5px; background:#fff; border:1px solid #ccc; margin-bottom:10px;"></div><input type="text" id="ship-name" class="input-pixel" placeholder="FULL NAME"><input type="email" id="ship-email" class="input-pixel" placeholder="EMAIL"><input type="text" id="ship-address" class="input-pixel" placeholder="ADDRESS"><button class="btn-pixel" style="background:#5469d4; border-color:#5469d4;" onclick="processStripeRedirect()">PAY NOW</button><button class="btn-pixel" onclick="closeAll()">CANCEL</button></div></div>
+    <div id="ov-checkout" class="overlay"><div class="mac-window"><div class="mac-title-bar draggable-handle">CHECKOUT</div><div id="checkout-items-list" style="width:85%; max-height:100px; overflow-y:auto; background:#fff; border:1px solid #ccc; margin-bottom:10px; padding:5px; text-align:left;"></div><form id="shipping-form" style="width:100%; display:flex; flex-direction:column; align-items:center;"><div class="checkout-group"><input type="text" id="ship-name" class="input-pixel" placeholder="FULL NAME" required><input type="email" id="ship-email" class="input-pixel" placeholder="E-MAIL" required></div><div class="checkout-group"><input type="text" id="ship-address" class="input-pixel" placeholder="ADDRESS" required><div style="display:flex; gap:5px;"><input type="text" id="ship-city" class="input-pixel" placeholder="CITY" style="width:70%;" required><input type="text" id="ship-zip" class="input-pixel" placeholder="ZIP" style="width:30%;" required></div></div><div style="font-size:10px; margin:10px 0;">TOTAL: <span id="checkout-total-display" style="font-weight:bold;">0</span>€</div><button type="button" class="btn-pixel" style="background:#5469d4; border-color:#5469d4;" onclick="processStripeRedirect()">PAY NOW (STRIPE)</button></form><button class="btn-pixel" style="background:transparent; color:#000; border:none; box-shadow:none;" onclick="closeAll()">CANCEL</button></div></div>
 
-    <div id="ov-world" class="overlay"><div class="mac-window"><div class="mac-title-bar">WORLD</div><p style="font-size:9px; margin:10px;">JOIN THE CLUB</p><input type="text" id="news-name" class="input-pixel" placeholder="NAME"><input type="email" id="news-email" class="input-pixel" placeholder="EMAIL"><button class="btn-pixel" id="news-btn" onclick="subscribeNewsletter()">SUBSCRIBE</button><button class="btn-pixel" style="background:#E1306C; border-color:#E1306C;" onclick="window.open('https://instagram.com/friendlyfire')">INSTAGRAM</button><button class="btn-pixel" onclick="closeAll()">BACK</button></div></div>
+    <div id="ov-newsletter" class="overlay"><div class="mac-window"><div class="mac-title-bar">JOIN THE CLUB</div><p style="font-size:9px; margin:15px; line-height:1.5;">SUBSCRIBE FOR EXCLUSIVE DROPS.</p><div style="width:100%; display:flex; flex-direction:column; align-items:center;"><input type="text" id="newsletter-name" class="input-pixel" placeholder="YOUR NAME" style="width:85%; margin-bottom:5px;"><input type="email" id="newsletter-email" class="input-pixel" placeholder="E-MAIL" style="width:85%; margin-bottom:10px;" required><button class="btn-pixel" id="news-btn" onclick="subscribeNewsletter()">SUBSCRIBE</button></div><button class="btn-pixel" style="background:transparent; color:#000; border:none; box-shadow:none;" onclick="closeAll()">CLOSE</button></div></div>
     
-    <div id="ov-profile" class="overlay"><div class="mac-window"><div class="mac-title-bar">PROFILE</div><div id="avatar-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:5px; padding:10px;"></div><input class="input-pixel" placeholder="NICKNAME" style="text-align:center;"><button class="btn-pixel" onclick="closeAll()">SAVE</button></div></div>
+    <div id="ov-profile" class="overlay"><div class="mac-window"><div class="mac-title-bar">PROFILE</div><div style="border:3px solid #000; width:100px; height:100px; margin:10px auto; background:#fff;"><img id="profile-img-big" src="" style="width:100%; height:100%; object-fit:cover;"></div><div id="avatar-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; width:85%; margin:10px auto;"></div><input type="text" class="input-pixel" placeholder="NICKNAME" value="GUEST" style="width:85%; text-align:center;"><button class="btn-pixel" onclick="closeAll()">SAVE</button></div></div>
     
-    <div id="ov-db" class="overlay"><div class="mac-window" style="max-width:95%; height:80vh;"><div class="mac-title-bar">ADMIN</div><input id="db-bg-url" class="input-pixel" placeholder="BG URL"><div id="db-list" style="overflow-y:auto; height:50vh;"></div><button class="btn-pixel" onclick="createNewItem()">+ NEW</button><button class="btn-pixel" onclick="saveAllChanges()">SAVE ALL</button><button class="btn-pixel" onclick="closeAll()">EXIT</button></div></div>
+    <div id="ov-world" class="overlay"><div class="mac-window"><div class="mac-title-bar">WORLD</div><img src="mondo_pongo.PNG" style="width:120px; margin:20px;"><button class="btn-pixel" onclick="window.open('https://instagram.com/friendlyfire')">INSTAGRAM</button><button class="btn-pixel" onclick="openOv('ov-newsletter')">NEWSLETTER</button><button class="btn-pixel" onclick="closeAll()">BACK</button></div></div>
+
+    <div id="ov-db" class="overlay"><div class="mac-window" style="max-width:95%; height:85vh; justify-content:flex-start;"><div class="mac-title-bar">ADMIN (CLOUD)</div><div style="width:90%; padding:5px; background:#ddd; margin-bottom:5px;"><label style="font-size:9px;">BACKGROUND URL:</label><input id="db-bg-url" class="input-pixel" style="width:100%;"></div><div id="db-list" style="overflow-y:auto; width:100%; flex-grow:1; border-bottom:2px solid #000; margin-bottom:10px;"></div><div style="display:flex; flex-wrap:wrap; justify-content:center; gap:5px; width:100%;"><button class="btn-pixel" style="width:45%; background:#00f;" onclick="createNewItem()">+ NEW ITEM</button><button class="btn-pixel" style="width:45%; background:#0f0;" onclick="saveAllChanges()">SAVE ALL</button><button class="btn-pixel" style="width:90%;" onclick="closeAll()">EXIT</button></div></div></div>
 
     <script>
-        // --- GLOBALI ---
-        let stripe, supabase, inventory = [], cart = [], dbClicks = 0;
-        const defaultItems = [
-            {id:0, name:'CAP FIRE', img:'image_cap.PNG', price:45, stripeId:'', sizes:'ONE SIZE'}, 
-            {id:1, name:'TEE FLAME', img:'image_tee.PNG', price:65, stripeId:'', sizes:'S,M,L,XL'}
-        ];
-        
-        // CHIAVI
+        let stripe, supabase;
+        const defaultItems = [{id:0, name:'CAP FIRE', img:'image_cap.PNG', price:45, stripeId:'', sizes:'ONE SIZE'}, {id:1, name:'TEE FLAME', img:'image_tee.PNG', price:65, stripeId:'', sizes:'S,M,L,XL'}];
+        let inventory = JSON.parse(JSON.stringify(defaultItems));
+        let cart = [], autoScrollSpeed = 0, dbClicks = 0, scrollLoopId = null;
+        let currentBg = 'sfondo2.jpg';
+
         const emailPublic = "BThMV2knP0VG0s4nr";
         const emailService = "service_4scv4hn";
         const emailTemplate = "template_8opoo1v";
 
-        // --- AVVIO ---
         window.onload = function() {
-            // Render Default immediato
-            inventory = JSON.parse(JSON.stringify(defaultItems));
-            renderShop(); renderAvatars(); initDraggable();
-            document.body.style.backgroundImage = `url('sfondo2.jpg')`;
+            renderShop(); renderAvatars(); initDraggableWindows(); 
+            document.body.style.backgroundImage = `url('${currentBg}')`;
 
             try {
                 stripe = Stripe('pk_live_51SyKuT1PjKstwovYOCs5iNC2Ef8sun65gJ2pLXi4pyvfqM9o2Tiaec8NTQuHJEoYVPzDEDsktyZwlSWl6SjMKxzM00i7aB1Yvd');
-                supabase = supabase.createClient('https://jwifyapbnsbbpsrstrow.supabase.co', 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y');
+                const sbUrl = 'https://jwifyapbnsbbpsrstrow.supabase.co';
+                const sbKey = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y';
+                supabase = supabase.createClient(sbUrl, sbKey);
                 emailjs.init(emailPublic);
-                loadDB(); // Carica dati reali
-            } catch(e) { console.log("Offline Mode"); }
+                loadDB();
+            } catch(e) { console.log("Offline Mode", e); }
         };
 
-        // --- LOADER KILLER ---
-        function destroyLoader() {
-            let l = document.getElementById('loader-overlay');
-            // Rimuove fisicamente il nodo HTML per sbloccare tutto
-            l.parentNode.removeChild(l);
+        function pongoClick(el, overlayId) {
             playSfx();
+            el.classList.remove('pongo-anim'); void el.offsetWidth; el.classList.add('pongo-anim');
+            if(overlayId) openOv(overlayId);
         }
 
-        // --- DATABASE ---
-        async function loadDB() {
-            if(!supabase) return;
-            const { data } = await supabase.from('products').select('*').order('id');
-            if(data && data.length > 0) { inventory = data; renderShop(); }
-            const { data: set } = await supabase.from('settings').select('*').single();
-            if(set && set.bg_url) document.body.style.backgroundImage = `url('${set.bg_url}')`;
-        }
-
-        // --- SHOP & PHYSICS ---
-        function renderShop() {
-            [1,2,3].forEach(n => document.getElementById('page-'+n).innerHTML = '');
-            inventory.forEach((item, i) => {
-                let p = Math.floor(i/12)+1; if(p>3) return;
-                let el = document.createElement('div'); el.className = 'item-card'; el.id = 'itm-'+item.id;
-                el.innerHTML = `<img src="${item.img}"><div class="clean-tag">${item.name}<br>${item.price}€</div>`;
-                attachPhysics(el, item, i);
-                document.getElementById('page-'+p).appendChild(el);
-            });
-        }
-
-        function attachPhysics(el, item, originalIdx) {
-            let timer, isDragging = false, ghost, startX, startY;
-            const slider = document.getElementById('shop-slider');
-
-            el.addEventListener('touchstart', e => {
-                startX = e.touches[0].clientX; startY = e.touches[0].clientY;
-                // HOLD TO DRAG (200ms)
-                timer = setTimeout(() => {
-                    isDragging = true;
-                    if(navigator.vibrate) navigator.vibrate(40);
-                    slider.classList.add('free-flow'); // Sblocca scroll durante drag
-                    ghost = el.cloneNode(true); ghost.classList.add('ghost-card');
-                    ghost.style.left = (startX-45)+'px'; ghost.style.top = (startY-60)+'px';
-                    document.body.appendChild(ghost); el.style.opacity = '0';
-                }, 200); 
-            }, {passive:true});
-
-            window.addEventListener('touchmove', e => {
-                if(!isDragging) {
-                    // Se muovo prima del timer, è scroll normale
-                    if(Math.abs(e.touches[0].clientX - startX) > 10) clearTimeout(timer);
-                    return;
-                }
-                e.preventDefault(); // Stop scroll pagina
-                ghost.style.left = (e.touches[0].clientX-45)+'px'; ghost.style.top = (e.touches[0].clientY-60)+'px';
-            }, {passive:false});
-
-            window.addEventListener('touchend', e => {
-                clearTimeout(timer); slider.classList.remove('free-flow');
-                if(!isDragging) return;
-                isDragging = false;
-                
-                let tx = e.changedTouches[0].clientX, ty = e.changedTouches[0].clientY;
-                let tank = document.getElementById('tank-btn').getBoundingClientRect();
-                
-                // Collisione Tank
-                if(Math.hypot(tx-(tank.left+35), ty-(tank.top+35)) < 60) {
-                    addToCart(item); playSfx();
-                } 
-                // Collisione Swap
-                else {
-                    let elem = document.elementFromPoint(tx, ty);
-                    let target = elem ? elem.closest('.item-card') : null;
-                    if(target && target !== el) {
-                        let tId = parseInt(target.id.split('-')[1]);
-                        let tIdx = inventory.findIndex(x=>x.id===tId);
-                        if(tIdx > -1) {
-                            [inventory[originalIdx], inventory[tIdx]] = [inventory[tIdx], inventory[originalIdx]];
-                            renderShop(); playSfx();
-                        }
-                    }
-                }
-                ghost.remove(); el.style.opacity = '1';
-            });
-        }
-
-        // --- UI UTILS ---
-        function pongoClick(el, id) { 
-            playSfx(); 
-            if(el) { el.classList.remove('pongo-anim'); void el.offsetWidth; el.classList.add('pongo-anim'); }
-            if(id) openOv(id); 
-        }
-        function playSfx() { let s = document.getElementById('sfx-gnam'); if(s) { s.currentTime=0; s.play().catch(()=>{}); } }
-        
-        // ADMIN TRIGGER
         function adminTrigger() {
-            dbClicks++;
+            playSfx(); dbClicks++;
             if(dbClicks >= 5) {
                 if(prompt("PASSWORD")==="FRIENDLYFIRE26") openDB();
                 dbClicks = 0;
@@ -294,97 +205,151 @@
             setTimeout(()=>dbClicks=0, 800);
         }
 
-        function openOv(id) { closeAll(); document.getElementById(id).style.display='flex'; if(id==='ov-checkout') updateCartUI(); }
-        function closeAll() { document.querySelectorAll('.overlay').forEach(o=>o.style.display='none'); }
-        function initDraggable() { 
-            document.querySelectorAll('.draggable-handle').forEach(h => {
-                let win = h.closest('.mac-window'), isDrag=false, sx, sy;
-                h.addEventListener('touchstart', e=>{ isDrag=true; let r=win.getBoundingClientRect(); sx=e.touches[0].clientX-r.left; sy=e.touches[0].clientY-r.top; });
-                window.addEventListener('touchmove', e=>{ if(!isDrag)return; e.preventDefault(); win.style.position='absolute'; win.style.left=(e.touches[0].clientX-sx)+'px'; win.style.top=(e.touches[0].clientY-sy)+'px'; });
-                window.addEventListener('touchend', ()=>{ isDrag=false; });
+        function playSfx() { let s = document.getElementById('sfx-gnam'); if(s) { s.currentTime=0; s.play().catch(()=>{}); } }
+
+        async function loadDB() {
+            if(!supabase) return;
+            let { data: prodData } = await supabase.from('products').select('*').order('id', {ascending:true});
+            if(prodData && prodData.length > 0) { inventory = prodData; renderShop(); }
+            let { data: set } = await supabase.from('settings').select('*').limit(1).single();
+            if(set && set.bg_url) { currentBg = set.bg_url; document.body.style.backgroundImage = `url('${currentBg}')`; }
+        }
+
+        function renderShop() {
+            [1,2,3].forEach(n => document.getElementById('page-'+n).innerHTML='');
+            let itemsPerPage = 12;
+            inventory.forEach((item, idx) => {
+                let page = Math.floor(idx/itemsPerPage) + 1; if(page>3) return;
+                let c = document.getElementById('page-'+page);
+                if(!c) return;
+                let el = document.createElement('div'); el.className = 'item-card'; el.id = 'itm-'+item.id;
+                el.innerHTML = `<img src="${item.img}"><div class="clean-tag">${item.name}</div><div class="clean-tag">${item.price}€</div>`;
+                attachPhysics(el, item, idx); 
+                c.appendChild(el);
             });
         }
 
-        // --- FUNZIONI CARRELLO ---
+        function attachPhysics(el, item, originalIndex) {
+            let timer = null, isDragging = false, startX = 0, startY = 0, ghost = null;
+            const slider = document.getElementById('shop-slider');
+
+            const onStart = (e) => {
+                if(cart.some(c => c.id === item.id)) return;
+                let pos = e.touches ? {x:e.touches[0].clientX, y:e.touches[0].clientY} : {x:e.clientX, y:e.clientY};
+                startX = pos.x; startY = pos.y;
+
+                timer = setTimeout(() => {
+                    isDragging = true;
+                    if(navigator.vibrate) navigator.vibrate(40);
+                    slider.classList.add('free-flow');
+                    startAutoScrollLoop();
+                    ghost = el.cloneNode(true);
+                    ghost.classList.add('ghost-card');
+                    ghost.style.left = (startX - 45) + 'px'; ghost.style.top = (startY - 60) + 'px';
+                    document.body.appendChild(ghost);
+                    el.style.opacity = '0';
+                }, 200);
+            };
+
+            const onMove = (e) => {
+                let pos = e.touches ? {x:e.touches[0].clientX, y:e.touches[0].clientY} : {x:e.clientX, y:e.clientY};
+                if(!isDragging) { 
+                    if(Math.abs(pos.x - startX)>10 || Math.abs(pos.y - startY)>10) clearTimeout(timer); 
+                    return; 
+                }
+                if(e.cancelable) e.preventDefault();
+                if(ghost) { ghost.style.left = (pos.x - 45) + 'px'; ghost.style.top = (pos.y - 60) + 'px'; }
+                
+                let edge = window.innerWidth * 0.15;
+                if (pos.x > window.innerWidth - edge) autoScrollSpeed = 15;
+                else if (pos.x < edge) autoScrollSpeed = -15;
+                else autoScrollSpeed = 0;
+            };
+
+            const onEnd = (e) => {
+                clearTimeout(timer); autoScrollSpeed = 0; stopAutoScrollLoop(); slider.classList.remove('free-flow');
+                if(isDragging) {
+                    isDragging = false;
+                    let pos = e.changedTouches ? {x:e.changedTouches[0].clientX, y:e.changedTouches[0].clientY} : {x:e.clientX, y:e.clientY};
+                    if(ghost) ghost.style.display='none';
+                    let elemBelow = document.elementFromPoint(pos.x, pos.y);
+                    if(ghost) ghost.style.display='flex';
+
+                    if (elemBelow && (elemBelow.id === 'tank-btn' || elemBelow.closest('.tank-wrapper'))) {
+                         if(ghost) {
+                            ghost.style.transition = "all 0.4s"; ghost.style.transform = "scale(0)"; 
+                            let tr = document.getElementById('tank-btn').getBoundingClientRect();
+                            ghost.style.left = (tr.left+10)+'px'; ghost.style.top = (tr.top+10)+'px';
+                            setTimeout(() => { if(ghost) ghost.remove(); playSfx(); let s=item.sizes?item.sizes.split(','):['ONE SIZE']; addToCart({...item, selectedSize:s[0]}); }, 350);
+                        }
+                        return;
+                    }
+                    let targetCard = elemBelow ? elemBelow.closest('.item-card') : null;
+                    if(targetCard && targetCard !== el) {
+                        let targetId = parseInt(targetCard.id.split('-')[1]);
+                        let targetIdx = inventory.findIndex(x => x.id === targetId);
+                        if(targetIdx !== -1) {
+                            let temp = inventory[originalIndex];
+                            inventory[originalIndex] = inventory[targetIdx];
+                            inventory[targetIdx] = temp;
+                            if(ghost) ghost.remove();
+                            renderShop(); playSfx();
+                            return;
+                        }
+                    }
+                    if(ghost) ghost.remove(); el.style.opacity = '1';
+                }
+            };
+            el.addEventListener('touchstart', onStart, {passive:true}); window.addEventListener('touchmove', onMove, {passive:false}); window.addEventListener('touchend', onEnd);
+            el.addEventListener('mousedown', onStart); window.addEventListener('mousemove', onMove); window.addEventListener('mouseup', onEnd);
+        }
+
+        function startAutoScrollLoop() { if(scrollLoopId) return; const loop = () => { if (autoScrollSpeed !== 0) document.getElementById('shop-slider').scrollLeft += autoScrollSpeed; scrollLoopId = requestAnimationFrame(loop); }; scrollLoopId = requestAnimationFrame(loop); }
+        function stopAutoScrollLoop() { if(scrollLoopId) { cancelAnimationFrame(scrollLoopId); scrollLoopId = null; } }
+
         function addToCart(item) { cart.push(JSON.parse(JSON.stringify(item))); updateCartUI(); }
+        function updateSize(index, newSize) { cart[index].selectedSize = newSize; }
+        function updateCartUI() { document.getElementById('tank-badge').innerText = cart.length; document.getElementById('tank-badge').style.display = cart.length>0?'block':'none'; let t = cart.reduce((a,c)=>a+c.price,0); document.getElementById('cart-total').innerText = t; document.getElementById('checkout-total-display').innerText = t; document.getElementById('cart-list').innerHTML = cart.map(i=>`<div style="display:flex; justify-content:space-between; border-bottom:1px dashed #ccc;"><span>${i.name}</span><span>${i.price}€</span></div>`).join(''); const coList = document.getElementById('checkout-items-list'); if(coList) coList.innerHTML = cart.map((item, idx) => { let sizes = item.sizes ? item.sizes.split(',') : ['ONE SIZE']; let options = sizes.map(s => `<option value="${s}" ${s===item.selectedSize?'selected':''}>${s}</option>`).join(''); return `<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed #ccc; padding:3px 0;"><span style="font-size:9px;">${item.name}</span><select class="size-select" onchange="updateSize(${idx}, this.value)">${options}</select><span style="font-size:9px;">${item.price}€</span></div>`; }).join(''); }
         function emptyCart() { cart=[]; updateCartUI(); closeAll(); }
-        function updateCartUI() {
-            document.getElementById('tank-badge').innerText = cart.length;
-            document.getElementById('tank-badge').style.display = cart.length ? 'block' : 'none';
-            document.getElementById('cart-total').innerText = cart.reduce((a,b)=>a+b.price,0);
-            document.getElementById('checkout-total-display').innerText = cart.reduce((a,b)=>a+b.price,0);
-            document.getElementById('cart-list').innerHTML = cart.map(i=>`<div>${i.name} - ${i.price}€</div>`).join('');
-            document.getElementById('checkout-items-list').innerHTML = cart.map(i=>`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #ccc;margin-bottom:5px;"><span>${i.name}</span><span>${i.price}€</span></div>`).join('');
-        }
 
-        // --- PAGAMENTI & NEWSLETTER ---
         async function processStripeRedirect() {
-            if(!cart.length) return alert("TANK EMPTY");
-            let name = document.getElementById('ship-name').value, email = document.getElementById('ship-email').value;
-            if(!name || !email) return alert("FILL DETAILS");
-            
-            const items = cart.map(i => {
-                if(!i.stripeId || i.stripeId.length < 5) return null;
-                return {price: i.stripeId, quantity: 1};
-            }).filter(i => i);
-
-            if(items.length === 0) return alert("PRODUCT ERR: Missing Stripe IDs");
-
-            const {error} = await stripe.redirectToCheckout({
-                lineItems: items, mode: 'payment', customerEmail: email,
-                shippingAddressCollection: { allowedCountries: ['IT','US','FR','DE','ES'] },
-                successUrl: window.location.href + '?success=true', cancelUrl: window.location.href
-            });
+            if(cart.length===0) { alert("TANK EMPTY"); return; }
+            const name = document.getElementById('ship-name').value; const email = document.getElementById('ship-email').value; const addr = document.getElementById('ship-address').value;
+            if(!name || !email || !addr) { alert("FILL DETAILS"); return; }
+            let lineItems = [];
+            for(let item of cart) { if(!item.stripeId || item.stripeId.length<5) { alert("PRODUCT ERROR: "+item.name); return; } lineItems.push({ price: item.stripeId, quantity: 1 }); }
+            const { error } = await stripe.redirectToCheckout({ mode: 'payment', lineItems: lineItems, customerEmail: email, shippingAddressCollection: { allowedCountries: ['IT','US','FR','DE','ES'] }, successUrl: window.location.href + '?success=true', cancelUrl: window.location.href, });
             if(error) alert(error.message);
         }
 
         async function subscribeNewsletter() {
-            let n = document.getElementById('news-name').value, e = document.getElementById('news-email').value;
-            if(!e) return alert("EMAIL REQUIRED");
+            let email = document.getElementById('newsletter-email').value;
+            let name = document.getElementById('newsletter-name').value || "Friend";
+            if(!email || !email.includes('@')) { alert("INVALID EMAIL"); return; }
             let btn = document.getElementById('news-btn'); btn.innerText = "WAIT...";
             try {
-                if(supabase) await supabase.from('newsletter').insert([{email: e}]);
-                await emailjs.send(emailService, emailTemplate, {to_name: n||"Friend", user_email: e});
+                if(supabase) await supabase.from('newsletter').insert([{ email: email }]);
+                await emailjs.send(emailService, emailTemplate, { to_name: name, user_email: email, message: "Welcome!" });
                 alert("WELCOME!"); closeAll();
-            } catch(e) { console.log(e); alert("DONE (DB Saved)"); closeAll(); }
+            } catch(e) { console.error(e); alert("ALREADY IN OR ERROR"); closeAll(); }
             btn.innerText = "SUBSCRIBE";
         }
 
-        // --- ADMIN ---
         function openDB(){
-            openOv('ov-db');
-            let l = document.getElementById('db-list'); l.innerHTML = '';
-            inventory.forEach(i => {
-                l.innerHTML += `<div class="db-row"><input id="dn-${i.id}" value="${i.name}" style="width:50px"><input id="ds-${i.id}" value="${i.stripeId}" placeholder="ID" style="width:50px"><input id="dp-${i.id}" value="${i.price}" style="width:30px"><button onclick="deleteItemDB(${i.id})" style="background:red;color:#fff;">X</button></div>`;
-            });
+            closeAll(); document.getElementById('ov-db').style.display='flex'; document.getElementById('db-bg-url').value = currentBg;
+            let l=document.getElementById('db-list'); l.innerHTML='';
+            inventory.forEach((i)=>l.innerHTML+=`<div class="db-row"><span style="font-size:8px;">${i.id}</span><input id="dn-${i.id}" value="${i.name}" style="width:40px;"><input id="di-${i.id}" value="${i.img}" style="width:40px;"><input id="ds-${i.id}" value="${i.stripeId}" style="width:40px;" placeholder="ID"><input id="dz-${i.id}" value="${i.sizes||'ONE SIZE'}" style="width:30px;"><input id="dp-${i.id}" value="${i.price}" type="number" style="width:25px;"><button onclick="deleteItemDB(${i.id})" style="background:red; color:#fff; font-size:8px;">X</button></div>`);
         }
-        async function saveAllChanges() {
-            if(!supabase) return;
-            let updates = [];
-            inventory.forEach(item => {
-                let n = document.getElementById(`dn-${item.id}`);
-                if(n) {
-                    item.name = n.value;
-                    item.stripeId = document.getElementById(`ds-${item.id}`).value;
-                    item.price = parseInt(document.getElementById(`dp-${item.id}`).value);
-                    updates.push(item);
-                }
-            });
-            await supabase.from('products').upsert(updates);
-            let bg = document.getElementById('db-bg-url').value;
-            if(bg) await supabase.from('settings').upsert({id:1, bg_url: bg});
-            alert("SAVED!"); location.reload();
-        }
-        async function createNewItem() {
-            if(!supabase) return;
-            let newId = inventory.length > 0 ? Math.max(...inventory.map(i=>i.id))+1 : 0;
-            await supabase.from('products').insert([{id: newId, name: 'NEW', img: 'logo_ff_loader.png', price: 0, stripeId: ''}]);
-            alert("CREATED! RELOAD."); location.reload();
-        }
-        async function deleteItemDB(id) { if(confirm("DELETE?")) { await supabase.from('products').delete().eq('id', id); location.reload(); } }
+        async function saveAllChanges() { if(!supabase) return; let updates = []; inventory.forEach((t, i) => { if(document.getElementById(`dn-${t.id}`)) { updates.push({ id: t.id, name: document.getElementById(`dn-${t.id}`).value, img: document.getElementById(`di-${t.id}`).value, price: parseInt(document.getElementById(`dp-${t.id}`).value), stripeId: document.getElementById(`ds-${t.id}`).value, sizes: document.getElementById(`dz-${t.id}`).value }); } }); await supabase.from('products').upsert(updates); let newBg = document.getElementById('db-bg-url').value; if(newBg) await supabase.from('settings').upsert({ id: 1, bg_url: newBg }).catch(()=>{}); alert("SAVED!"); location.reload(); }
+        async function createNewItem() { if(!supabase) return; let newId = inventory.length > 0 ? Math.max(...inventory.map(i=>i.id)) + 1 : 0; await supabase.from('products').insert([{ id: newId, name: 'NEW', img: 'logo_ff_loader.png', price: 0, stripeId: '', sizes: 'ONE SIZE' }]); alert("CREATED! RELOAD."); location.reload(); }
+        async function deleteItemDB(id) { if(!confirm("DELETE?")) return; await supabase.from('products').delete().eq('id', id); location.reload(); }
+        
+        function closeAll(){ document.querySelectorAll('.overlay').forEach(e=>e.style.display='none'); }
+        function openOv(id){ playSfx(); closeAll(); let o=document.getElementById(id); o.style.display='flex'; let w=o.querySelector('.mac-window'); if(w){w.style.position='relative';w.style.left='auto';w.style.top='auto';} if(id==='ov-checkout') updateCartUI(); }
+        function initDraggableWindows() { document.querySelectorAll('.draggable-handle').forEach(h => { const win = h.closest('.mac-window'); let isDrag=false, startX, startY; const start=(e)=>{ isDrag=true; let r=win.getBoundingClientRect(); win.style.position='absolute'; win.style.margin='0'; win.style.left=r.left+'px'; win.style.top=r.top+'px'; let p=getPointerPosition(e); startX=p.x-r.left; startY=p.y-r.top; }; const move=(e)=>{ if(!isDrag)return; e.preventDefault(); let p=getPointerPosition(e); win.style.left=(p.x-startX)+'px'; win.style.top=(p.y-startY)+'px'; }; const end=()=>{isDrag=false;}; h.addEventListener('mousedown',start); window.addEventListener('mousemove',move); window.addEventListener('mouseup',end); h.addEventListener('touchstart',start,{passive:false}); window.addEventListener('touchmove',move,{passive:false}); window.addEventListener('touchend',end); }); }
         function renderAvatars(){ let g=document.getElementById('avatar-grid'); for(let i=0;i<8;i++){ let u=`https://api.dicebear.com/7.x/pixel-art/svg?seed=ff${i}`; let d=document.createElement('div'); d.style.border='2px solid #000'; d.innerHTML=`<img src="${u}" style="width:100%">`; d.onclick=()=>{document.getElementById('profile-img-big').src=u;playSfx();}; if(i===0)d.click(); g.appendChild(d); } }
-
-        if(window.location.search.includes('success')) { alert("ORDER CONFIRMED!"); cart=[]; updateCartUI(); }
+        
+        if(window.location.search.includes('success')){ alert("ORDER CONFIRMED. WELCOME TO THE FAMILY."); cart=[]; updateCartUI(); }
     </script>
 </body>
 </html>
