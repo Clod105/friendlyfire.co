@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FRIENDLYFIRE CO.</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <style>
         /* --- 1. CORE & RESET --- */
@@ -15,106 +18,67 @@
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Press Start 2P', cursive; 
-            background: var(--bg-pongo) url('sfondo2.jpg') no-repeat center center fixed; 
-            background-size: cover; 
+            background-color: var(--bg-pongo);
+            background-position: center center; background-repeat: no-repeat; background-size: cover;
             overscroll-behavior: none; position: fixed; 
         }
 
-        /* --- 2. LOADER (BUTTON FIX) --- */
+        /* --- 2. LOADER (FIXATO) --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: var(--white); z-index: 999999; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding-bottom: 50px;
+            padding-bottom: 80px; transition: opacity 0.4s ease-out;
         }
-        .loader-brand-img { width: 280px; max-width: 85%; height: auto; object-fit: contain; margin-bottom: 20px; }
-        .gif-wrapper { width: 320px; height: 320px; display: flex; justify-content: center; align-items: center; }
-        #loader-gif { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transform: scale(1.2); }
-        
-        .loading-area-bottom { 
-            display: flex; flex-direction: column; align-items: center; 
-            margin-top: 20px; width: 100%; height: 80px; /* Spazio fisso */
-            justify-content: flex-start; 
-        }
+        .loader-brand-img { width: 260px; max-width: 80%; height: auto; object-fit: contain; margin-bottom: 10px; }
+        .gif-wrapper { width: 280px; height: 280px; display: flex; justify-content: center; align-items: center; }
+        #loader-gif { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transform: scale(1.1); }
+        .loading-area-bottom { display: flex; flex-direction: column; align-items: center; margin-top: 20px; width: 100%; height: 120px; justify-content: flex-start; }
         .loading-text { font-size: 10px; color: #000; margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; }
-        .pixel-bar-container { width: 200px; height: 18px; background: #fff; border: 3px solid #000; padding: 3px; box-shadow: 6px 6px 0 rgba(0,0,0,0.1); }
+        .pixel-bar-container { width: 180px; height: 16px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 6px 6px 0 rgba(0,0,0,0.1); margin-bottom: 10px; }
         .pixel-bar-fill { height: 100%; width: 0%; background-color: #32cd32; transition: width 0.1s linear; }
-        
         #start-btn { 
-            display: none; /* NASCOSTO COMPLETAMENTE INIZIALMENTE */
+            display: none; /* Nascosto finché non pronto */
             background: #000; color: #fff; border: 2px solid #000; 
-            padding: 16px 40px; font-family: 'Press Start 2P'; font-size: 11px; 
-            cursor: pointer; margin-top: 15px; text-transform: uppercase; 
-            animation: blink 1s infinite; box-shadow: 5px 5px 0 #999;
+            padding: 14px 30px; font-family: 'Press Start 2P'; font-size: 10px; 
+            cursor: pointer; text-transform: uppercase; margin-top: 10px;
+            box-shadow: 4px 4px 0 #999; animation: blink 1s infinite;
         }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+        .loader-footer { position: absolute; bottom: 20px; width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .copyright-mark { width: 30px; height: auto; margin-bottom: 5px; opacity: 0.8; }
+        .copyright-text { font-family: Arial, sans-serif; font-weight: bold; font-size: 8px; color: #000; opacity: 0.6; line-height: 1.4; }
 
-        .loader-footer { position: absolute; bottom: 20px; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .copyright-mark { width: 35px; height: auto; margin-bottom: 10px; opacity: 0.8; }
-        .copyright-text { font-family: Arial, sans-serif; font-weight: bold; font-size: 9px; color: #000; opacity: 0.6; line-height: 1.5; }
-
-        /* --- 3. HEADER & UI --- */
-        header { 
-            display: flex; justify-content: space-between; align-items: flex-start; 
-            padding: 15px 20px; position: absolute; top: 0; left: 0; right: 0; 
-            z-index: 2000; pointer-events: none; 
-        }
-        @keyframes pongo-stretch { 0% { transform: scale(1); } 50% { transform: scale(1.15, 0.85); } 100% { transform: scale(1); } }
-        .pongo-btn { 
-            width: 75px; height: 75px; object-fit: contain; cursor: pointer; pointer-events: auto; 
-            filter: drop-shadow(0 4px 2px rgba(0,0,0,0.4)); transition: transform 0.1s;
-        }
-        .pongo-btn:active { animation: pongo-stretch 0.4s ease-in-out; }
+        /* --- 3. HEADER & ANIM --- */
+        header { display: flex; justify-content: space-between; align-items: flex-start; padding: 15px 20px; position: absolute; top: 0; left: 0; right: 0; z-index: 2000; pointer-events: none; }
+        @keyframes pongo-anim { 0% { transform: scale(1); } 30% { transform: scale(1.25, 0.75); } 40% { transform: scale(0.75, 1.25); } 50% { transform: scale(1.15, 0.85); } 65% { transform: scale(0.95, 1.05); } 75% { transform: scale(1.05, 0.95); } 100% { transform: scale(1); } }
+        .pongo-btn { width: 70px; height: 70px; object-fit: contain; cursor: pointer; pointer-events: auto; filter: drop-shadow(0 4px 2px rgba(0,0,0,0.4)); transition: transform 0.1s; }
+        .pongo-btn.stretch { animation: pongo-anim 0.5s ease-in-out; }
         .tank-wrapper { position: relative; pointer-events: auto; }
         #tank-badge { position: absolute; top: 0; right: -5px; background: var(--red); color: white; border: 2px solid #000; font-size: 9px; padding: 3px 6px; border-radius: 50%; display: none; z-index: 10003; }
 
-        /* --- 4. SHOP SLIDER (SWAP READY) --- */
-        #shop-slider { 
-            width: 100vw; height: 100%; display: flex; 
-            overflow-x: scroll; overflow-y: hidden;
-            scroll-snap-type: x mandatory; 
-            -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
-            z-index: 1;
-        }
+        /* --- 4. SHOP GRID (RESPONSIVE) --- */
+        #shop-slider { width: 100vw; height: 100%; display: flex; overflow-x: scroll; overflow-y: hidden; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; z-index: 1; }
         #shop-slider.free-flow { scroll-snap-type: none !important; scroll-behavior: auto !important; }
         #shop-slider::-webkit-scrollbar { display: none; }
         
-        .shop-page { 
-            min-width: 100vw; height: 100%; flex: 0 0 100vw;
-            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); 
-            padding: 120px 10px 100px 10px; gap: 5px; scroll-snap-align: start; 
-            justify-items: center; align-items: center;
-        }
-
-        .item-card { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            position: relative; z-index: 100; 
-            touch-action: pan-x pan-y; 
-            transform: translateZ(0);
-            transition: opacity 0.2s;
-        }
-        .item-card img { width: 95px; pointer-events: none; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
+        /* Mobile: 3 Colonne */
+        .shop-page { min-width: 100vw; height: 100%; flex: 0 0 100vw; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); padding: 110px 10px 100px 10px; gap: 5px; scroll-snap-align: start; justify-items: center; align-items: center; }
+        
+        .item-card { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 100; touch-action: pan-x pan-y; transform: translateZ(0); cursor: grab; }
+        .item-card img { width: 90px; pointer-events: none; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); transition: transform 0.2s; }
         .clean-tag { font-family: sans-serif; font-weight: 800; font-size: 9px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.9); margin-top: 5px; text-transform: uppercase; text-align: center; }
-
-        /* GHOST (Oggetto in volo) */
-        .ghost-card {
-            position: fixed; z-index: 999999; pointer-events: none;
-            display: flex; flex-direction: column; align-items: center;
-            transform: scale(1.3) rotate(-5deg); opacity: 0.95;
-            filter: drop-shadow(0 25px 40px rgba(0,0,0,0.6));
-        }
+        .ghost-card { position: fixed; z-index: 999999; pointer-events: none; display: flex; flex-direction: column; align-items: center; transform: scale(1.3) rotate(-5deg); opacity: 0.95; filter: drop-shadow(0 25px 40px rgba(0,0,0,0.6)); }
         .ghost-card img { width: 95px; } .ghost-card .clean-tag { display: none; }
 
         /* --- 5. OVERLAYS --- */
         #app-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; display: flex; align-items: center; justify-content: center; z-index: 20000; pointer-events: none; background: linear-gradient(to top, rgba(0,0,0,0.3), transparent); }
-        .footer-logo { width: 160px; cursor: pointer; pointer-events: auto; transition: transform 0.1s; }
+        .footer-logo { width: 150px; cursor: pointer; pointer-events: auto; transition: transform 0.1s; }
         .footer-logo:active { transform: scale(0.95); }
-
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 50000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .mac-window { width: 90%; max-width: 360px; background: #fff; border: 3px double #000; padding: 0 0 15px 0; box-shadow: 15px 15px 0 rgba(0,0,0,0.5); text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; }
         .mac-title-bar { width: 100%; background: repeating-linear-gradient(45deg, #ccc, #ccc 2px, #fff 2px, #fff 4px); border-bottom: 2px solid #000; padding: 10px; margin-bottom: 10px; color: #000; font-size: 10px; font-weight: 800; letter-spacing: 1px; touch-action: none; cursor: move; }
         .draggable-handle { cursor: move; }
-
         .btn-pixel { background: #000; color: #fff; border: 2px solid #000; padding: 14px; font-family: 'Press Start 2P'; font-size: 9px; cursor: pointer; box-shadow: 4px 4px 0 #888; margin: 6px; width: 85%; text-transform: uppercase; transition: transform 0.1s; }
         .btn-pixel:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #888; }
         .checkout-group { width: 85%; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
@@ -122,11 +86,15 @@
         .db-row { display: flex; gap: 4px; width: 95%; margin: 4px 0; align-items: center; justify-content: center; border-bottom: 1px dashed #ccc; padding-bottom: 2px; }
         .size-select { background: #fff; border: 2px solid #000; font-family: sans-serif; font-weight: bold; font-size: 10px; padding: 2px; margin-left: 5px; cursor: pointer; }
 
+        /* --- 6. PC / WIDESCREEN OPTIMIZATION --- */
         @media (min-width: 1024px) {
-            .loader-brand-img { width: 450px; } .gif-wrapper { width: 550px; height: 550px; }
-            header { padding: 30px 60px; } .pongo-btn { width: 110px; height: 110px; }
-            .shop-page { padding: 160px 120px; gap: 40px; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); }
-            .item-card img { width: 160px; } .ghost-card img { width: 160px; }
+            .loader-brand-img { width: 450px; } 
+            .gif-wrapper { width: 500px; height: 500px; }
+            header { padding: 30px 60px; } .pongo-btn { width: 100px; height: 100px; }
+            /* 4 Colonne su PC */
+            .shop-page { padding: 160px 100px; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: 40px; }
+            .item-card img { width: 140px; } .item-card:hover img { transform: scale(1.1); } 
+            .ghost-card img { width: 140px; }
             .mac-window { max-width: 500px; } .footer-logo { width: 240px; }
         }
     </style>
@@ -206,11 +174,11 @@
         <div class="mac-window">
             <div class="mac-title-bar">JOIN THE CLUB</div>
             <p style="font-size:9px; margin:15px; line-height:1.5;">ISCRIVITI PER DROP ESCLUSIVI.</p>
-            <form name="newsletter" method="POST" data-netlify="true" style="width:100%; display:flex; flex-direction:column; align-items:center;">
-                <input type="hidden" name="form-name" value="newsletter">
-                <input type="email" name="email" class="input-pixel" placeholder="E-MAIL" style="width:85%; margin-bottom:10px;" required>
-                <button type="submit" class="btn-pixel">SUBSCRIBE</button>
-            </form>
+            <div style="width:100%; display:flex; flex-direction:column; align-items:center;">
+                <input type="text" id="newsletter-name" class="input-pixel" placeholder="IL TUO NOME" style="width:85%; margin-bottom:5px;">
+                <input type="email" id="newsletter-email" class="input-pixel" placeholder="E-MAIL" style="width:85%; margin-bottom:10px;" required>
+                <button class="btn-pixel" onclick="subscribeNewsletter()">SUBSCRIBE</button>
+            </div>
             <button class="btn-pixel" style="background:transparent; color:#000; border:none; box-shadow:none;" onclick="closeAll()">CLOSE</button>
         </div>
     </div>
@@ -239,80 +207,193 @@
 
     <div id="ov-db" class="overlay">
         <div class="mac-window" style="max-width:95%; height:85vh; justify-content:flex-start;">
-            <div class="mac-title-bar">ADMIN</div>
-            <div style="font-size:8px; color:red; margin-bottom:5px;">STRIPE IDs & SIZES</div>
+            <div class="mac-title-bar">ADMIN (CLOUD)</div>
+            <div style="width:90%; padding:5px; background:#ddd; margin-bottom:5px;">
+                <label style="font-size:9px;">BACKGROUND URL:</label>
+                <input id="db-bg-url" class="input-pixel" style="width:100%;">
+            </div>
             <div id="db-list" style="overflow-y:auto; width:100%; flex-grow:1; border-bottom:2px solid #000; margin-bottom:10px;"></div>
             <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:5px; width:100%;">
-                <button class="btn-pixel" style="width:40%; background:#00f;" onclick="addItem()">ADD</button>
-                <button class="btn-pixel" style="width:40%; background:#0f0;" onclick="saveDB()">SAVE</button>
-                <button class="btn-pixel" style="width:40%; background:red;" onclick="resetDB()">RESET</button>
-                <button class="btn-pixel" style="width:40%;" onclick="closeAll()">EXIT</button>
+                <button class="btn-pixel" style="width:45%; background:#00f;" onclick="createNewItem()">+ NEW ITEM</button>
+                <button class="btn-pixel" style="width:45%; background:#0f0;" onclick="saveAllChanges()">SAVE ALL</button>
+                <button class="btn-pixel" style="width:90%;" onclick="closeAll()">EXIT</button>
             </div>
         </div>
     </div>
 
     <script>
+        // --- 1. CONFIGURAZIONE CHIAVI FINALI ---
         const stripe = Stripe('pk_live_51SyKuT1PjKstwovYOCs5iNC2Ef8sun65gJ2pLXi4pyvfqM9o2Tiaec8NTQuHJEoYVPzDEDsktyZwlSWl6SjMKxzM00i7aB1Yvd');
         
+        // SUPABASE KEYS
+        const supabaseUrl = 'https://jwifyapbnsbbpsrstrow.supabase.co';
+        const supabaseKey = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // EMAILJS KEYS
+        const emailPublic = "BThMV2knP0VG0s4nr";
+        const emailService = "service_4scv4hn";
+        const emailTemplate = "template_8opoo1v";
+
+        (function(){ emailjs.init(emailPublic); })();
+
+        // --- VARIABILI GLOBALI ---
         const defaultItems = [
             {id:0, name:'CAP FIRE', img:'image_cap.PNG', price:45, stripeId:'', sizes:'ONE SIZE'}, 
-            {id:1, name:'TEE FLAME', img:'image_tee.PNG', price:65, stripeId:'', sizes:'S,M,L,XL'},
-            {id:2, name:'CAP BLK', img:'image_cap.PNG', price:45, stripeId:'', sizes:'ONE SIZE'},
-            {id:3, name:'TEE WHT', img:'image_tee.PNG', price:65, stripeId:'', sizes:'S,M,L,XL'},
-            {id:4, name:'CAP RED', img:'image_cap.PNG', price:45, stripeId:'', sizes:'ONE SIZE'},
-            {id:5, name:'TEE LTD', img:'image_tee.PNG', price:85, stripeId:'', sizes:'S,M,L,XL'},
-            {id:6, name:'CAP V1', img:'image_cap.PNG', price:45, stripeId:'', sizes:'ONE SIZE'},
-            {id:7, name:'TEE V1', img:'image_tee.PNG', price:65, stripeId:'', sizes:'S,M,L'},
-            {id:8, name:'CAP V2', img:'image_cap.PNG', price:45, stripeId:'', sizes:'ONE SIZE'},
-            {id:9, name:'TEE V2', img:'image_tee.PNG', price:65, stripeId:'', sizes:'S,M,L'},
-            {id:10, name:'CAP V3', img:'image_cap.PNG', price:45, stripeId:'', sizes:'ONE SIZE'},
-            {id:11, name:'TEE V3', img:'image_tee.PNG', price:65, stripeId:'', sizes:'S,M,L'}
+            {id:1, name:'TEE FLAME', img:'image_tee.PNG', price:65, stripeId:'', sizes:'S,M,L,XL'}
         ];
-
         let inventory = [], cart = [], autoScrollSpeed = 0, dbClicks = 0, scrollLoopId = null;
+        let currentBg = 'sfondo2.jpg';
 
-        window.onload = () => {
-            loadDB(); initLoader(); renderShop(); renderAvatars(); 
-            initDraggableWindows();
+        // --- AVVIO E LOADER FIXATO ---
+        window.onload = async () => {
+            // 1. Avvia animazione loader subito
+            startLoaderAnim();
+
+            // 2. Prova a caricare il DB con timeout di sicurezza
+            // Se Supabase non risponde in 2 secondi, usa i default e vai avanti
+            const dbPromise = loadDB();
+            const timeoutPromise = new Promise(resolve => setTimeout(resolve, 2000));
+            
+            await Promise.race([dbPromise, timeoutPromise]);
+
+            // 3. Renderizza e mostra bottone START
+            renderShop(); renderAvatars(); initDraggableWindows(); initPongoAnimation();
+            document.body.style.backgroundImage = `url('${currentBg}')`;
+            
+            // Nasconde scritta "LOADING..." e mostra "START"
+            document.getElementById('loading-txt').style.display='none';
+            document.getElementById('start-btn').style.display='block';
         };
 
-        function initLoader() {
+        function startLoaderAnim() {
             let bar=document.getElementById('pixel-bar-fill'), w=0;
-            let iv=setInterval(()=>{
-                w+=3; bar.style.width=w+'%';
-                if(w>=100){
-                    clearInterval(iv);
-                    document.getElementById('loading-txt').style.display='none';
-                    // APPARE SOLO ORA
-                    document.getElementById('start-btn').style.display='block';
-                }
-            },30);
+            // Animazione finta che arriva al 95%
+            let iv=setInterval(()=>{ w+=1; if(w>95)w=95; bar.style.width=w+'%'; }, 30);
+            
             document.getElementById('start-btn').onclick=()=>{
-                playSfx(); document.getElementById('loader-overlay').style.display='none';
+                playSfx(); 
+                document.getElementById('loader-overlay').style.opacity='0';
+                setTimeout(()=>document.getElementById('loader-overlay').style.display='none', 400);
             };
         }
-        function playSfx() { let s = document.getElementById('sfx-gnam'); if(s) { s.currentTime=0; s.play().catch(()=>{}); } }
 
-        function loadDB() {
-            try { inventory = JSON.parse(localStorage.getItem('ff_inv_v200')) || JSON.parse(JSON.stringify(defaultItems)); }
-            catch(e) { inventory = JSON.parse(JSON.stringify(defaultItems)); }
+        // --- DATABASE LOGIC ---
+        async function loadDB() {
+            if(!supabase) { inventory=JSON.parse(JSON.stringify(defaultItems)); return; }
+            try {
+                let { data: prodData, error } = await supabase.from('products').select('*').order('id', {ascending:true});
+                if(error) throw error;
+                if(prodData && prodData.length>0) inventory = prodData;
+                else inventory = JSON.parse(JSON.stringify(defaultItems));
+                
+                let { data: set } = await supabase.from('settings').select('*').limit(1).single();
+                if(set && set.bg_url) currentBg = set.bg_url;
+            } catch(e) {
+                console.log("DB Load Error (Using Defaults):", e);
+                inventory = JSON.parse(JSON.stringify(defaultItems));
+            }
         }
 
+        async function saveAllChanges() {
+            if(!supabase) return;
+            let updates = [];
+            inventory.forEach((t, i) => {
+                if(document.getElementById(`dn-${t.id}`)) {
+                    updates.push({
+                        id: t.id,
+                        name: document.getElementById(`dn-${t.id}`).value,
+                        img: document.getElementById(`di-${t.id}`).value,
+                        price: parseInt(document.getElementById(`dp-${t.id}`).value),
+                        stripeId: document.getElementById(`ds-${t.id}`).value,
+                        sizes: document.getElementById(`dz-${t.id}`).value
+                    });
+                }
+            });
+            await supabase.from('products').upsert(updates);
+            let newBg = document.getElementById('db-bg-url').value;
+            if(newBg) await supabase.from('settings').upsert({ id: 1, bg_url: newBg });
+            alert("SAVED TO CLOUD!"); location.reload();
+        }
+
+        async function createNewItem() {
+            if(!supabase) return;
+            let newId = inventory.length > 0 ? Math.max(...inventory.map(i=>i.id)) + 1 : 0;
+            await supabase.from('products').insert([{ id: newId, name: 'NEW', img: 'logo_ff_loader.png', price: 0, stripeId: '', sizes: 'ONE SIZE' }]);
+            alert("ITEM CREATED! EDIT & SAVE."); location.reload();
+        }
+
+        async function deleteItemDB(id) {
+            if(!confirm("DELETE?")) return;
+            await supabase.from('products').delete().eq('id', id);
+            location.reload();
+        }
+
+        // --- NEWSLETTER INTEGRATA ---
+        async function subscribeNewsletter() {
+            let email = document.getElementById('newsletter-email').value;
+            let name = document.getElementById('newsletter-name').value;
+            if(!name) name = "Amico"; // Fallback se non mette nome
+
+            if(!email || !email.includes('@')) { alert("Inserisci una email valida!"); return; }
+
+            let btn = document.querySelector('#ov-newsletter button');
+            let oldText = btn.innerText;
+            btn.innerText = "WAIT...";
+
+            // 1. Salva su Database
+            let { error } = await supabase.from('newsletter').insert([{ email: email }]); // Se hai aggiunto colonna 'name' su supabase, aggiungi qui: , name: name
+
+            if(error) {
+                if(error.message.includes('unique')) alert("Sei già iscritto!");
+                else alert("Errore DB: " + error.message);
+                btn.innerText = oldText;
+            } else {
+                // 2. Invia Email
+                emailjs.send(emailService, emailTemplate, {
+                    to_name: name,
+                    user_email: email,
+                    message: "Benvenuto nel club Friendlyfire!"
+                })
+                .then(() => {
+                    alert("BENVENUTO " + name.toUpperCase() + "! Controlla la posta.");
+                    btn.innerText = oldText;
+                    closeAll();
+                })
+                .catch((err) => {
+                    console.error('EmailJS Error:', err);
+                    alert("Iscritto al DB!");
+                    btn.innerText = oldText;
+                    closeAll();
+                });
+            }
+        }
+
+        // --- UTILS ---
+        function playSfx() { let s = document.getElementById('sfx-gnam'); if(s) { s.currentTime=0; s.play().catch(()=>{}); } }
+        function initPongoAnimation() {
+            document.querySelectorAll('.pongo-btn').forEach(btn => {
+                const trigger = () => { btn.classList.remove('stretch'); void btn.offsetWidth; btn.classList.add('stretch'); };
+                btn.addEventListener('mouseenter', trigger); btn.addEventListener('touchstart', trigger);
+            });
+        }
+
+        // --- RENDER SHOP ---
         function renderShop() {
             [1,2,3].forEach(n => document.getElementById('page-'+n).innerHTML='');
+            let itemsPerPage = 12; 
             inventory.forEach((item, idx) => {
-                let page = Math.floor(idx/12) + 1;
-                if(page > 3) return;
-                let el = document.createElement('div');
-                el.className = 'item-card';
-                el.id = 'itm-'+idx;
+                let page = Math.floor(idx/itemsPerPage) + 1; if(page>3) return;
+                let el = document.createElement('div'); el.className = 'item-card'; el.id = 'itm-'+item.id;
                 el.innerHTML = `<img src="${item.img}"><div class="clean-tag">${item.name}</div><div class="clean-tag">${item.price}€</div>`;
-                attachPhysics(el, item, idx);
+                attachPhysics(el, item, idx); 
                 document.getElementById('page-'+page).appendChild(el);
             });
         }
 
-        // --- MOTORE FISICO V200: SWAP, SCROLL & CART ---
+        // --- PHYSICS (MOUSE & TOUCH) ---
+        function getPointerPosition(e) { return e.touches ? {x:e.touches[0].clientX, y:e.touches[0].clientY} : {x:e.clientX, y:e.clientY}; }
+
         function attachPhysics(el, item, originalIndex) {
             let timer = null, isDragging = false, startX = 0, startY = 0;
             let ghost = null;
@@ -320,9 +401,8 @@
 
             const onStart = (e) => {
                 if(cart.some(c => c.id === item.id)) return;
-                let touch = e.touches ? e.touches[0] : e;
-                startX = touch.clientX; startY = touch.clientY;
-
+                let pos = getPointerPosition(e); startX = pos.x; startY = pos.y;
+                
                 timer = setTimeout(() => {
                     isDragging = true;
                     if(navigator.vibrate) navigator.vibrate(40);
@@ -334,261 +414,117 @@
                     ghost.style.left = (startX - 45) + 'px'; 
                     ghost.style.top = (startY - 60) + 'px';
                     document.body.appendChild(ghost);
-                    
                     el.style.opacity = '0';
                 }, 200);
             };
 
             const onMove = (e) => {
-                let touch = e.touches ? e.touches[0] : e;
-                let cx = touch.clientX; let cy = touch.clientY;
-
-                if(!isDragging) {
-                    if(Math.abs(cx - startX) > 10 || Math.abs(cy - startY) > 10) clearTimeout(timer);
-                    return;
-                }
-
+                let pos = getPointerPosition(e);
+                if(!isDragging) { if(Math.abs(pos.x - startX)>10 || Math.abs(pos.y - startY)>10) clearTimeout(timer); return; }
                 if(e.cancelable) e.preventDefault();
 
-                if(ghost) {
-                    ghost.style.left = (cx - 45) + 'px';
-                    ghost.style.top = (cy - 60) + 'px';
-                }
-
-                // AUTO SCROLL
+                if(ghost) { ghost.style.left = (pos.x - 45) + 'px'; ghost.style.top = (pos.y - 60) + 'px'; }
                 let edge = window.innerWidth * 0.15;
-                if (cx > window.innerWidth - edge) autoScrollSpeed = 15;
-                else if (cx < edge) autoScrollSpeed = -15;
+                if (pos.x > window.innerWidth - edge) autoScrollSpeed = 15;
+                else if (pos.x < edge) autoScrollSpeed = -15;
                 else autoScrollSpeed = 0;
             };
 
             const onEnd = (e) => {
-                clearTimeout(timer);
-                autoScrollSpeed = 0;
-                stopAutoScrollLoop();
-                slider.classList.remove('free-flow');
-
+                clearTimeout(timer); autoScrollSpeed = 0; stopAutoScrollLoop(); slider.classList.remove('free-flow');
                 if(isDragging) {
                     isDragging = false;
-                    let touch = e.changedTouches ? e.changedTouches[0] : e;
-                    let cx = touch.clientX; let cy = touch.clientY;
-                    
-                    // 1. CONTROLLO TANK (CARRELLO)
-                    let tank = document.getElementById('tank-btn');
-                    let tr = tank.getBoundingClientRect();
+                    let pos = getPointerPosition(e.changedTouches ? {touches:[e.changedTouches[0]]} : e);
+                    let cx = pos.x; let cy = pos.y;
+                    let tank = document.getElementById('tank-btn'); let tr = tank.getBoundingClientRect();
                     
                     if(Math.hypot(cx - (tr.left+tr.width/2), cy - (tr.top+tr.height/2)) < 80) {
                         if(ghost) {
-                            ghost.style.transition = "all 0.4s";
-                            ghost.style.left = (tr.left + 10) + 'px';
-                            ghost.style.top = (tr.top + 10) + 'px';
-                            ghost.style.transform = "scale(0)";
-                            setTimeout(() => {
-                                if(ghost) ghost.remove();
-                                playSfx();
-                                let sizes = item.sizes ? item.sizes.split(',') : ['ONE SIZE'];
-                                addToCart({...item, selectedSize: sizes[0]});
-                            }, 350);
+                            ghost.style.transition = "all 0.4s"; ghost.style.transform = "scale(0)"; ghost.style.left = (tr.left+10)+'px'; ghost.style.top = (tr.top+10)+'px';
+                            setTimeout(() => { if(ghost) ghost.remove(); playSfx(); let s=item.sizes?item.sizes.split(','):['ONE SIZE']; addToCart({...item, selectedSize:s[0]}); }, 350);
                         }
                         return;
-                    } 
-                    
-                    // 2. CONTROLLO SWAP (SCAMBIO VESTITI)
-                    // Trova l'elemento sotto al dito (nascondendo il ghost momentaneamente)
+                    }
                     if(ghost) ghost.style.display = 'none';
                     let elemBelow = document.elementFromPoint(cx, cy);
                     if(ghost) ghost.style.display = 'flex';
-
                     let targetCard = elemBelow ? elemBelow.closest('.item-card') : null;
-
-                    if (targetCard && targetCard !== el) {
-                        let targetId = targetCard.id.split('-')[1]; // itm-5 -> 5
-                        let targetIndex = parseInt(targetId);
-                        
-                        // ESEGUI LO SCAMBIO NEL DB
-                        if(!isNaN(targetIndex)) {
+                    
+                    if(targetCard && targetCard !== el) {
+                        let targetId = parseInt(targetCard.id.split('-')[1]); 
+                        let targetIdx = inventory.findIndex(x => x.id === targetId);
+                        if(targetIdx !== -1) {
                             let temp = inventory[originalIndex];
-                            inventory[originalIndex] = inventory[targetIndex];
-                            inventory[targetIndex] = temp;
-                            
-                            // Salva e Ricarica
-                            localStorage.setItem('ff_inv_v200', JSON.stringify(inventory));
-                            if(ghost) ghost.remove();
-                            renderShop(); // Ridisegna tutto con le nuove posizioni
-                            return;
+                            inventory[originalIndex] = inventory[targetIdx];
+                            inventory[targetIdx] = temp;
+                            if(ghost) ghost.remove(); renderShop(); return;
                         }
                     }
-
-                    // 3. RITORNO ALLA BASE (SE NESSUNA AZIONE)
-                    if(ghost) ghost.remove();
-                    el.style.opacity = '1';
+                    if(ghost) ghost.remove(); el.style.opacity = '1';
                 }
             };
-
-            el.addEventListener('touchstart', onStart, {passive:true});
-            window.addEventListener('touchmove', onMove, {passive:false});
-            window.addEventListener('touchend', onEnd);
-            el.addEventListener('mousedown', onStart);
-            window.addEventListener('mousemove', onMove);
-            window.addEventListener('mouseup', onEnd);
+            el.addEventListener('touchstart', onStart, {passive:true}); window.addEventListener('touchmove', onMove, {passive:false}); window.addEventListener('touchend', onEnd);
+            el.addEventListener('mousedown', onStart); window.addEventListener('mousemove', onMove); window.addEventListener('mouseup', onEnd);
         }
 
-        function startAutoScrollLoop() {
-            if(scrollLoopId) return;
-            const loop = () => {
-                if (autoScrollSpeed !== 0) {
-                    document.getElementById('shop-slider').scrollLeft += autoScrollSpeed;
-                }
-                scrollLoopId = requestAnimationFrame(loop);
-            };
-            scrollLoopId = requestAnimationFrame(loop);
-        }
+        function startAutoScrollLoop() { if(scrollLoopId) return; const loop = () => { if (autoScrollSpeed !== 0) document.getElementById('shop-slider').scrollLeft += autoScrollSpeed; scrollLoopId = requestAnimationFrame(loop); }; scrollLoopId = requestAnimationFrame(loop); }
         function stopAutoScrollLoop() { if(scrollLoopId) { cancelAnimationFrame(scrollLoopId); scrollLoopId = null; } }
 
         function initDraggableWindows() {
             document.querySelectorAll('.draggable-handle').forEach(h => {
-                const win = h.closest('.mac-window');
-                let isDrag=false, startX, startY;
-                const start=(e)=>{
-                    isDrag=true;
-                    let r = win.getBoundingClientRect();
-                    win.style.position='absolute'; win.style.margin='0';
-                    win.style.left=r.left+'px'; win.style.top=r.top+'px';
-                    let t = e.touches?e.touches[0]:e;
-                    startX=t.clientX-r.left; startY=t.clientY-r.top;
-                };
-                const move=(e)=>{
-                    if(!isDrag)return; e.preventDefault();
-                    let t = e.touches?e.touches[0]:e;
-                    win.style.left=(t.clientX-startX)+'px'; win.style.top=(t.clientY-startY)+'px';
-                };
+                const win = h.closest('.mac-window'); let isDrag=false, startX, startY;
+                const start=(e)=>{ isDrag=true; let r=win.getBoundingClientRect(); win.style.position='absolute'; win.style.margin='0'; win.style.left=r.left+'px'; win.style.top=r.top+'px'; let p=getPointerPosition(e); startX=p.x-r.left; startY=p.y-r.top; };
+                const move=(e)=>{ if(!isDrag)return; e.preventDefault(); let p=getPointerPosition(e); win.style.left=(p.x-startX)+'px'; win.style.top=(p.y-startY)+'px'; };
                 const end=()=>{isDrag=false;};
                 h.addEventListener('mousedown',start); window.addEventListener('mousemove',move); window.addEventListener('mouseup',end);
                 h.addEventListener('touchstart',start,{passive:false}); window.addEventListener('touchmove',move,{passive:false}); window.addEventListener('touchend',end);
             });
         }
 
-        function addToCart(item) {
-            cart.push(JSON.parse(JSON.stringify(item))); 
-            updateCartUI();
-            let b=document.getElementById('tank-badge');
-            b.style.transform='scale(1.5)'; setTimeout(()=>b.style.transform='scale(1)', 250);
-        }
-
+        function addToCart(item) { cart.push(JSON.parse(JSON.stringify(item))); updateCartUI(); }
         function updateSize(index, newSize) { cart[index].selectedSize = newSize; }
-
         function updateCartUI() {
-            let b = document.getElementById('tank-badge');
-            b.innerText = cart.length; b.style.display = cart.length > 0 ? 'block' : 'none';
-            let t = cart.reduce((a,c)=>a+c.price,0);
-            document.getElementById('cart-total').innerText = t;
-            document.getElementById('checkout-total-display').innerText = t;
-            
-            document.getElementById('cart-list').innerHTML = cart.map(i=>
-                `<div style="display:flex; justify-content:space-between; border-bottom:1px dashed #ccc;">
-                    <span>${i.name}</span><span>${i.price}€</span>
-                </div>`
-            ).join('');
-
+            document.getElementById('tank-badge').innerText = cart.length; document.getElementById('tank-badge').style.display = cart.length>0?'block':'none';
+            let t = cart.reduce((a,c)=>a+c.price,0); document.getElementById('cart-total').innerText = t; document.getElementById('checkout-total-display').innerText = t;
+            document.getElementById('cart-list').innerHTML = cart.map(i=>`<div style="display:flex; justify-content:space-between; border-bottom:1px dashed #ccc;"><span>${i.name}</span><span>${i.price}€</span></div>`).join('');
             const coList = document.getElementById('checkout-items-list');
-            if(coList) {
-                coList.innerHTML = cart.map((item, idx) => {
-                    let sizes = item.sizes ? item.sizes.split(',') : ['ONE SIZE'];
-                    let options = sizes.map(s => `<option value="${s}" ${s===item.selectedSize?'selected':''}>${s}</option>`).join('');
-                    return `
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed #ccc; padding:3px 0;">
-                        <span style="font-size:9px;">${item.name}</span>
-                        <select class="size-select" onchange="updateSize(${idx}, this.value)">${options}</select>
-                        <span style="font-size:9px;">${item.price}€</span>
-                    </div>`;
-                }).join('');
-            }
+            if(coList) coList.innerHTML = cart.map((item, idx) => {
+                let sizes = item.sizes ? item.sizes.split(',') : ['ONE SIZE']; let options = sizes.map(s => `<option value="${s}" ${s===item.selectedSize?'selected':''}>${s}</option>`).join('');
+                return `<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed #ccc; padding:3px 0;"><span style="font-size:9px;">${item.name}</span><select class="size-select" onchange="updateSize(${idx}, this.value)">${options}</select><span style="font-size:9px;">${item.price}€</span></div>`;
+            }).join('');
         }
-
-        function emptyCart() { cart=[]; updateCartUI(); renderShop(); closeAll(); }
+        function emptyCart() { cart=[]; updateCartUI(); closeAll(); }
 
         async function processStripeRedirect() {
             if(cart.length===0) { alert("TANK EMPTY"); return; }
-            const name = document.getElementById('ship-name').value;
-            const email = document.getElementById('ship-email').value;
-            const addr = document.getElementById('ship-address').value;
+            const name = document.getElementById('ship-name').value; const email = document.getElementById('ship-email').value; const addr = document.getElementById('ship-address').value;
             if(!name || !email || !addr) { alert("FILL ALL DATA!"); return; }
-
             let lineItems = [];
-            for(let item of cart) {
-                if(!item.stripeId || item.stripeId.length<5) { alert("ERROR: MISSING PRICE ID FOR " + item.name); return; }
-                lineItems.push({ price: item.stripeId, quantity: 1 });
-            }
-
-            const { error } = await stripe.redirectToCheckout({
-                mode: 'payment',
-                lineItems: lineItems,
-                customerEmail: email,
-                shippingAddressCollection: { allowedCountries: ['IT','US','FR','DE','ES'] },
-                successUrl: window.location.href + '?success=true',
-                cancelUrl: window.location.href,
-            });
-
+            for(let item of cart) { if(!item.stripeId || item.stripeId.length<5) { alert("MISSING STRIPE ID: "+item.name); return; } lineItems.push({ price: item.stripeId, quantity: 1 }); }
+            const { error } = await stripe.redirectToCheckout({ mode: 'payment', lineItems: lineItems, customerEmail: email, shippingAddressCollection: { allowedCountries: ['IT','US','FR','DE','ES'] }, successUrl: window.location.href + '?success=true', cancelUrl: window.location.href, });
             if(error) alert(error.message);
         }
 
-        document.querySelector('.footer-logo').onclick=()=>{
-            dbClicks++; if(dbClicks>=5){if(prompt("KEY")==="FRIENDLYFIRE26")openDB(); dbClicks=0;}
-            setTimeout(()=>dbClicks=0,800);
-        };
+        document.querySelector('.footer-logo').onclick=()=>{ dbClicks++; if(dbClicks>=5){if(prompt("KEY")==="FRIENDLYFIRE26")openDB(); dbClicks=0;} setTimeout(()=>dbClicks=0,800); };
+        
         function openDB(){
-            closeAll(); document.getElementById('ov-db').style.display='flex';
+            closeAll(); document.getElementById('ov-db').style.display='flex'; document.getElementById('db-bg-url').value = currentBg;
             let l=document.getElementById('db-list'); l.innerHTML='';
-            inventory.forEach((i,x)=>l.innerHTML+=`
+            inventory.forEach((i)=>l.innerHTML+=`
                 <div class="db-row">
-                    <span>${x}</span>
-                    <input id="dn-${x}" value="${i.name}" style="width:40px;" placeholder="Name">
-                    <input id="ds-${x}" value="${i.stripeId}" style="flex-grow:1;" placeholder="Price ID">
-                    <input id="dz-${x}" value="${i.sizes||'ONE SIZE'}" style="width:50px;" placeholder="S,M,L">
-                    <input id="dp-${x}" value="${i.price}" type="number" style="width:30px;" placeholder="€">
-                    <button onclick="delItem(${x})" style="background:red; color:#fff;">X</button>
+                    <span style="font-size:8px;">${i.id}</span>
+                    <input id="dn-${i.id}" value="${i.name}" style="width:40px;" placeholder="Name">
+                    <input id="di-${i.id}" value="${i.img}" style="width:40px;" placeholder="Img">
+                    <input id="ds-${i.id}" value="${i.stripeId}" style="width:40px;" placeholder="ID">
+                    <input id="dz-${i.id}" value="${i.sizes||'ONE SIZE'}" style="width:30px;">
+                    <input id="dp-${i.id}" value="${i.price}" type="number" style="width:25px;">
+                    <button onclick="deleteItemDB(${i.id})" style="background:red; color:#fff; font-size:8px;">X</button>
                 </div>`);
         }
-        function addItem(){inventory.push({id:Date.now(),name:'NEW',img:'image_cap.PNG',price:0,stripeId:'',sizes:'S,M,L'});openDB();}
-        function delItem(i){inventory.splice(i,1);openDB();}
-        
-        function saveDB(){
-            inventory.forEach((t,i)=>{
-                if(document.getElementById(`dn-${i}`)){
-                    t.name = document.getElementById(`dn-${i}`).value;
-                    t.stripeId = document.getElementById(`ds-${i}`).value;
-                    t.sizes = document.getElementById(`dz-${i}`).value;
-                    t.price = parseInt(document.getElementById(`dp-${i}`).value);
-                }
-            });
-            localStorage.setItem('ff_inv_v200',JSON.stringify(inventory)); 
-            alert("SAVED!"); location.reload();
-        }
-        function resetDB(){localStorage.removeItem('ff_inv_v200');location.reload();}
-        
-        function openOv(id){
-            playSfx(); closeAll(); 
-            let o=document.getElementById(id); o.style.display='flex';
-            let w=o.querySelector('.mac-window'); 
-            if(w){w.style.position='relative';w.style.left='auto';w.style.top='auto';}
-            if(id==='ov-checkout') updateCartUI();
-        }
         function closeAll(){document.querySelectorAll('.overlay').forEach(e=>e.style.display='none');}
-        
-        function renderAvatars(){
-            let g=document.getElementById('avatar-grid');
-            for(let i=0;i<8;i++){
-                let u=`https://api.dicebear.com/7.x/pixel-art/svg?seed=ff${i}`;
-                let d=document.createElement('div'); d.style.border='2px solid #000';
-                d.innerHTML=`<img src="${u}" style="width:100%">`;
-                d.onclick=()=>{document.getElementById('profile-img-big').src=u;playSfx();};
-                if(i===0)d.click(); g.appendChild(d);
-            }
-        }
-        if(window.location.search.includes('success')){
-            alert("ORDER CONFIRMED. WELCOME TO THE FAMILY.");
-            localStorage.removeItem('ff_inv_v200'); cart=[]; updateCartUI();
-        }
+        function openOv(id){ playSfx(); closeAll(); let o=document.getElementById(id); o.style.display='flex'; let w=o.querySelector('.mac-window'); if(w){w.style.position='relative';w.style.left='auto';w.style.top='auto';} if(id==='ov-checkout') updateCartUI(); }
+        function renderAvatars(){ let g=document.getElementById('avatar-grid'); for(let i=0;i<8;i++){ let u=`https://api.dicebear.com/7.x/pixel-art/svg?seed=ff${i}`; let d=document.createElement('div'); d.style.border='2px solid #000'; d.innerHTML=`<img src="${u}" style="width:100%">`; d.onclick=()=>{document.getElementById('profile-img-big').src=u;playSfx();}; if(i===0)d.click(); g.appendChild(d); } }
+        if(window.location.search.includes('success')){ alert("ORDER CONFIRMED. WELCOME TO THE FAMILY."); cart=[]; updateCartUI(); }
     </script>
 </body>
 </html>
