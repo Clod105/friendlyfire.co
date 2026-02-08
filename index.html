@@ -8,20 +8,19 @@
     <script src="https://js.stripe.com/v3/"></script>
 
     <style>
-        /* --- 1. SETUP & RESET --- */
+        /* --- 1. SETUP --- */
         :root { --red: #ff3a3a; --bg-pongo: #2e4a1e; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; touch-action: manipulation; }
         
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Press Start 2P', cursive; 
-            /* Sfondo Cover Full Screen */
             background: var(--bg-pongo) url('sfondo2.jpg') no-repeat center center fixed; 
             background-size: cover; 
             overscroll-behavior: none; position: fixed; 
         }
 
-        /* --- 2. LOADER (CLEAN NO TM) --- */
+        /* --- 2. LOADER (CLASSICO CON MARK & COPYRIGHT) --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: #ffffff; z-index: 999999; 
@@ -29,43 +28,47 @@
             transition: opacity 0.5s ease-out; 
         }
         .loader-brand-img { width: 280px; max-width: 85%; height: auto; object-fit: contain; margin-bottom: 20px; }
+        
         .gif-wrapper { width: 180px; height: 180px; display: flex; justify-content: center; align-items: center; }
         #loader-gif { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
         
-        .loading-area-bottom { display: flex; flex-direction: column; align-items: center; margin-top: 15px; width: 100%; min-height: 60px; }
+        .loading-area-bottom { display: flex; flex-direction: column; align-items: center; margin-top: 10px; width: 100%; min-height: 70px; }
         .loading-text { font-size: 10px; color: #000; margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; }
         
-        .pixel-bar-container { width: 180px; height: 18px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 4px 4px 0 rgba(0,0,0,0.1); }
+        .pixel-bar-container { width: 180px; height: 16px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 4px 4px 0 rgba(0,0,0,0.1); }
         .pixel-bar-fill { height: 100%; width: 0%; background-color: #32cd32; transition: width 0.1s linear; }
         
         #start-btn { display: none; background: #000; color: #fff; border: 2px solid #000; padding: 15px 30px; font-family: 'Press Start 2P'; font-size: 12px; cursor: pointer; margin-top: 15px; animation: blink 1s infinite; box-shadow: 4px 4px 0 #999; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
         
-        .loader-footer { position: absolute; bottom: 20px; text-align: center; font-family: Arial, sans-serif; font-size: 9px; opacity: 0.6; font-weight: bold; line-height: 1.4; }
+        /* COPYRIGHT SECTION */
+        .loader-footer { 
+            position: absolute; bottom: 20px; width: 100%; 
+            display: flex; flex-direction: column; align-items: center; text-align: center; 
+        }
+        .copyright-mark { width: 35px; height: auto; margin-bottom: 8px; opacity: 0.8; }
+        .copyright-text { font-family: Arial, sans-serif; font-weight: bold; font-size: 9px; color: #000; opacity: 0.6; line-height: 1.4; }
 
-        /* --- 3. HEADER NAV (ICONE SINISTRA E DESTRA FIXATE) --- */
+        /* --- 3. HEADER --- */
         header { 
             display: flex; justify-content: space-between; align-items: flex-start; 
             padding: 15px 20px; position: absolute; top: 0; left: 0; right: 0; 
-            z-index: 10000; pointer-events: none; /* Lascia passare i click al sotto se vuoto */
+            z-index: 10000; pointer-events: none; 
         }
-        
         .pongo-btn { 
             width: 65px; height: 65px; object-fit: contain; 
-            cursor: pointer; pointer-events: auto; /* Riabilita click sulle icone */
+            cursor: pointer; pointer-events: auto; 
             transition: transform 0.1s; filter: drop-shadow(0 4px 2px rgba(0,0,0,0.4)); 
         }
-        .pongo-btn:active { transform: scale(0.9); filter: drop-shadow(0 2px 1px rgba(0,0,0,0.4)); }
-        
+        .pongo-btn:active { transform: scale(0.9); }
         .tank-wrapper { position: relative; pointer-events: auto; }
         #tank-badge { position: absolute; top: 0; right: -5px; background: var(--red); color: white; border: 2px solid #000; font-size: 9px; padding: 3px 6px; border-radius: 50%; display: none; z-index: 10003; }
 
-        /* --- 4. SHOP SLIDER (V87 LOGIC) --- */
+        /* --- 4. SHOP SLIDER --- */
         #shop-slider { 
             width: 100vw; height: 100%; 
             display: flex; 
-            overflow-x: scroll; /* Abilita scroll orizzontale */
-            overflow-y: hidden;
+            overflow-x: scroll; overflow-y: hidden;
             scroll-snap-type: x mandatory; 
             -webkit-overflow-scrolling: touch; 
             scroll-behavior: smooth;
@@ -86,27 +89,22 @@
         .item-card { 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             position: relative; z-index: 100; 
-            /* Importante: pan-x pan-y permette lo scroll ma gestiamo il drag via JS */
-            touch-action: pan-x pan-y; 
-            transform: translateZ(0);
+            touch-action: pan-x pan-y; transform: translateZ(0);
         }
-        
-        .item-card img { width: 90px; height: auto; pointer-events: none; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); transition: transform 0.2s; }
+        .item-card img { width: 90px; pointer-events: none; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
         .clean-tag { font-family: sans-serif; font-weight: 800; font-size: 9px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.9); margin-top: 5px; text-transform: uppercase; text-align: center; }
 
-        /* Dragging state */
         .item-card.dragging { 
             position: fixed; z-index: 99999; 
             transform: scale(1.25) rotate(-3deg); opacity: 0.95; 
-            pointer-events: none; /* Il click passa sotto per rilevare il tank */
+            pointer-events: none; 
             filter: drop-shadow(0 15px 20px rgba(0,0,0,0.6));
         }
-        
-        .item-card.sucked { transform: scale(0) rotate(180deg) !important; opacity: 0 !important; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .item-card.sucked { transform: scale(0) rotate(180deg) !important; opacity: 0 !important; transition: all 0.5s; }
 
-        /* --- 5. UI COMPONENTS (Footer & Overlays) --- */
+        /* --- 5. UI COMPONENTS --- */
         #app-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; display: flex; align-items: center; justify-content: center; z-index: 20000; pointer-events: none; background: linear-gradient(to top, rgba(0,0,0,0.2), transparent); }
-        .footer-logo { width: 150px; cursor: pointer; pointer-events: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .footer-logo { width: 150px; cursor: pointer; pointer-events: auto; }
 
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 50000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
         
@@ -116,42 +114,34 @@
             box-shadow: 10px 10px 0 rgba(0,0,0,0.6); text-align: center; 
             display: flex; flex-direction: column; align-items: center; 
         }
-        
-        .mac-title-bar { width: 100%; background: repeating-linear-gradient(45deg, #ccc, #ccc 2px, #fff 2px, #fff 4px); border-bottom: 2px solid #000; padding: 10px; margin-bottom: 15px; color: #000; font-size: 10px; font-weight: 800; letter-spacing: 1px; }
+        .mac-title-bar { width: 100%; background: repeating-linear-gradient(45deg, #ccc, #ccc 2px, #fff 2px, #fff 4px); border-bottom: 2px solid #000; padding: 10px; margin-bottom: 10px; color: #000; font-size: 10px; font-weight: 800; }
 
         .btn-pixel { 
             background: #000; color: #fff; border: 2px solid #000; 
             padding: 14px; font-family: 'Press Start 2P'; font-size: 10px; 
             cursor: pointer; box-shadow: 4px 4px 0 #888; margin: 6px; 
-            width: 85%; text-transform: uppercase; transition: transform 0.1s; 
+            width: 85%; text-transform: uppercase; 
         }
         .btn-pixel:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #888; }
-        .input-pixel { border: 2px solid #000; padding: 10px; font-family: sans-serif; font-weight: bold; width: 85%; margin: 5px 0; background: #eee; }
+        
+        /* CHECKOUT INPUTS */
+        .checkout-group { width: 85%; display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+        .input-pixel { 
+            border: 2px solid #000; padding: 10px; font-family: sans-serif; font-weight: bold; 
+            width: 100%; font-size: 12px; background: #eee; border-radius: 0;
+        }
 
-        /* Admin DB Rows */
         .db-row { display: flex; gap: 4px; width: 95%; margin: 4px 0; align-items: center; justify-content: center; border-bottom: 1px dashed #ccc; padding-bottom: 2px; }
-        .db-row input { padding: 4px; font-size: 10px; border: 1px solid #999; }
-
-        /* --- 6. PC RESPONSIVE --- */
+        
+        /* --- 6. PC ADAPT --- */
         @media (min-width: 1024px) {
             .loader-brand-img { width: 450px; }
             .pixel-bar-container { width: 300px; height: 24px; }
-            #start-btn { font-size: 16px; padding: 20px 40px; }
-            
             header { padding: 30px 60px; }
             .pongo-btn { width: 110px; height: 110px; }
-            
-            .shop-page { 
-                padding: 160px 120px; 
-                gap: 40px; 
-                grid-template-columns: repeat(4, 1fr); 
-                grid-template-rows: repeat(3, 1fr);
-            }
+            .shop-page { padding: 160px 120px; gap: 40px; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); }
             .item-card img { width: 150px; } 
-            .clean-tag { font-size: 12px; margin-top: 10px; }
-            
             .mac-window { max-width: 500px; }
-            .btn-pixel { font-size: 14px; padding: 16px; }
             .footer-logo { width: 240px; }
         }
     </style>
@@ -162,22 +152,23 @@
         <img src="logo_ff_loader.png" alt="FRIENDLYFIRE" class="loader-brand-img">
         <div class="gif-wrapper"><img id="loader-gif" src="loadernob.gif"></div>
         <div class="loading-area-bottom">
-            <div id="loading-txt" class="loading-text">LOADING ASSETS...</div>
+            <div id="loading-txt" class="loading-text">LOADING...</div>
             <div class="pixel-bar-container"><div id="pixel-bar-fill" class="pixel-bar-fill"></div></div>
-            <button id="start-btn">ENTER WORLD</button>
+            <button id="start-btn">START</button>
         </div>
-        <div class="loader-footer">Friendlyfire Co. - Made in Italy<br>System V87.2 - Diego Edition</div>
+        <div class="loader-footer">
+            <img src="mark_c.png" alt="C" class="copyright-mark">
+            <div class="copyright-text">Friendlyfire Co. - Made in Italy<br>System V90 - Diego Edition 2026</div>
+        </div>
     </div>
 
     <audio id="sfx-gnam" src="suono_gnam.mp3" preload="auto"></audio>
 
     <header>
-        <img src="mondo_pongo.PNG" class="pongo-btn" onclick="openOv('ov-world')" title="World">
-        
-        <img src="fuochini_centrali.png" class="pongo-btn" onclick="openOv('ov-profile')" title="Profile">
-        
+        <img src="mondo_pongo.PNG" class="pongo-btn" onclick="openOv('ov-world')">
+        <img src="fuochini_centrali.png" class="pongo-btn" onclick="openOv('ov-profile')">
         <div class="tank-wrapper">
-            <img src="tank_header.PNG" class="pongo-btn" id="tank-btn" onclick="openOv('ov-cart')" title="Tank">
+            <img src="tank_header.PNG" class="pongo-btn" id="tank-btn" onclick="openOv('ov-cart')">
             <div id="tank-badge">0</div>
         </div>
     </header>
@@ -189,7 +180,7 @@
     </div>
 
     <footer id="app-footer">
-        <img src="brand_name.png" class="footer-logo" title="Admin Access">
+        <img src="brand_name.png" class="footer-logo">
     </footer>
 
     <div id="ov-cart" class="overlay">
@@ -205,14 +196,26 @@
 
     <div id="ov-checkout" class="overlay">
         <div class="mac-window">
-            <div class="mac-title-bar">SECURE PAYMENT</div>
-            <div style="width:100%; padding: 20px; display:flex; flex-direction:column; align-items:center;">
-                <p style="font-size:10px; line-height:1.6;">YOU ARE ABOUT TO BE REDIRECTED TO STRIPE SECURE CHECKOUT.</p>
-                <div style="font-size:14px; font-weight:bold; margin:15px 0;">TOTAL: <span id="checkout-total-display">0</span>€</div>
-                <button type="button" class="btn-pixel" style="background:#5469d4; border-color:#5469d4; margin-top:5px;" onclick="processStripeRedirect()">
-                    PAY WITH CARD &rarr;
+            <div class="mac-title-bar">SHIPPING DATA</div>
+            <form id="shipping-form" style="width:100%; display:flex; flex-direction:column; align-items:center;">
+                <div class="checkout-group">
+                    <input type="text" id="ship-name" class="input-pixel" placeholder="NOME E COGNOME" required>
+                    <input type="email" id="ship-email" class="input-pixel" placeholder="E-MAIL" required>
+                </div>
+                <div class="checkout-group">
+                    <input type="text" id="ship-address" class="input-pixel" placeholder="INDIRIZZO (Via/Piazza, N. Civico)" required>
+                    <div style="display:flex; gap:5px;">
+                        <input type="text" id="ship-zip" class="input-pixel" placeholder="CAP" style="width:30%;" required>
+                        <input type="text" id="ship-city" class="input-pixel" placeholder="CITTÀ" style="width:70%;" required>
+                    </div>
+                </div>
+                
+                <div style="font-size:10px; margin:10px 0;">TOTAL: <span id="checkout-total-display" style="font-weight:bold;">0</span>€</div>
+                
+                <button type="button" class="btn-pixel" style="background:#5469d4; border-color:#5469d4;" onclick="processStripeRedirect()">
+                    PAGA ORA (STRIPE)
                 </button>
-            </div>
+            </form>
             <button class="btn-pixel" style="background:transparent; color:#000; border:none; box-shadow:none;" onclick="closeAll()">CANCEL</button>
         </div>
     </div>
@@ -220,28 +223,28 @@
     <div id="ov-profile" class="overlay">
         <div class="mac-window">
             <div class="mac-title-bar">PILOT PROFILE</div>
-            <div style="border:3px solid #000; width:110px; height:110px; margin:10px auto; background:#fff; overflow:hidden;">
+            <div style="border:3px solid #000; width:100px; height:100px; margin:10px auto; background:#fff;">
                 <img id="profile-img-big" src="" style="width:100%; height:100%; object-fit:cover;">
             </div>
             <div id="avatar-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; width:85%; margin:10px auto;"></div>
-            <input type="text" class="input-pixel" placeholder="NICKNAME" value="DIEGO" style="text-align:center;">
+            <input type="text" class="input-pixel" placeholder="NICKNAME" value="DIEGO" style="width:85%;">
             <button class="btn-pixel" onclick="closeAll()">SAVE PROFILE</button>
         </div>
     </div>
 
     <div id="ov-world" class="overlay">
         <div class="mac-window">
-            <div class="mac-title-bar">WORLD WIDE</div>
+            <div class="mac-title-bar">WORLD</div>
             <img src="mondo_pongo.PNG" style="width:120px; margin:20px;">
             <button class="btn-pixel" onclick="window.open('https://instagram.com')">INSTAGRAM</button>
-            <button class="btn-pixel" onclick="closeAll()">BACK TO SHOP</button>
+            <button class="btn-pixel" onclick="closeAll()">BACK</button>
         </div>
     </div>
 
     <div id="ov-db" class="overlay">
         <div class="mac-window" style="max-width:95%; height:85vh; justify-content:flex-start;">
             <div class="mac-title-bar">ADMIN DATABASE</div>
-            <div style="font-size:8px; color:red; margin-bottom:5px;">ENTER STRIPE PRICE IDs BELOW</div>
+            <div style="font-size:8px; color:red; margin-bottom:5px;">INSERISCI PRICE IDs DI STRIPE</div>
             <div id="db-list" style="overflow-y:auto; width:100%; flex-grow:1; border-bottom:2px solid #000; margin-bottom:10px;"></div>
             <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:5px; width:100%;">
                 <button class="btn-pixel" style="width:40%; background:#00f;" onclick="addItem()">ADD</button>
@@ -253,19 +256,17 @@
     </div>
 
     <script>
-        // --- 1. CONFIGURAZIONE CHIAVI ---
-        // Chiave Pubblica Stripe
+        // --- 1. CHIAVI & DATI ---
         const stripe = Stripe('pk_live_51SyKuT1PjKstwovYOCs5iNC2Ef8sun65gJ2pLXi4pyvfqM9o2Tiaec8NTQuHJEoYVPzDEDsktyZwlSWl6SjMKxzM00i7aB1Yvd');
         
-        // Items Default (Usati se il DB è vuoto)
-        // NOTA: Devi inserire i veri 'price_...' di Stripe o usando il pannello Admin o modificando qui.
+        // Items Default
         const defaultItems = [
-            {id: 0, name: 'CAP FIRE', img:'image_cap.PNG', price:45, stripeId: 'INSERISCI_PRICE_ID_QUI'}, 
-            {id: 1, name: 'TEE FLAME', img:'image_tee.PNG', price:65, stripeId: 'INSERISCI_PRICE_ID_QUI'},
-            {id: 2, name: 'CAP BLK', img:'image_cap.PNG', price:45, stripeId: 'INSERISCI_PRICE_ID_QUI'}, 
-            {id: 3, name: 'TEE WHT', img:'image_tee.PNG', price:65, stripeId: 'INSERISCI_PRICE_ID_QUI'},
-            {id: 4, name: 'CAP RED', img:'image_cap.PNG', price:45, stripeId: 'INSERISCI_PRICE_ID_QUI'}, 
-            {id: 5, name: 'TEE LTD', img:'image_tee.PNG', price:85, stripeId: 'INSERISCI_PRICE_ID_QUI'},
+            {id: 0, name: 'CAP FIRE', img:'image_cap.PNG', price:45, stripeId: 'INSERISCI_QUI'}, 
+            {id: 1, name: 'TEE FLAME', img:'image_tee.PNG', price:65, stripeId: 'INSERISCI_QUI'},
+            {id: 2, name: 'CAP BLK', img:'image_cap.PNG', price:45, stripeId: 'INSERISCI_QUI'}, 
+            {id: 3, name: 'TEE WHT', img:'image_tee.PNG', price:65, stripeId: 'INSERISCI_QUI'},
+            {id: 4, name: 'CAP RED', img:'image_cap.PNG', price:45, stripeId: 'INSERISCI_QUI'}, 
+            {id: 5, name: 'TEE LTD', img:'image_tee.PNG', price:85, stripeId: 'INSERISCI_QUI'},
             {id: 6, name: 'CAP V1', img:'image_cap.PNG', price:45, stripeId: ''}, 
             {id: 7, name: 'TEE V1', img:'image_tee.PNG', price:65, stripeId: ''},
             {id: 8, name: 'CAP V2', img:'image_cap.PNG', price:45, stripeId: ''}, 
@@ -277,48 +278,42 @@
         let inventory = [];
         let cart = [];
         let dbClicks = 0;
+        let autoScrollSpeed = 0; // Per lo scroll automatico
 
-        // --- 2. INITIALIZATION ---
         window.onload = () => {
             loadDB();
             initLoader();
             renderShop();
             renderAvatars();
+            startAutoScrollLoop(); // Avvia il motore scroll
         };
 
-        // --- 3. LOADER ANIMATION ---
+        // --- 2. LOADER ---
         function initLoader() {
             let bar = document.getElementById('pixel-bar-fill');
-            let txt = document.getElementById('loading-txt');
             let w = 0;
             let iv = setInterval(() => {
                 w += 2; bar.style.width = w + '%';
                 if(w >= 100) {
                     clearInterval(iv);
-                    txt.style.display='none';
+                    document.getElementById('loading-txt').style.display='none';
                     document.getElementById('start-btn').style.display='block';
                 }
-            }, 25); // Caricamento rapido
-            
+            }, 30);
             document.getElementById('start-btn').onclick = () => {
                 playSfx();
-                let overlay = document.getElementById('loader-overlay');
-                overlay.style.opacity = '0';
-                overlay.style.pointerEvents = 'none';
-                setTimeout(() => overlay.style.display='none', 500);
+                let o = document.getElementById('loader-overlay');
+                o.style.opacity = '0'; o.style.pointerEvents = 'none';
+                setTimeout(() => o.style.display='none', 500);
             };
         }
+        function playSfx() { let s = document.getElementById('sfx-gnam'); if(s) { s.currentTime=0; s.play().catch(()=>{}); } }
 
-        function playSfx() {
-            let s = document.getElementById('sfx-gnam');
-            if(s) { s.currentTime=0; s.play().catch(e=>{}); }
-        }
-
-        // --- 4. DATA LOGIC ---
+        // --- 3. LOGICA DATA ---
         function loadDB() {
             try {
-                let saved = localStorage.getItem('ff_db_v87');
-                if(saved) inventory = JSON.parse(saved);
+                let s = localStorage.getItem('ff_db_v90');
+                if(s) inventory = JSON.parse(s);
                 else inventory = JSON.parse(JSON.stringify(defaultItems));
             } catch(e) { inventory = JSON.parse(JSON.stringify(defaultItems)); }
         }
@@ -328,265 +323,217 @@
             inventory.forEach((item, idx) => {
                 let page = Math.floor(idx/12) + 1;
                 if(page > 3) return;
-                
                 let el = document.createElement('div');
                 el.className = 'item-card';
                 el.id = 'itm-'+idx;
                 el.innerHTML = `<img src="${item.img}"><div class="clean-tag">${item.name}</div><div class="clean-tag">${item.price}€</div>`;
-                
-                // CORE V87 INTERACTION LOGIC
-                attachV87Logic(el, item);
-                
+                attachLogic(el, item);
                 document.getElementById('page-'+page).appendChild(el);
             });
         }
 
-        // --- 5. THE "V87" INTERACTION ENGINE (Hybrid Swipe/Drag) ---
-        function attachV87Logic(el, item) {
+        // --- 4. ENGINE (SCROLL + DRAG + AUTO-SCROLL) ---
+        function attachLogic(el, item) {
             let timer = null;
             let isDragging = false;
             let startX = 0, startY = 0;
-            
-            // Handler Unificato Start
-            const onStart = (e) => {
-                // Se già nel carrello, ignora
-                if(cart.some(c => c.id === item.id)) return;
 
+            const onStart = (e) => {
+                if(cart.some(c => c.id === item.id)) return;
                 let cx = e.touches ? e.touches[0].clientX : e.clientX;
                 let cy = e.touches ? e.touches[0].clientY : e.clientY;
                 startX = cx; startY = cy;
 
-                // Timer 200ms: Se tieni premuto diventa Drag, altrimenti è Swipe/Scroll
                 timer = setTimeout(() => {
                     isDragging = true;
                     playSfx();
-                    
-                    // Cloniamo lo stile per il drag
                     let rect = el.getBoundingClientRect();
-                    el.style.width = rect.width + 'px';
-                    el.style.height = rect.height + 'px';
+                    el.style.width = rect.width + 'px'; el.style.height = rect.height + 'px';
                     el.style.position = 'fixed';
-                    el.style.left = (cx - rect.width/2) + 'px';
-                    el.style.top = (cy - rect.height/2) + 'px';
+                    el.style.left = (cx - rect.width/2) + 'px'; el.style.top = (cy - rect.height/2) + 'px';
                     el.classList.add('dragging');
-                    
-                    // Vibrazione su mobile se supportata
                     if(navigator.vibrate) navigator.vibrate(20);
                 }, 200);
             };
 
-            // Handler Unificato Move
             const onMove = (e) => {
                 let cx = e.touches ? e.touches[0].clientX : e.clientX;
                 let cy = e.touches ? e.touches[0].clientY : e.clientY;
 
                 if(!isDragging) {
-                    // Se muovi prima del timer, cancella timer -> è uno Scroll
-                    if(Math.abs(cx - startX) > 10 || Math.abs(cy - startY) > 10) {
-                        clearTimeout(timer);
-                    }
+                    if(Math.abs(cx - startX) > 10 || Math.abs(cy - startY) > 10) clearTimeout(timer);
                     return;
                 }
-
-                // Se Dragging attivo, muovi elemento e blocca scroll pagina
+                
                 if(e.cancelable) e.preventDefault();
                 el.style.left = (cx - el.offsetWidth/2) + 'px';
                 el.style.top = (cy - el.offsetHeight/2) + 'px';
+
+                // --- AUTO SCROLL LOGIC ---
+                // Se trascini ai bordi, scorre lo slider
+                if (cx > window.innerWidth - 60) {
+                    autoScrollSpeed = 10; // Destra
+                } else if (cx < 60) {
+                    autoScrollSpeed = -10; // Sinistra
+                } else {
+                    autoScrollSpeed = 0; // Ferma
+                }
             };
 
-            // Handler Unificato End
             const onEnd = (e) => {
-                clearTimeout(timer); // Pulisce timer se click veloce
-                
+                clearTimeout(timer);
+                autoScrollSpeed = 0; // Stop scroll
+
                 if(isDragging) {
                     isDragging = false;
                     let cx = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
                     let cy = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
-
-                    // Check collisione Tank
                     let tank = document.getElementById('tank-btn');
                     let tr = tank.getBoundingClientRect();
-                    let tcx = tr.left + tr.width/2;
-                    let tcy = tr.top + tr.height/2;
                     
-                    // Distanza tolleranza 80px
-                    if(Math.hypot(cx - tcx, cy - tcy) < 80) {
-                        // SUCKED IN
-                        el.style.left = (tcx - el.offsetWidth/2) + 'px';
-                        el.style.top = (tcy - el.offsetHeight/2) + 'px';
-                        el.classList.add('sucked');
-                        playSfx();
-                        addToCart(item);
-                        // Vibrazione successo
-                        if(navigator.vibrate) navigator.vibrate([30, 50, 30]);
+                    if(Math.hypot(cx - (tr.left+tr.width/2), cy - (tr.top+tr.height/2)) < 80) {
+                        el.style.left = (tr.left+tr.width/2 - el.offsetWidth/2) + 'px';
+                        el.style.top = (tr.top+tr.height/2 - el.offsetHeight/2) + 'px';
+                        el.classList.add('sucked'); playSfx(); addToCart(item);
                     } else {
-                        // RITORNA AL POSTO
-                        el.style.position = '';
-                        el.style.width = '';
-                        el.style.height = '';
-                        el.style.left = '';
-                        el.style.top = '';
-                        el.classList.remove('dragging');
+                        el.style.position = ''; el.style.width = ''; el.style.height = ''; 
+                        el.style.left = ''; el.style.top = ''; el.classList.remove('dragging');
                     }
                 }
             };
 
-            // Event Listeners (Passive: false è cruciale per bloccare scroll durante drag)
             el.addEventListener('touchstart', onStart, {passive:true});
             el.addEventListener('touchmove', onMove, {passive:false});
             el.addEventListener('touchend', onEnd);
-            
             el.addEventListener('mousedown', onStart);
             window.addEventListener('mousemove', onMove);
             window.addEventListener('mouseup', onEnd);
         }
 
-        // --- 6. CART SYSTEM ---
+        // Loop Animazione Scroll
+        function startAutoScrollLoop() {
+            const loop = () => {
+                if (autoScrollSpeed !== 0) {
+                    document.getElementById('shop-slider').scrollBy(autoScrollSpeed, 0);
+                }
+                requestAnimationFrame(loop);
+            };
+            requestAnimationFrame(loop);
+        }
+
+        // --- 5. CART & STRIPE (CON DATI) ---
         function addToCart(item) {
             cart.push(item);
             updateCartUI();
             let b = document.getElementById('tank-badge');
-            b.style.transform = 'scale(1.5)'; 
-            setTimeout(()=>b.style.transform='scale(1)', 250);
+            b.style.transform = 'scale(1.5)'; setTimeout(()=>b.style.transform='scale(1)', 250);
         }
 
         function updateCartUI() {
             let b = document.getElementById('tank-badge');
-            b.innerText = cart.length;
-            b.style.display = cart.length > 0 ? 'block' : 'none';
-            
-            let total = cart.reduce((acc, cur) => acc + cur.price, 0);
-            document.getElementById('cart-total').innerText = total;
-            document.getElementById('checkout-total-display').innerText = total;
-
-            let list = document.getElementById('cart-list');
-            list.innerHTML = cart.map(i => 
-                `<div style="display:flex; justify-content:space-between; border-bottom:1px dashed #bbb; margin-bottom:5px;">
-                    <span>${i.name}</span><span>${i.price}€</span>
-                </div>`
-            ).join('');
+            b.innerText = cart.length; b.style.display = cart.length > 0 ? 'block' : 'none';
+            let t = cart.reduce((a,c)=>a+c.price,0);
+            document.getElementById('cart-total').innerText = t;
+            document.getElementById('checkout-total-display').innerText = t;
+            let l = document.getElementById('cart-list');
+            l.innerHTML = cart.map(i=>`<div style="display:flex; justify-content:space-between; border-bottom:1px dashed #ccc;"><span>${i.name}</span><span>${i.price}€</span></div>`).join('');
         }
 
-        function emptyCart() {
-            cart = [];
-            updateCartUI();
-            renderShop(); // Rigenera le card per renderle di nuovo disponibili
-            closeAll();
-        }
+        function emptyCart() { cart=[]; updateCartUI(); renderShop(); closeAll(); }
 
-        // --- 7. STRIPE DIRECT PAYMENT ---
         async function processStripeRedirect() {
-            if(cart.length === 0) { alert("TANK IS EMPTY"); return; }
+            if(cart.length === 0) { alert("TANK VUOTO"); return; }
             
-            // Costruzione Line Items per Stripe
+            // Check campi obbligatori form
+            const name = document.getElementById('ship-name').value;
+            const addr = document.getElementById('ship-address').value;
+            const city = document.getElementById('ship-city').value;
+            const email = document.getElementById('ship-email').value;
+
+            if(!name || !addr || !city || !email) {
+                alert("COMPILA TUTTI I DATI DI SPEDIZIONE!");
+                return;
+            }
+
             let lineItems = [];
             for(let item of cart) {
                 if(!item.stripeId || item.stripeId.length < 5) {
-                    alert(`ERROR: Product "${item.name}" is missing a valid Stripe Price ID.\nPlease configure it in the Admin Panel.`);
-                    return;
+                    alert(`ERRORE: ${item.name} non ha Price ID. Inseriscilo in Admin.`); return;
                 }
                 lineItems.push({ price: item.stripeId, quantity: 1 });
             }
 
-            // Chiamata a Stripe
+            // REDIRECT STRIPE CON RICHIESTA INDIRIZZO
+            // customer_email pre-compila la mail
+            // shipping_address_collection obbliga l'utente a confermare l'indirizzo su Stripe
             const { error } = await stripe.redirectToCheckout({
                 mode: 'payment',
                 lineItems: lineItems,
-                successUrl: window.location.href + '?status=success',
-                cancelUrl: window.location.href + '?status=cancel',
+                customerEmail: email, 
+                shippingAddressCollection: { allowedCountries: ['IT', 'FR', 'DE', 'ES', 'US'] }, 
+                successUrl: window.location.href + '?success=true',
+                cancelUrl: window.location.href,
             });
 
-            if(error) {
-                alert("STRIPE ERROR: " + error.message);
-            }
+            if(error) alert("STRIPE ERROR: " + error.message);
         }
 
-        // --- 8. ADMIN PANEL & HELPERS ---
-        // Admin Access: 5 click sul footer logo
+        // --- 6. ADMIN ---
         document.querySelector('.footer-logo').onclick = () => {
             dbClicks++;
             if(dbClicks >= 5) {
-                let p = prompt("ADMIN PASSWORD:");
-                if(p === "FRIENDLYFIRE26") openDB();
-                dbClicks = 0;
+                if(prompt("PWD:")==="FRIENDLYFIRE26") openDB();
+                dbClicks=0;
             }
             setTimeout(()=>dbClicks=0, 800);
         };
 
         function openDB() {
-            closeAll();
-            document.getElementById('ov-db').style.display='flex';
-            let list = document.getElementById('db-list');
-            list.innerHTML = '';
-            
+            closeAll(); document.getElementById('ov-db').style.display='flex';
+            let l = document.getElementById('db-list'); l.innerHTML = '';
             inventory.forEach((item, i) => {
-                list.innerHTML += `
+                l.innerHTML += `
                 <div class="db-row">
-                    <span style="width:15px;">${i}</span>
-                    <input id="dn-${i}" value="${item.name}" style="width:60px;">
-                    <input id="ds-${i}" value="${item.stripeId}" placeholder="price_..." style="flex-grow:1; background:#fff;">
-                    <input id="dp-${i}" value="${item.price}" type="number" style="width:40px;">
-                    <button onclick="delItem(${i})" style="background:red; color:#fff; border:none; width:20px;">X</button>
+                    <span style="font-size:8px;">${i}</span>
+                    <input id="dn-${i}" value="${item.name}" style="width:50px;">
+                    <input id="ds-${i}" value="${item.stripeId}" placeholder="Price ID" style="flex-grow:1;">
+                    <input id="dp-${i}" value="${item.price}" type="number" style="width:30px;">
+                    <button onclick="delItem(${i})" style="background:red; color:#fff; border:none;">X</button>
                 </div>`;
             });
         }
-
-        function addItem() { inventory.push({id:Date.now(), name:'NEW', img:'image_tee.PNG', price:0, stripeId:''}); openDB(); }
+        function addItem() { inventory.push({id:Date.now(), name:'NEW', img:'image_cap.PNG', price:0, stripeId:''}); openDB(); }
         function delItem(i) { inventory.splice(i,1); openDB(); }
-        
         function saveDB() {
-            inventory.forEach((item, i) => {
-                let n = document.getElementById(`dn-${i}`);
-                if(n) {
-                    item.name = n.value;
-                    item.stripeId = document.getElementById(`ds-${i}`).value;
-                    item.price = parseInt(document.getElementById(`dp-${i}`).value);
+            inventory.forEach((t, i) => {
+                if(document.getElementById(`dn-${i}`)) {
+                    t.name = document.getElementById(`dn-${i}`).value;
+                    t.stripeId = document.getElementById(`ds-${i}`).value;
+                    t.price = parseInt(document.getElementById(`dp-${i}`).value);
                 }
             });
-            localStorage.setItem('ff_db_v87', JSON.stringify(inventory));
-            alert("SAVED! REBOOTING...");
+            localStorage.setItem('ff_db_v90', JSON.stringify(inventory));
             location.reload();
         }
+        function resetDB() { if(confirm("RESET?")) { localStorage.removeItem('ff_db_v90'); location.reload(); } }
 
-        function resetDB() {
-            if(confirm("FACTORY RESET? ALL DATA WILL BE LOST.")) {
-                localStorage.removeItem('ff_db_v87');
-                location.reload();
-            }
-        }
-
-        // --- 9. NAVIGATION ---
-        function openOv(id) {
-            playSfx();
-            closeAll();
-            document.getElementById(id).style.display='flex';
-            // Update totals se apriamo checkout
-            if(id === 'ov-checkout') updateCartUI();
-        }
-        function closeAll() {
-            document.querySelectorAll('.overlay').forEach(e => e.style.display='none');
-        }
-
-        // Avatars Generator
+        // --- 7. NAV & UTILS ---
+        function openOv(id) { playSfx(); closeAll(); document.getElementById(id).style.display='flex'; if(id==='ov-checkout') updateCartUI(); }
+        function closeAll() { document.querySelectorAll('.overlay').forEach(e=>e.style.display='none'); }
         function renderAvatars() {
             let g = document.getElementById('avatar-grid');
-            if(!g) return;
             for(let i=0; i<8; i++) {
                 let u = `https://api.dicebear.com/7.x/pixel-art/svg?seed=diego${i}`;
-                let d = document.createElement('div');
-                d.style.border='2px solid #000'; d.style.cursor='pointer';
-                d.innerHTML=`<img src="${u}" style="width:100%; display:block;">`;
-                d.onclick = () => { document.getElementById('profile-img-big').src=u; playSfx(); };
-                if(i===0) d.click();
-                g.appendChild(d);
+                let d = document.createElement('div'); d.style.border='2px solid #000'; d.style.cursor='pointer';
+                d.innerHTML=`<img src="${u}" style="width:100%">`;
+                d.onclick=()=>{document.getElementById('profile-img-big').src=u; playSfx();};
+                if(i===0) d.click(); g.appendChild(d);
             }
         }
 
-        // Success Check
         if(window.location.search.includes('success')) {
-            setTimeout(() => alert("PAYMENT SUCCESSFUL! THANKS DIEGO."), 1000);
-            localStorage.removeItem('ff_db_v87'); // Optional: Clear cart logic could go here
-            cart = []; updateCartUI();
+            alert("ORDINE RICEVUTO! GRAZIE DIEGO.");
+            localStorage.removeItem('ff_db_v90'); cart=[]; updateCartUI();
         }
     </script>
 </body>
