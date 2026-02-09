@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FRIENDLYFIRE CO.</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
@@ -11,7 +11,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <style>
-        /* --- 1. CORE --- */
+        /* --- CORE --- */
         :root { --red: #ff3a3a; --bg-pongo: #2e4a1e; --white: #ffffff; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
         
@@ -19,65 +19,61 @@
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Press Start 2P', cursive; 
             background-color: var(--bg-pongo);
-            /* Sfondo caricato via CSS per evitare buchi neri */
             background-image: url('sfondo2.jpg');
             background-position: center center; background-repeat: no-repeat; background-size: cover;
-            overscroll-behavior: none; position: fixed; touch-action: none;
+            overscroll-behavior: none; position: fixed; 
         }
 
-        /* --- 2. LOADER BLINDATO --- */
+        /* --- LOADER (STRUTTURA INDIPENDENTE) --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background-color: var(--white); z-index: 9999999; 
+            background-color: var(--white); z-index: 999999999; /* Massimo Assoluto */
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            transition: opacity 0.3s ease-out;
         }
         .loader-brand-img { width: 260px; max-width: 80%; margin-bottom: 10px; }
         .gif-wrapper { width: 280px; height: 280px; display: flex; justify-content: center; align-items: center; }
         #loader-gif { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transform: scale(1.1); }
-        .loading-area-bottom { display: flex; flex-direction: column; align-items: center; margin-top: 20px; width: 100%; }
         
-        .pixel-bar-container { width: 180px; height: 16px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 6px 6px 0 rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .pixel-bar-container { width: 180px; height: 16px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 6px 6px 0 rgba(0,0,0,0.1); margin-top: 20px; }
         .pixel-bar-fill { height: 100%; width: 0%; background-color: #32cd32; animation: fillBar 1.5s linear forwards; }
         @keyframes fillBar { 0% { width: 0%; } 100% { width: 100%; } }
 
         #start-btn { 
-            /* Visibile dopo 1.5s */
+            /* Appare dopo 1.5s */
             opacity: 0; pointer-events: auto; 
             background: #000; color: #fff; border: 2px solid #000; 
             padding: 14px 30px; font-family: 'Press Start 2P'; font-size: 10px; 
-            cursor: pointer; box-shadow: 4px 4px 0 #999; 
+            cursor: pointer; margin-top: 15px; box-shadow: 4px 4px 0 #999; 
             animation: showBtn 0.1s ease-out 1.5s forwards; 
         }
         @keyframes showBtn { to { opacity: 1; } }
 
-        .loader-footer { position: absolute; bottom: 20px; width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .copyright-mark { width: 30px; height: auto; margin-bottom: 5px; opacity: 0.8; }
-        .copyright-text { font-family: Arial, sans-serif; font-weight: bold; font-size: 8px; color: #000; opacity: 0.6; line-height: 1.4; }
-
-        /* --- 3. HEADER --- */
+        /* --- HEADER --- */
         header { 
             display: flex; justify-content: space-between; align-items: flex-start; padding: 15px 20px; 
             position: absolute; top: 0; left: 0; right: 0; 
-            z-index: 5000; pointer-events: none; /* Lascia passare i click tra le icone */
+            z-index: 50000; /* Altissimo */
+            pointer-events: none; 
         }
         .pongo-btn { 
             width: 70px; height: 70px; object-fit: contain; cursor: pointer; 
-            pointer-events: auto; /* IMPORTANTE: Icone cliccabili */
+            pointer-events: auto; /* Cliccabile */
             filter: drop-shadow(0 4px 2px rgba(0,0,0,0.4)); transition: transform 0.1s; 
         }
         .pongo-anim { animation: pongo 0.3s ease-out; }
         @keyframes pongo { 0%{transform:scale(1);} 50%{transform:scale(1.2,0.8);} 100%{transform:scale(1);} }
         
         .tank-wrapper { position: relative; pointer-events: auto; }
-        #tank-badge { position: absolute; top: 0; right: -5px; background: var(--red); color: white; border: 2px solid #000; font-size: 9px; padding: 3px 6px; border-radius: 50%; display: none; z-index: 10003; }
+        #tank-badge { position: absolute; top: 0; right: -5px; background: var(--red); color: white; border: 2px solid #000; font-size: 9px; padding: 3px 6px; border-radius: 50%; display: none; z-index: 50001; }
 
-        /* --- 4. SHOP GRID (STRUTTURA IPHONE) --- */
+        /* --- GRID --- */
         #shop-slider { 
             width: 100vw; height: 100%; display: flex; 
             overflow-x: scroll; overflow-y: hidden; 
             scroll-snap-type: x mandatory; 
             z-index: 1; 
-            touch-action: pan-x; /* Permette solo scroll orizzontale */
+            -webkit-overflow-scrolling: touch; /* Fluido su iOS */
         }
         #shop-slider::-webkit-scrollbar { display: none; }
         
@@ -91,37 +87,35 @@
         .item-card { 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             position: relative; z-index: 100; transform: translateZ(0); 
-            touch-action: pan-x; /* Segue lo scroll */
+            /* Permette lo scroll nativo ma prepara al drag */
+            touch-action: pan-x pan-y; 
         }
         .item-card img { width: 90px; pointer-events: none; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); transition: transform 0.2s; }
-        .item-card:active img { transform: scale(0.95); }
-        .clean-tag { font-family: sans-serif; font-weight: 800; font-size: 9px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.9); margin-top: 5px; text-transform: uppercase; text-align: center; }
+        .item-card.dragging { opacity: 0.5; }
+        .clean-tag { font-family: sans-serif; font-weight: 800; font-size: 9px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.9); margin-top: 5px; text-transform: uppercase; }
         
-        /* GHOST */
         .ghost-card { position: fixed; z-index: 999999; pointer-events: none; display: flex; flex-direction: column; align-items: center; transform: scale(1.2) rotate(5deg); opacity: 0.95; filter: drop-shadow(0 30px 50px rgba(0,0,0,0.6)); }
         .ghost-card img { width: 100px; } .ghost-card .clean-tag { display: none; }
 
-        /* --- 5. FOOTER --- */
+        /* --- FOOTER --- */
         #app-footer { 
             position: fixed; bottom: 0; left: 0; right: 0; height: 60px; 
             display: flex; align-items: center; justify-content: center; 
-            z-index: 5000; pointer-events: none; 
+            z-index: 50000; pointer-events: none; 
             background: linear-gradient(to top, rgba(0,0,0,0.3), transparent); 
         }
         .footer-logo { 
-            width: 150px; cursor: pointer; pointer-events: auto; transition: transform 0.1s; 
+            width: 150px; cursor: pointer; pointer-events: auto; /* Cliccabile */
+            transition: transform 0.1s; 
         }
         .footer-logo:active { transform: scale(0.95); }
 
-        /* --- 6. OVERLAYS --- */
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 6000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        /* --- OVERLAYS --- */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 60000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .mac-window { width: 90%; max-width: 360px; background: #fff; border: 3px double #000; padding: 0 0 15px 0; box-shadow: 15px 15px 0 rgba(0,0,0,0.5); text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; }
         .mac-title-bar { width: 100%; background: repeating-linear-gradient(45deg, #ccc, #ccc 2px, #fff 2px, #fff 4px); border-bottom: 2px solid #000; padding: 10px; margin-bottom: 10px; color: #000; font-size: 10px; font-weight: 800; letter-spacing: 1px; touch-action: none; cursor: move; }
         .draggable-handle { cursor: move; }
-        
-        .btn-pixel { background: #000; color: #fff; border: 2px solid #000; padding: 14px; font-family: 'Press Start 2P'; font-size: 9px; cursor: pointer; margin: 6px; width: 85%; transition: transform 0.1s; }
-        .btn-pixel:active { transform: translate(2px, 2px); }
-        .checkout-group { width: 85%; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+        .btn-pixel { background: #000; color: #fff; border: 2px solid #000; padding: 14px; font-family: 'Press Start 2P'; font-size: 9px; cursor: pointer; margin: 6px; width: 85%; }
         .input-pixel { border: 2px solid #000; padding: 12px; font-family: sans-serif; font-weight: bold; width: 85%; font-size: 11px; margin-bottom: 10px; background: #eee; outline: none; }
         .db-row { display: flex; gap: 4px; width: 95%; margin: 4px 0; align-items: center; justify-content: center; border-bottom: 1px dashed #ccc; padding-bottom: 2px; }
 
@@ -138,7 +132,7 @@
         <div class="gif-wrapper"><img id="loader-gif" src="loadernob.gif"></div>
         <div class="loading-area-bottom">
             <div class="pixel-bar-container"><div class="pixel-bar-fill"></div></div>
-            <button id="start-btn" onclick="this.closest('#loader-overlay').remove(); playSfx();">START</button>
+            <button id="start-btn" onclick="document.getElementById('loader-overlay').remove(); try{document.getElementById('sfx-gnam').play()}catch(e){}">START</button>
         </div>
         <div class="loader-footer">
             <img src="mark_c.png" alt="C" class="copyright-mark">
@@ -180,37 +174,44 @@
     <div id="ov-db" class="overlay"><div class="mac-window" style="max-width:95%; height:85vh; justify-content:flex-start;"><div class="mac-title-bar">ADMIN (CLOUD)</div><div style="width:90%; padding:5px; background:#ddd; margin-bottom:5px;"><label style="font-size:9px;">BACKGROUND URL:</label><input id="db-bg-url" class="input-pixel" style="width:100%;"></div><div id="db-list" style="overflow-y:auto; width:100%; flex-grow:1; border-bottom:2px solid #000; margin-bottom:10px;"></div><div style="display:flex; flex-wrap:wrap; justify-content:center; gap:5px; width:100%;"><button class="btn-pixel" style="width:45%; background:#00f;" onclick="createNewItem()">+ NEW ITEM</button><button class="btn-pixel" style="width:45%; background:#0f0;" onclick="saveAllChanges()">SAVE ALL</button><button class="btn-pixel" style="width:90%;" onclick="closeAll()">EXIT</button></div></div></div>
 
     <script>
-        // GLOBALI
+        // --- 1. GLOBALI ---
         let stripe, supabase;
         const defaultItems = [
             {id:0, name:'CAP FIRE', img:'image_cap.PNG', price:45, stripeId:'', sizes:'ONE SIZE'}, 
             {id:1, name:'TEE FLAME', img:'image_tee.PNG', price:65, stripeId:'', sizes:'S,M,L,XL'}
         ];
         let inventory = JSON.parse(JSON.stringify(defaultItems));
-        let cart = [], autoScrollSpeed = 0, dbClicks = 0, scrollLoopId = null;
+        let cart = [], dbClicks = 0;
         let currentBg = 'sfondo2.jpg';
 
+        // CHIAVI (Live)
         const emailPublic = "BThMV2knP0VG0s4nr";
         const emailService = "service_4scv4hn";
         const emailTemplate = "template_8opoo1v";
 
-        // STARTUP
+        // --- 2. STARTUP ---
         window.onload = function() {
+            // Render Immediato
             renderShop(); renderAvatars(); initDraggableWindows(); 
             document.body.style.backgroundImage = `url('${currentBg}')`;
 
+            // Fail-Safe: Se il caricamento non sparisce, forzalo via dopo 8 secondi
+            setTimeout(() => {
+                let l = document.getElementById('loader-overlay');
+                if(l) l.remove();
+            }, 8000);
+
             try {
-                // CHIAVI LIVE
                 stripe = Stripe('pk_live_51SyKuT1PjKstwovYOCs5iNC2Ef8sun65gJ2pLXi4pyvfqM9o2Tiaec8NTQuHJEoYVPzDEDsktyZwlSWl6SjMKxzM00i7aB1Yvd');
                 const sbUrl = 'https://jwifyapbnsbbpsrstrow.supabase.co';
-                const sbKey = 'sb_publishable_KxgF0mfUyD1b0AFxoJQ2ww_klbphC9s'; // CORRETTA
+                const sbKey = 'sb_publishable_KxgF0mfUyD1b0AFxoJQ2ww_klbphC9s'; 
                 supabase = supabase.createClient(sbUrl, sbKey);
                 emailjs.init(emailPublic);
                 loadDB();
             } catch(e) { console.log("Offline Mode", e); }
         };
 
-        // --- UI ---
+        // --- 3. UI FUNCTIONS ---
         function pongoClick(el, overlayId) {
             playSfx();
             if(el) { el.classList.remove('pongo-anim'); void el.offsetWidth; el.classList.add('pongo-anim'); }
@@ -220,7 +221,6 @@
         function adminTrigger() {
             playSfx(); dbClicks++;
             if(dbClicks >= 5) {
-                // NESSUN CONTROLLO, SOLO PASSWORD
                 if(prompt("PASSWORD")==="FRIENDLYFIRE26") openDB();
                 dbClicks = 0;
             }
@@ -229,7 +229,7 @@
 
         function playSfx() { try{document.getElementById('sfx-gnam').play();}catch(e){} }
 
-        // --- DB ---
+        // --- 4. DATA ---
         async function loadDB() {
             if(!supabase) return;
             try {
@@ -252,11 +252,11 @@
             });
         }
 
-        // --- PHYSICS (HOLD TO DRAG) ---
+        // --- 5. PHYSICS (IOS FRIENDLY) ---
         function attachPhysics(el, item, originalIndex) {
             let timer, isDragging = false, startX, startY, ghost;
-            const slider = document.getElementById('shop-slider');
-
+            
+            // TIMING: Click veloce = Nulla / Swipe pagina. Hold 0.3s = Drag Vestito.
             el.addEventListener('touchstart', e => {
                 startX = e.touches[0].clientX; startY = e.touches[0].clientY;
                 timer = setTimeout(() => {
@@ -265,20 +265,16 @@
                     ghost = el.cloneNode(true); ghost.classList.add('ghost-card');
                     ghost.style.left = (startX-45)+'px'; ghost.style.top = (startY-60)+'px';
                     document.body.appendChild(ghost); el.style.opacity = '0';
-                }, 300); // 300ms hold per trascinare
+                }, 300);
             }, {passive:true});
 
             window.addEventListener('touchmove', e => {
-                if(!isDragging) { 
-                    if(Math.abs(e.touches[0].clientX-startX)>10) clearTimeout(timer); 
-                    return; 
+                if(!isDragging) {
+                    if(Math.abs(e.touches[0].clientX - startX) > 10) clearTimeout(timer); // È scroll, cancella drag
+                    return;
                 }
-                e.preventDefault();
+                e.preventDefault(); // È drag, cancella scroll
                 ghost.style.left = (e.touches[0].clientX-45)+'px'; ghost.style.top = (e.touches[0].clientY-60)+'px';
-                
-                // Edge Scroll
-                if(e.touches[0].clientX > window.innerWidth*0.85) slider.scrollLeft += 10;
-                else if(e.touches[0].clientX < window.innerWidth*0.15) slider.scrollLeft -= 10;
             }, {passive:false});
 
             window.addEventListener('touchend', e => {
@@ -308,6 +304,7 @@
             });
         }
 
+        // --- 6. CART & PAY ---
         function addToCart(item) { cart.push(JSON.parse(JSON.stringify(item))); updateCartUI(); }
         function emptyCart() { cart=[]; updateCartUI(); closeAll(); }
         function updateCartUI() { document.getElementById('tank-badge').innerText = cart.length; document.getElementById('tank-badge').style.display = cart.length ? 'block' : 'none'; let t = cart.reduce((a,b)=>a+b.price,0); document.getElementById('cart-total').innerText = t; document.getElementById('checkout-total-display').innerText = t; document.getElementById('cart-list').innerHTML = cart.map(i=>`<div>${i.name} - ${i.price}€</div>`).join(''); document.getElementById('checkout-items-list').innerHTML = cart.map(i=>`<div style="display:flex;justify-content:space-between;border-bottom:1px solid #ccc;padding:5px;"><span>${i.name}</span><span>${i.price}€</span></div>`).join(''); }
@@ -330,7 +327,7 @@
                 if(supabase) await supabase.from('newsletter').insert([{email: e}]);
                 await emailjs.send(emailService, emailTemplate, {to_name: n||"Friend", user_email: e});
                 alert("WELCOME!"); closeAll();
-            } catch(e) { console.log(e); alert("DONE (DB Saved)"); closeAll(); }
+            } catch(e) { console.log(e); alert("DONE"); closeAll(); }
             btn.innerText = "SUBSCRIBE";
         }
 
@@ -339,8 +336,8 @@
         async function createNewItem() { if(!supabase) return; let newId = inventory.length > 0 ? Math.max(...inventory.map(i=>i.id))+1 : 0; await supabase.from('products').insert([{id: newId, name: 'NEW', img: 'logo_ff_loader.png', price: 0, stripeId: ''}]); alert("CREATED! RELOAD."); location.reload(); }
         async function deleteItemDB(id) { if(confirm("DELETE?")) { await supabase.from('products').delete().eq('id', id); location.reload(); } }
         
-        function openOv(id) { closeAll(); document.getElementById(id).style.display='flex'; if(id==='ov-checkout') updateCartUI(); }
-        function closeAll() { document.querySelectorAll('.overlay').forEach(o=>o.style.display='none'); }
+        function closeAll(){ document.querySelectorAll('.overlay').forEach(e=>e.style.display='none'); }
+        function openOv(id){ playSfx(); closeAll(); let o=document.getElementById(id); o.style.display='flex'; let w=o.querySelector('.mac-window'); if(w){w.style.position='relative';w.style.left='auto';w.style.top='auto';} if(id==='ov-checkout') updateCartUI(); }
         function initDraggableWindows() { document.querySelectorAll('.draggable-handle').forEach(h => { let win = h.closest('.mac-window'), isDrag=false, sx, sy; h.addEventListener('touchstart', e=>{ isDrag=true; let r=win.getBoundingClientRect(); sx=e.touches[0].clientX-r.left; sy=e.touches[0].clientY-r.top; }); window.addEventListener('touchmove', e=>{ if(!isDrag)return; e.preventDefault(); win.style.position='absolute'; win.style.left=(e.touches[0].clientX-sx)+'px'; win.style.top=(e.touches[0].clientY-sy)+'px'; }); window.addEventListener('touchend', ()=>{ isDrag=false; }); }); }
         function renderAvatars(){ let g=document.getElementById('avatar-grid'); for(let i=0;i<8;i++){ let u=`https://api.dicebear.com/7.x/pixel-art/svg?seed=ff${i}`; let d=document.createElement('div'); d.style.border='2px solid #000'; d.innerHTML=`<img src="${u}" style="width:100%">`; d.onclick=()=>{document.getElementById('profile-img-big').src=u;playSfx();}; if(i===0)d.click(); g.appendChild(d); } }
 
