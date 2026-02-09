@@ -11,9 +11,9 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <style>
-        /* --- 1. MOTORE GRAFICO --- */
-        :root { --red: #ff3a3a; --bg-pongo: #2e4a1e; --white: #ffffff; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
+        /* --- CORE --- */
+        :root { --bg-pongo: #2e4a1e; --white: #ffffff; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
         
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
@@ -21,113 +21,110 @@
             background-color: var(--bg-pongo);
             background-image: url('sfondo2.jpg');
             background-position: center; background-size: cover;
-            /* Abilita swipe nativo */
-            touch-action: pan-x pan-y;
+            overscroll-behavior: none; position: fixed;
         }
 
-        /* --- 2. LOADER AUTOMATICO CSS (SI DISTRUGGE DA SOLO) --- */
+        /* --- LOADER CSS AUTO-DISTRUTTIVO --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background-color: var(--white); z-index: 999999; 
+            background: #fff; z-index: 9999999; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            /* DOPO 3.5 SECONDI SPARIRE COMPLETAMENTE - SENZA JS */
-            animation: vanish 0.5s ease 3.5s forwards;
-            pointer-events: all;
+            animation: fadeOut 0.5s ease 4s forwards; pointer-events: all;
         }
-        @keyframes vanish { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+        @keyframes fadeOut { to { opacity: 0; visibility: hidden; pointer-events: none; } }
 
-        .loader-brand-img { width: 260px; max-width: 80%; margin-bottom: 10px; }
-        .gif-wrapper { width: 280px; height: 280px; display: flex; justify-content: center; align-items: center; }
+        .loader-img { width: 250px; max-width: 80%; margin-bottom: 20px; }
+        .gif-box { width: 280px; height: 280px; display: flex; justify-content: center; align-items: center; }
         #loader-gif { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transform: scale(1.1); }
-        
-        .loading-bar { width: 200px; height: 10px; border: 2px solid #000; padding: 1px; margin-top: 20px; }
-        .loading-fill { height: 100%; width: 0%; background: #32cd32; animation: load 3s linear forwards; }
+        .bar-con { width: 200px; height: 12px; border: 3px solid #000; padding: 2px; margin-top: 15px; }
+        .bar-fill { height: 100%; width: 0%; background: #32cd32; animation: load 3s linear forwards; }
         @keyframes load { 100% { width: 100%; } }
 
-        /* Bottone START manuale (se l'utente vuole cliccare prima) */
-        #start-btn {
-            margin-top: 15px; padding: 15px 30px; background: #000; color: #fff; 
-            border: 2px solid #000; font-family: inherit; cursor: pointer;
-            animation: blink 1s infinite;
+        #start-btn { 
+            margin-top: 20px; background: #000; color: #fff; border: 2px solid #000; 
+            padding: 15px 30px; font-family: inherit; cursor: pointer; 
+            animation: blink 1s infinite; 
         }
-        @keyframes blink { 50% { opacity: 0.7; } }
+        @keyframes blink { 50% { opacity: 0.6; } }
 
-        /* --- 3. HEADER --- */
+        /* --- HEADER --- */
         header { 
-            position: fixed; top: 0; left: 0; right: 0; z-index: 10000; 
-            display: flex; justify-content: space-between; padding: 20px; 
-            pointer-events: none; /* Lascia passare i click */
+            position: fixed; top: 0; left: 0; right: 0; z-index: 5000; 
+            display: flex; justify-content: space-between; padding: 20px; pointer-events: none; 
         }
         .icon-btn { 
-            width: 70px; height: 70px; object-fit: contain; cursor: pointer; 
-            pointer-events: auto; /* Icone cliccabili */
+            width: 70px; height: 70px; object-fit: contain; cursor: pointer; pointer-events: auto; 
             filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3)); transition: transform 0.1s;
         }
         .icon-btn:active { transform: scale(0.9); }
-        
         .tank-wrap { position: relative; pointer-events: auto; }
-        #badge { position: absolute; top: 0; right: -5px; background: #ff3a3a; color: #fff; padding: 3px 6px; font-size: 10px; display: none; border: 2px solid #000; }
+        #badge { position: absolute; top: 0; right: -5px; background: #ff3a3a; color: #fff; border: 2px solid #000; font-size: 10px; padding: 2px 6px; display: none; }
 
-        /* --- 4. SCROLL SHOP (FLUIDO) --- */
-        #shop-view { 
+        /* --- SHOP ENGINE v87 --- */
+        #shop-slider { 
             width: 100vw; height: 100%; display: flex; 
             overflow-x: scroll; overflow-y: hidden; 
             scroll-snap-type: x mandatory; 
-            -webkit-overflow-scrolling: touch; /* iOS Smooth */
             z-index: 10;
         }
-        #shop-view::-webkit-scrollbar { display: none; }
+        #shop-slider.free-flow { scroll-snap-type: none !important; } /* Sblocco per drag */
+        #shop-slider::-webkit-scrollbar { display: none; }
 
         .page { 
             min-width: 100vw; height: 100%; flex-shrink: 0; 
             display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); 
             padding: 110px 10px 100px 10px; gap: 5px; 
-            scroll-snap-align: center; justify-items: center; align-items: center;
+            scroll-snap-align: start; justify-items: center; align-items: center;
         }
 
         .card { 
+            width: 100px; height: 120px; position: relative; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            position: relative; width: 100px; height: 120px;
-            /* Permette drag & drop */
-            touch-action: pan-x pan-y; 
+            /* Importante per v87: lascia che JS gestisca il touch */
         }
         .card img { width: 90px; pointer-events: none; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
-        .tag { font-family: sans-serif; font-weight: 900; font-size: 9px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; text-transform: uppercase; text-align: center; }
+        .info { font-family: sans-serif; font-weight: 900; font-size: 9px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; text-align: center; text-transform: uppercase; }
 
-        .ghost { position: fixed; z-index: 99999; pointer-events: none; opacity: 0.8; transform: scale(1.2) rotate(5deg); }
-
-        /* --- 5. FOOTER --- */
-        footer { 
-            position: fixed; bottom: 0; left: 0; right: 0; height: 70px; 
-            display: flex; justify-content: center; align-items: center; 
-            z-index: 10000; pointer-events: none;
-            background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
+        /* GHOST FIXATO (Non diventa gigante) */
+        .ghost { 
+            position: fixed; z-index: 9999; pointer-events: none; 
+            width: 100px !important; height: 100px !important; /* Forza dimensione */
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0.9; transform: scale(1.1) rotate(5deg); 
         }
-        .brand-logo { width: 150px; pointer-events: auto; cursor: pointer; }
+        .ghost img { width: 90px !important; height: auto; }
+        .ghost .info { display: none; }
 
-        /* --- 6. FINESTRE (OVERLAYS) --- */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 20000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        /* --- FOOTER --- */
+        footer { 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 60px; 
+            display: flex; justify-content: center; align-items: center; 
+            z-index: 5000; pointer-events: none; 
+            background: linear-gradient(to top, rgba(0,0,0,0.4), transparent); 
+        }
+        .brand { width: 150px; pointer-events: auto; cursor: pointer; }
+
+        /* --- MODALS --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .win { width: 90%; max-width: 400px; background: #fff; border: 3px double #000; padding-bottom: 15px; text-align: center; box-shadow: 10px 10px 0 rgba(0,0,0,0.5); }
         .win-h { background: #eee; border-bottom: 2px solid #000; padding: 10px; font-weight: bold; margin-bottom: 15px; }
-        
-        .btn { background: #000; color: #fff; border: 2px solid #000; padding: 12px; width: 85%; margin: 5px auto; display: block; font-family: inherit; cursor: pointer; text-transform: uppercase; }
-        .btn:active { transform: translate(2px, 2px); }
-        .inp { width: 85%; padding: 10px; margin: 5px auto; display: block; border: 2px solid #000; background: #eee; font-family: sans-serif; font-weight: bold; }
+        .btn { background: #000; color: #fff; border: 2px solid #000; padding: 12px; width: 85%; margin: 6px auto; display: block; font-family: inherit; cursor: pointer; }
+        .inp { width: 85%; padding: 10px; margin: 5px auto; border: 2px solid #000; background: #eee; font-family: sans-serif; font-weight: bold; }
 
-        /* PC FIX */
         @media (min-width: 1024px) {
             .page { grid-template-columns: repeat(6, 1fr); padding: 100px; }
-            .card { width: 150px; height: 180px; } .card img { width: 140px; }
+            .card { width: 160px; height: 200px; } .card img { width: 140px; }
+            .ghost { width: 160px !important; } .ghost img { width: 140px !important; }
         }
     </style>
 </head>
 <body>
 
     <div id="loader-overlay">
-        <img src="logo_ff_loader.png" class="loader-brand-img">
-        <div class="gif-wrapper"><img id="loader-gif" src="loadernob.gif"></div>
-        <div class="loading-bar"><div class="loading-fill"></div></div>
-        <button id="start-btn" onclick="this.parentElement.style.display='none'; playSfx()">START</button>
+        <img src="logo_ff_loader.png" class="loader-img">
+        <div class="gif-box"><img id="loader-gif" src="loadernob.gif"></div>
+        <div class="bar-con"><div class="bar-fill"></div></div>
+        <button id="start-btn" onclick="killLoader()">START</button>
     </div>
 
     <audio id="sfx" src="suono_gnam.mp3"></audio>
@@ -141,182 +138,180 @@
         </div>
     </header>
 
-    <div id="shop-view">
+    <div id="shop-slider">
         <div id="page-1" class="page"></div>
         <div id="page-2" class="page"></div>
         <div id="page-3" class="page"></div>
     </div>
 
     <footer>
-        <img src="brand_name.png" class="brand-logo" onclick="admin.click()">
+        <img src="brand_name.png" class="brand" onclick="admin.click()">
     </footer>
 
     <div id="mod-cart" class="modal"><div class="win"><div class="win-h">TANK</div><div id="list-cart" style="max-height:150px;overflow:auto"></div><div style="margin:10px">TOT: <span id="tot">0</span>€</div><button class="btn" onclick="ui.open('pay')">CHECKOUT</button><button class="btn" onclick="cart.clear()">EMPTY</button><button class="btn" onclick="ui.close()">CLOSE</button></div></div>
-    
     <div id="mod-pay" class="modal"><div class="win"><div class="win-h">CHECKOUT</div><input id="ship-n" class="inp" placeholder="NAME"><input id="ship-e" class="inp" placeholder="EMAIL"><button class="btn" style="background:#5469d4" onclick="cart.pay()">PAY STRIPE</button><button class="btn" onclick="ui.close()">CANCEL</button></div></div>
-
-    <div id="mod-world" class="modal"><div class="win"><div class="win-h">WORLD</div><input id="sub-n" class="inp" placeholder="NAME"><input id="sub-e" class="inp" placeholder="EMAIL"><button class="btn" onclick="admin.sub()">SUBSCRIBE</button><button class="btn" onclick="window.open('https://instagram.com/friendlyfire')">INSTAGRAM</button><button class="btn" onclick="ui.close()">BACK</button></div></div>
-
+    <div id="mod-world" class="modal"><div class="win"><div class="win-h">WORLD</div><input id="sub-e" class="inp" placeholder="EMAIL"><button class="btn" onclick="admin.sub()">SUBSCRIBE</button><button class="btn" onclick="ui.close()">BACK</button></div></div>
     <div id="mod-profile" class="modal"><div class="win"><div class="win-h">PROFILE</div><div id="avatars" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:10px"></div><button class="btn" onclick="ui.close()">SAVE</button></div></div>
-
-    <div id="mod-admin" class="modal"><div class="win" style="height:80vh"><div class="win-h">ADMIN</div><div id="db-list" style="height:60%;overflow:auto"></div><button class="btn" onclick="admin.save()">SAVE ALL</button><button class="btn" onclick="ui.close()">EXIT</button></div></div>
+    <div id="mod-admin" class="modal"><div class="win" style="height:80vh"><div class="win-h">DB</div><div id="db-list" style="height:60%;overflow:auto"></div><button class="btn" onclick="admin.save()">SAVE ALL</button><button class="btn" onclick="ui.close()">EXIT</button></div></div>
 
     <script>
-        // --- CONFIGURAZIONE ---
-        const KEYS = {
+        // CONFIG
+        const CFG = {
             stripe: 'pk_live_51SyKuT1PjKstwovYOCs5iNC2Ef8sun65gJ2pLXi4pyvfqM9o2Tiaec8NTQuHJEoYVPzDEDsktyZwlSWl6SjMKxzM00i7aB1Yvd',
             sbUrl: 'https://jwifyapbnsbbpsrstrow.supabase.co',
             sbKey: 'sb_publishable_KxgF0mfUyD1b0AFxoJQ2ww_klbphC9s',
             email: 'BThMV2knP0VG0s4nr'
         };
-        
-        let state = {
-            items: [
-                {id:0, name:'CAP FIRE', img:'image_cap.PNG', price:45, stripeId:''},
-                {id:1, name:'TEE FLAME', img:'image_tee.PNG', price:65, stripeId:''}
-            ],
-            cart: [],
-            clicks: 0
-        };
-        let sb = null, strp = null;
+        const DEF = [{id:0, name:'CAP FIRE', img:'image_cap.PNG', price:45, stripeId:''}, {id:1, name:'TEE FLAME', img:'image_tee.PNG', price:65, stripeId:''}];
+        let state = { items: [...DEF], cart: [], clicks: 0, scrollSpeed: 0, loopId: null };
+        let sb, strp;
 
-        // --- AVVIO SICURO ---
         window.onload = () => {
-            // 1. Disegna subito (non aspetta DB)
-            shop.draw(); 
-            ui.genAvatars();
-            
-            // 2. Connessione Lazy (dopo 1s)
+            shop.render(); ui.avatars();
             setTimeout(async () => {
                 try {
-                    strp = Stripe(KEYS.stripe);
-                    sb = supabase.createClient(KEYS.sbUrl, KEYS.sbKey);
-                    emailjs.init(KEYS.email);
-                    
-                    // Scarica dati veri
+                    strp = Stripe(CFG.stripe);
+                    sb = supabase.createClient(CFG.sbUrl, CFG.sbKey);
+                    emailjs.init(CFG.email);
                     let { data } = await sb.from('products').select('*').order('id');
-                    if(data && data.length) { state.items = data; shop.draw(); }
-                    
+                    if(data && data.length) { state.items = data; shop.render(); }
                     let { data: set } = await sb.from('settings').select('*').single();
                     if(set?.bg_url) document.body.style.backgroundImage = `url('${set.bg_url}')`;
-                    
-                } catch(e) { console.log("Offline:", e); }
-            }, 1000);
+                } catch(e) { console.log("Offline Mode"); }
+            }, 500);
         };
 
-        // --- SISTEMA SHOP ---
+        function killLoader() { document.getElementById('loader-overlay').remove(); playSfx(); }
+        function playSfx() { try{document.getElementById('sfx').play()}catch(e){} }
+
+        // --- PHYSICS v87 (THE CORE) ---
         const shop = {
-            draw: () => {
+            render: () => {
                 [1,2,3].forEach(n => document.getElementById('page-'+n).innerHTML='');
                 state.items.forEach((it, i) => {
                     let p = Math.floor(i/12)+1; if(p>3) return;
-                    let div = document.createElement('div');
-                    div.className = 'card';
-                    div.innerHTML = `<img src="${it.img}"><div class="tag">${it.name}<br>${it.price}€</div>`;
-                    shop.phys(div, it);
-                    document.getElementById('page-'+p).appendChild(div);
+                    let d = document.createElement('div'); d.className = 'card'; d.id = 'itm-'+it.id;
+                    d.innerHTML = `<img src="${it.img}"><div class="info">${it.name}<br>${it.price}€</div>`;
+                    shop.physics(d, it, i);
+                    document.getElementById('page-'+p).appendChild(d);
                 });
             },
-            phys: (el, item) => {
-                let timer, isDrag=false, sx, sy, ghost;
-                
+            physics: (el, item, idx) => {
+                let timer, isDrag = false, startX, startY, ghost;
+                const slider = document.getElementById('shop-slider');
+
                 el.addEventListener('touchstart', e => {
-                    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+                    if(state.cart.some(c=>c.id===item.id)) return;
+                    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+                    // HOLD 300ms TO ACTIVATE DRAG
                     timer = setTimeout(() => {
                         isDrag = true;
-                        if(navigator.vibrate) navigator.vibrate(40);
-                        ghost = el.cloneNode(true); ghost.className = 'ghost';
-                        ghost.style.left = (sx-50)+'px'; ghost.style.top = (sy-60)+'px';
-                        document.body.appendChild(ghost); el.style.opacity = 0.3;
+                        if(navigator.vibrate) navigator.vibrate(50);
+                        slider.classList.add('free-flow'); // Sblocca scroll snap
+                        shop.scrollLoop(); // Avvia edge scroll
+                        
+                        ghost = el.cloneNode(true); 
+                        ghost.className = 'ghost'; // Ha dimensioni fisse nel CSS
+                        ghost.style.left = (startX-50)+'px'; ghost.style.top = (startY-60)+'px';
+                        document.body.appendChild(ghost);
+                        el.style.opacity = 0.3;
                     }, 300);
                 }, {passive:true});
 
                 window.addEventListener('touchmove', e => {
                     if(!isDrag) {
-                        if(Math.abs(e.touches[0].clientX - sx) > 10) clearTimeout(timer);
+                        if(Math.abs(e.touches[0].clientX - startX) > 10) clearTimeout(timer);
                         return;
                     }
                     e.preventDefault();
-                    ghost.style.left = (e.touches[0].clientX-50)+'px';
-                    ghost.style.top = (e.touches[0].clientY-60)+'px';
+                    let cx = e.touches[0].clientX, cy = e.touches[0].clientY;
+                    ghost.style.left = (cx-50)+'px'; ghost.style.top = (cy-60)+'px';
+
+                    // Edge Scroll logic
+                    if(cx > window.innerWidth*0.85) state.scrollSpeed = 10;
+                    else if(cx < window.innerWidth*0.15) state.scrollSpeed = -10;
+                    else state.scrollSpeed = 0;
                 }, {passive:false});
 
                 window.addEventListener('touchend', e => {
                     clearTimeout(timer);
                     if(!isDrag) return;
                     isDrag = false;
-                    
-                    let tx = e.changedTouches[0].clientX, ty = e.changedTouches[0].clientY;
+                    state.scrollSpeed = 0; 
+                    cancelAnimationFrame(state.loopId);
+                    slider.classList.remove('free-flow');
+
+                    let cx = e.changedTouches[0].clientX, cy = e.changedTouches[0].clientY;
                     let tank = document.getElementById('tank-target').getBoundingClientRect();
-                    
-                    if(tx > tank.left && tx < tank.right && ty > tank.top && ty < tank.bottom) {
+
+                    // TANK COLLISION
+                    if(cx > tank.left && cx < tank.right && cy > tank.top && cy < tank.bottom) {
                         cart.add(item); playSfx();
+                    }
+                    // SWAP COLLISION
+                    else {
+                        let target = document.elementFromPoint(cx, cy)?.closest('.card');
+                        if(target && target !== el) {
+                            let tId = parseInt(target.id.split('-')[1]);
+                            let tIdx = state.items.findIndex(x => x.id === tId);
+                            if(tIdx > -1) {
+                                [state.items[idx], state.items[tIdx]] = [state.items[tIdx], state.items[idx]];
+                                shop.render(); playSfx();
+                            }
+                        }
                     }
                     ghost.remove(); el.style.opacity = 1;
                 });
+            },
+            scrollLoop: () => {
+                const step = () => {
+                    if(state.scrollSpeed !== 0) document.getElementById('shop-slider').scrollLeft += state.scrollSpeed;
+                    state.loopId = requestAnimationFrame(step);
+                };
+                step();
             }
         };
 
-        // --- CARRELLO ---
+        // --- CART & UI ---
         const cart = {
             add: (it) => { state.cart.push(it); cart.upd(); },
             clear: () => { state.cart = []; cart.upd(); ui.close(); },
             upd: () => {
                 document.getElementById('badge').innerText = state.cart.length;
-                document.getElementById('badge').style.display = state.cart.length ? 'block' : 'none';
-                let t = state.cart.reduce((a,b)=>a+b.price,0);
-                document.getElementById('tot').innerText = t;
-                document.getElementById('list-cart').innerHTML = state.cart.map(i=>`<div>${i.name} - ${i.price}€</div>`).join('');
+                document.getElementById('badge').style.display = state.cart.length?'block':'none';
+                document.getElementById('tot').innerText = state.cart.reduce((a,b)=>a+b.price,0);
+                document.getElementById('list-cart').innerHTML = state.cart.map(i=>`<div>${i.name}</div>`).join('');
             },
             pay: async () => {
                 if(!state.cart.length) return alert("EMPTY");
-                let n = document.getElementById('ship-n').value, e = document.getElementById('ship-e').value;
-                if(!n || !e) return alert("DATA REQUIRED");
-                
                 let items = state.cart.map(i => i.stripeId ? {price: i.stripeId, quantity: 1} : null).filter(i=>i);
-                if(!items.length) return alert("ERR: NO STRIPE ID");
-
+                if(!items.length) return alert("ERR: IDs");
+                let email = document.getElementById('ship-e').value;
+                if(!email) return alert("EMAIL?");
                 await strp.redirectToCheckout({
-                    lineItems: items, mode: 'payment', customerEmail: e,
-                    shippingAddressCollection: { allowedCountries: ['IT','US','FR'] },
+                    lineItems: items, mode: 'payment', customerEmail: email,
+                    shippingAddressCollection: { allowedCountries: ['IT','US'] },
                     successUrl: window.location.href, cancelUrl: window.location.href
                 });
             }
         };
 
-        // --- UI & ADMIN ---
         const ui = {
-            open: (id) => { 
-                playSfx();
-                document.querySelectorAll('.modal').forEach(m=>m.style.display='none');
-                document.getElementById('mod-'+id).style.display='flex';
-                if(id==='admin') admin.render();
-            },
+            open: (id) => { playSfx(); document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); document.getElementById('mod-'+id).style.display='flex'; if(id==='admin') admin.render(); },
             close: () => document.querySelectorAll('.modal').forEach(m=>m.style.display='none'),
-            genAvatars: () => {
-                let c = document.getElementById('avatars'); c.innerHTML='';
-                for(let i=0;i<8;i++) c.innerHTML+=`<img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=${i}" width="100%" onclick="playSfx()">`;
-            }
+            avatars: () => { document.getElementById('avatars').innerHTML = [...Array(8)].map((_,i)=>`<img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=${i}" width="100%" onclick="playSfx()">`).join(''); }
         };
 
         const admin = {
             click: () => {
                 playSfx(); state.clicks++;
-                if(state.clicks >= 5) {
-                    if(prompt("PASS") === "FRIENDLYFIRE26") ui.open('admin');
-                    state.clicks = 0;
-                }
+                if(state.clicks >= 5) { if(prompt("PASS")==="FRIENDLYFIRE26") ui.open('admin'); state.clicks=0; }
                 setTimeout(()=>state.clicks=0, 800);
             },
             render: () => {
-                let c = document.getElementById('db-list'); c.innerHTML='';
-                state.items.forEach(i => {
-                    c.innerHTML += `<div style="display:flex;gap:5px;margin:5px;border-bottom:1px solid #ccc">
-                        <input id="n-${i.id}" value="${i.name}" class="inp" style="width:30%">
-                        <input id="p-${i.id}" value="${i.price}" class="inp" style="width:20%">
-                        <button class="btn" style="width:20%;background:red" onclick="admin.del(${i.id})">X</button>
-                    </div>`;
-                });
+                document.getElementById('db-list').innerHTML = state.items.map(i => 
+                    `<div style="display:flex;gap:5px;margin:5px;border-bottom:1px solid #ccc"><input id="n-${i.id}" value="${i.name}" class="inp" style="width:30%"><input id="p-${i.id}" value="${i.price}" class="inp" style="width:20%"><button class="btn" style="width:20%;background:red" onclick="admin.del(${i.id})">X</button></div>`
+                ).join('');
             },
             save: async () => {
                 if(!sb) return;
@@ -336,8 +331,6 @@
                 alert("DONE"); ui.close();
             }
         };
-
-        function playSfx() { try{document.getElementById('sfx').play()}catch(e){} }
         
         if(window.location.search.includes('success')) { alert("ORDER CONFIRMED!"); cart.clear(); }
     </script>
