@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>FRIENDLYFIRE CO. | V96 PRE-ORDER</title>
+    <title>FRIENDLYFIRE CO. | V97 FINAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -24,18 +24,44 @@
             background-size: 450px; overscroll-behavior: none; position: fixed; 
         }
 
-        /* --- LOADER --- */
+        /* --- LOADER V87 (RIPRISTINATO) --- */
         #loader-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #ffffff; z-index: 999999; 
+            background-color: #ffffff; /* Sfondo bianco pulito */
+            z-index: 999999999; /* Sempre sopra a tutto */
             display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-        .gif-loader-container { width: 320px; height: 320px; display: flex; justify-content: center; align-items: center; margin-bottom: -10px; }
-        #loader-gif { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; filter: contrast(1.2) saturate(1.2); }
-        .loading-text { font-size: 9px; letter-spacing: 2px; margin-bottom: 12px; color: #000; }
-        .bar-outer { width: 200px; height: 16px; border: 3px solid #000; padding: 2px; background: #fff; }
-        #bar-fill { width: 0%; height: 100%; background: #000; transition: width 0.1s linear; }
-        #start-btn { display: none; margin-top: 15px; }
+
+        .gif-loader-container {
+            width: 300px; height: 300px; 
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #loader-gif { 
+            width: 100%; height: 100%; object-fit: contain;
+            mix-blend-mode: screen; /* Rende la GIF trasparente sul bianco */
+            filter: contrast(1.2) saturate(1.2);
+        }
+
+        .loading-text { 
+            font-size: 10px; letter-spacing: 2px; margin-bottom: 15px; color: #000; text-transform: uppercase; 
+        }
+
+        .bar-outer { 
+            width: 220px; height: 20px; border: 4px solid #000; padding: 3px; background: #fff; 
+        }
+
+        #bar-fill { 
+            width: 0%; height: 100%; background: #000; transition: width 0.1s linear; 
+        }
+
+        #start-btn { 
+            display: none; margin-top: 25px; width: 220px; text-align: center;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 0% {opacity:1;} 50% {opacity:0.5;} 100% {opacity:1;} }
 
         /* --- HEADER --- */
         header { 
@@ -88,11 +114,11 @@
 
     <div id="loader-overlay">
         <div class="gif-loader-container">
-            <img id="loader-gif" src="loader_360.gif">
+            <img id="loader-gif" src="loader_360.gif" alt="Loading...">
         </div>
-        <div class="loading-text">LOADING WORLD...</div>
+        <div class="loading-text">LOADING ASSETS...</div>
         <div class="bar-outer"><div id="bar-fill"></div></div>
-        <button id="start-btn" class="btn-pixel" style="width: 200px;">ENTER WORLD</button>
+        <button id="start-btn" class="btn-pixel" onclick="enterWorld()">ENTER WORLD</button>
     </div>
 
     <audio id="sfx-eat" src="suono_gnam.mp3" preload="auto"></audio>
@@ -138,14 +164,13 @@
     </div>
 
     <script>
-        // --- CHIAVI INTEGRATE (NON TOCCARE) ---
+        // --- CHIAVI INTEGRATE ---
         const EMAILJS_PUBLIC_KEY = 'BThMV2knP0VG0s4nr';
         const EMAILJS_SERVICE_ID = 'service_4scv4hn';
         const EMAILJS_TEMPLATE_ID = 'template_8opoo1v';
         const SUPABASE_URL = 'https://jwifyapbnsbbpsrstrow.supabase.co';
         const SUPABASE_KEY = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y';
 
-        // --- INIZIALIZZAZIONE ---
         (function(){ emailjs.init(EMAILJS_PUBLIC_KEY); })();
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -159,20 +184,28 @@
         ];
         let cart = [];
 
+        // --- LOADER LOGIC (ESECUZIONE IMMEDIATA) ---
         window.onload = () => {
             renderShop();
+            
+            // Logica Loading Bar
             let p = 0;
+            const bar = document.getElementById('bar-fill');
+            const btn = document.getElementById('start-btn');
+            
             const interval = setInterval(() => {
-                p += 2; 
-                document.getElementById('bar-fill').style.width = p + '%';
+                p += 1; // Velocità
+                bar.style.width = p + '%';
                 if(p >= 100) {
                     clearInterval(interval);
-                    document.getElementById('start-btn').style.display = 'block';
+                    btn.style.display = 'block'; // Mostra bottone
                 }
             }, 30);
         };
 
-        document.getElementById('start-btn').onclick = () => document.getElementById('loader-overlay').style.display='none';
+        function enterWorld() {
+            document.getElementById('loader-overlay').style.display = 'none';
+        }
 
         function renderShop() {
             const container = document.getElementById('page-1');
@@ -246,11 +279,9 @@
                 return false; 
             }
 
-            // Salva su Supabase (se non esiste già)
             const { error } = await supabase.from('newsletter').insert([{ email: email }]);
             if(error && !error.message.includes('unique')) console.error("DB Err", error);
 
-            // Invia solo se non è un checkout automatico (per non spammare)
             if(!manualEmail) {
                 const btn = document.querySelector('#ov-newsletter button');
                 btn.innerText = "SENDING...";
@@ -264,28 +295,22 @@
             return true;
         }
 
-        // --- CHECKOUT "VETRINA" ---
+        // --- CHECKOUT SIMULATO ---
         async function processPayment() {
             if(cart.length === 0) { alert("Il carrello è vuoto!"); return; }
-            
-            // 1. Chiediamo la mail per "Confermare l'ordine"
-            let email = prompt("Inserisci la tua email per inviare la richiesta d'ordine:");
+            let email = prompt("Inserisci la tua email per l'ordine:");
             
             if(email && email.includes('@')) {
                 const btn = document.getElementById('btn-checkout');
-                btn.innerText = "ELABORAZIONE...";
-                
-                // 2. Salviamo la mail nel DB (come lead)
-                await subscribeNewsletter(email);
+                btn.innerText = "ATTENDI...";
+                await subscribeNewsletter(email); // Salva nel DB
 
-                // 3. Simuliamo il successo
                 setTimeout(() => {
-                    alert(`GRAZIE! La richiesta per ${cart.length} item è stata ricevuta.\nTi contatteremo a: ${email}`);
+                    alert(`ORDINE RICEVUTO! Ti scriveremo a: ${email}`);
                     
-                    // Invia notifica via EmailJS a TE STESSO (Opzionale: qui invia conferma all'utente)
                     emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { 
                         user_email: email, 
-                        message: `Richiesta Ordine: ${cart.map(i=>i.name).join(', ')} - Tot: ${document.getElementById('cart-total').innerText}` 
+                        message: `NUOVO ORDINE: ${cart.map(i=>i.name).join(', ')} - TOT: ${document.getElementById('cart-total').innerText}` 
                     });
 
                     cart = [];
@@ -294,7 +319,7 @@
                     btn.innerText = "PRENOTA / ORDINA";
                 }, 1500);
             } else if (email) {
-                alert("Email non valida, riprova.");
+                alert("Email non valida.");
             }
         }
     </script>
