@@ -2,72 +2,67 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>FRIENDLYFIRE CO. | V97 FINAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>FRIENDLYFIRE CO. | V99</title>
     
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
     <style>
-        /* --- CORE DESIGN --- */
+        /* --- CORE DESIGN IPHONE --- */
         :root { --red: #ff3a3a; --bg-pongo: #2e4a1e; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; outline: none; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
         
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Press Start 2P', cursive; 
+            /* Sfondo Pongo ripetuto e fisso (stile V87) */
             background: var(--bg-pongo) url('sfondo_pongo.PNG') repeat fixed center; 
-            background-size: 450px; overscroll-behavior: none; position: fixed; 
+            background-size: 450px; 
+            overscroll-behavior: none; position: fixed; 
         }
 
-        /* --- LOADER V87 (RIPRISTINATO) --- */
-        #loader-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #ffffff; /* Sfondo bianco pulito */
-            z-index: 999999999; /* Sempre sopra a tutto */
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        /* --- LOADER PIXEL BAR (Richiesta Fulvio) --- */
+        #loader-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background-color: #ffffff; z-index: 99999999; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
         }
-
-        .gif-loader-container {
-            width: 300px; height: 300px; 
-            display: flex; justify-content: center; align-items: center;
+        
+        .loader-logo { font-size: 20px; margin-bottom: 20px; text-transform: uppercase; color: #000; letter-spacing: -1px;}
+        
+        .pixel-bar-container { 
+            width: 220px; height: 24px; background: #fff; 
+            border: 4px solid #000; padding: 3px; 
+            box-shadow: 6px 6px 0 rgba(0,0,0,0.2); 
             margin-bottom: 20px;
         }
-
-        #loader-gif { 
-            width: 100%; height: 100%; object-fit: contain;
-            mix-blend-mode: screen; /* Rende la GIF trasparente sul bianco */
-            filter: contrast(1.2) saturate(1.2);
-        }
-
-        .loading-text { 
-            font-size: 10px; letter-spacing: 2px; margin-bottom: 15px; color: #000; text-transform: uppercase; 
-        }
-
-        .bar-outer { 
-            width: 220px; height: 20px; border: 4px solid #000; padding: 3px; background: #fff; 
-        }
-
-        #bar-fill { 
-            width: 0%; height: 100%; background: #000; transition: width 0.1s linear; 
+        
+        .pixel-bar-fill { 
+            height: 100%; width: 0%; background-color: #000; 
+            transition: width 0.1s linear;
         }
 
         #start-btn { 
-            display: none; margin-top: 25px; width: 220px; text-align: center;
-            animation: blink 1s infinite;
+            display: none; 
+            background: #ff3a3a; color: #fff; border: 4px solid #000; 
+            padding: 15px 30px; font-family: 'Press Start 2P'; font-size: 10px; 
+            cursor: pointer; box-shadow: 6px 6px 0 #000; 
+            text-transform: uppercase; margin-top: 10px;
         }
-
-        @keyframes blink { 0% {opacity:1;} 50% {opacity:0.5;} 100% {opacity:1;} }
+        #start-btn:active { transform: translate(2px, 2px); box-shadow: 3px 3px 0 #000; }
 
         /* --- HEADER --- */
         header { 
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px 20px; position: absolute; top: 0; width: 100%; 
             z-index: 10000; pointer-events: none; 
+            padding-top: env(safe-area-inset-top, 20px); /* Notch Safe */
         }
         .pongo-btn { 
             width: 65px; height: 65px; object-fit: contain; 
@@ -85,15 +80,38 @@
             min-width: 20px; text-align: center; display: none; 
         }
 
-        /* --- SHOP --- */
+        /* --- SHOP HORIZONTAL --- */
         #shop-slider { width: 100vw; height: 100%; display: flex; overflow-x: scroll; scroll-snap-type: x mandatory; }
         #shop-slider::-webkit-scrollbar { display: none; }
-        .shop-page { min-width: 100vw; height: 100%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); padding: 110px 15px 150px 15px; gap: 10px; scroll-snap-align: start; }
+        
+        /* Spazio extra sotto per il Footer */
+        .shop-page { 
+            min-width: 100vw; height: 100%; display: grid; 
+            grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); 
+            padding: 100px 15px 120px 15px; 
+            gap: 5px; scroll-snap-align: start; 
+        }
         
         .item-card { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .item-card img { width: 80px; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.6)); touch-action: none; }
-        .clean-tag { font-family: sans-serif; font-weight: 800; font-size: 8px; color: #fff; text-shadow: 0 1px 3px #000; margin-top: 3px; }
+        .item-card img { width: 85px; filter: drop-shadow(0 5px 6px rgba(0,0,0,0.6)); touch-action: none; }
+        .clean-tag { font-family: sans-serif; font-weight: 800; font-size: 8px; color: #fff; text-shadow: 0 1px 3px #000; margin-top: 5px; }
 
+        /* --- FOOTER BRAND NAME (Added) --- */
+        #app-footer {
+            position: fixed; bottom: 20px; left: 0; width: 100%;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9000; pointer-events: none;
+            padding-bottom: env(safe-area-inset-bottom, 10px);
+        }
+        .footer-logo {
+            width: 140px; height: auto; object-fit: contain;
+            pointer-events: auto; cursor: pointer;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            transition: transform 0.1s;
+        }
+        .footer-logo:active { transform: scale(0.9); }
+
+        /* Physics */
         .dragging { position: fixed !important; z-index: 99999 !important; pointer-events: none; transform: scale(1.2); }
         .sucked { transform: scale(0) rotate(360deg) !important; opacity: 0 !important; transition: 0.5s ease-in !important; }
 
@@ -113,12 +131,12 @@
 <body>
 
     <div id="loader-overlay">
-        <div class="gif-loader-container">
-            <img id="loader-gif" src="loader_360.gif" alt="Loading...">
+        <div class="loader-logo">FRIENDLYFIRE</div>
+        <div class="pixel-bar-container">
+            <div id="bar-fill" class="pixel-bar-fill"></div>
         </div>
-        <div class="loading-text">LOADING ASSETS...</div>
-        <div class="bar-outer"><div id="bar-fill"></div></div>
-        <button id="start-btn" class="btn-pixel" onclick="enterWorld()">ENTER WORLD</button>
+        <div id="loading-txt" style="font-size:8px; margin-bottom:15px; font-family: sans-serif;">LOADING ASSETS...</div>
+        <button id="start-btn" onclick="destroyLoader()">ENTER WORLD</button>
     </div>
 
     <audio id="sfx-eat" src="suono_gnam.mp3" preload="auto"></audio>
@@ -136,20 +154,24 @@
         <div id="page-1" class="shop-page"></div>
     </div>
 
+    <footer id="app-footer">
+        <img src="brand_name.png" class="footer-logo" onclick="refreshWorld()" alt="FRIENDLYFIRE">
+    </footer>
+
     <div id="cart-popup">
         <p style="color:#000; font-size:12px; margin-bottom:15px;">IL TUO TANK</p>
         <div id="cart-list" style="font-size:9px; color:#000; text-align:left; margin-bottom:15px; min-height:50px;">
             IL CARRELLO È VUOTO
         </div>
         <div id="cart-total" style="font-size:10px; margin-bottom:15px; border-top:2px solid #000; padding-top:5px;">TOT: 0€</div>
-        <button class="btn-pixel" id="btn-checkout" onclick="processPayment()">PRENOTA / ORDINA</button>
+        <button class="btn-pixel" id="btn-checkout" onclick="processPayment()">ORDINA / PRENOTA</button>
         <button class="btn-pixel" style="background:#fff; color:#000; border:2px solid #000;" onclick="toggleCart()">CHIUDI</button>
     </div>
 
     <div id="ov-newsletter" class="overlay">
         <div class="pixel-box">
             <h3 style="font-size:12px; margin-top:0;">JOIN THE CLUB</h3>
-            <p style="font-size:8px; line-height:1.5; margin-bottom:15px;">Iscriviti per drop esclusivi e codici sconto.</p>
+            <p style="font-size:8px; line-height:1.5; margin-bottom:15px;">Iscriviti per drop esclusivi.</p>
             <input type="email" id="newsletter-email" placeholder="la tua mail...">
             <button class="btn-pixel" onclick="subscribeNewsletter()">ISCRIVITI ORA</button>
             <button class="btn-pixel" style="background:transparent; color:#000; margin-top:5px;" onclick="closeAll()">ESCI</button>
@@ -164,16 +186,18 @@
     </div>
 
     <script>
-        // --- CHIAVI INTEGRATE ---
+        // --- 1. CONFIGURAZIONE CHIAVI (CORRETTE) ---
         const EMAILJS_PUBLIC_KEY = 'BThMV2knP0VG0s4nr';
         const EMAILJS_SERVICE_ID = 'service_4scv4hn';
         const EMAILJS_TEMPLATE_ID = 'template_8opoo1v';
         const SUPABASE_URL = 'https://jwifyapbnsbbpsrstrow.supabase.co';
         const SUPABASE_KEY = 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y';
 
+        // Init
         (function(){ emailjs.init(EMAILJS_PUBLIC_KEY); })();
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // --- DATI ---
         let inventory = [
             {name:'CAP FIRE', price:45, img:'image_cap.PNG'},
             {name:'TEE PONGO', price:65, img:'image_tee.PNG'},
@@ -184,29 +208,34 @@
         ];
         let cart = [];
 
-        // --- LOADER LOGIC (ESECUZIONE IMMEDIATA) ---
+        // --- 2. LOADER ---
         window.onload = () => {
             renderShop();
-            
-            // Logica Loading Bar
             let p = 0;
             const bar = document.getElementById('bar-fill');
             const btn = document.getElementById('start-btn');
+            const txt = document.getElementById('loading-txt');
             
             const interval = setInterval(() => {
-                p += 1; // Velocità
+                p += 2; 
                 bar.style.width = p + '%';
                 if(p >= 100) {
                     clearInterval(interval);
-                    btn.style.display = 'block'; // Mostra bottone
+                    txt.style.display = 'none';
+                    btn.style.display = 'block';
                 }
             }, 30);
         };
 
-        function enterWorld() {
-            document.getElementById('loader-overlay').style.display = 'none';
+        function destroyLoader() {
+            const l = document.getElementById('loader-overlay');
+            l.style.transition = 'opacity 0.5s';
+            l.style.opacity = '0';
+            setTimeout(() => l.remove(), 500);
+            try { document.getElementById('sfx-eat').play(); } catch(e){}
         }
 
+        // --- 3. LOGICA & FISICA ---
         function renderShop() {
             const container = document.getElementById('page-1');
             container.innerHTML = inventory.map((item, i) => `
@@ -218,11 +247,11 @@
             `).join('');
         }
 
-        // --- DRAG & DROP ---
         function startDrag(e, index) {
             const card = document.getElementById(`item-${index}`);
             const rect = card.getBoundingClientRect();
             const clone = card.cloneNode(true);
+            
             clone.classList.add('dragging');
             clone.style.width = rect.width + 'px';
             clone.style.left = rect.left + 'px';
@@ -239,19 +268,23 @@
                 window.onpointermove = null;
                 const tank = document.getElementById('tank-btn').getBoundingClientRect();
                 const dist = Math.hypot(ev.clientX - (tank.left + tank.width/2), ev.clientY - (tank.top + tank.height/2));
+
                 if(dist < 80) { 
                     clone.classList.add('sucked');
-                    document.getElementById('sfx-eat').play();
+                    try{document.getElementById('sfx-eat').play();}catch(e){}
                     setTimeout(() => {
                         cart.push(inventory[index]);
                         updateCartUI();
                         clone.remove();
                         toggleCart(true); 
                     }, 400);
-                } else { clone.remove(); }
+                } else {
+                    clone.remove();
+                }
             };
         }
 
+        // --- 4. CARRELLO & ORDINI ---
         function updateCartUI() {
             const b = document.getElementById('tank-badge');
             b.innerText = cart.length;
@@ -268,60 +301,46 @@
             if(forceOpen) p.style.display = 'block';
             else p.style.display = (p.style.display === 'block' ? 'none' : 'block');
         }
-        function openPage(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeAll() { document.querySelectorAll('.overlay').forEach(o => o.style.display='none'); }
 
-        // --- NEWSLETTER ---
-        async function subscribeNewsletter(manualEmail = null) {
-            let email = manualEmail || document.getElementById('newsletter-email').value;
-            if(!email || !email.includes('@')) { 
-                if(!manualEmail) alert("Email non valida!"); 
-                return false; 
-            }
-
-            const { error } = await supabase.from('newsletter').insert([{ email: email }]);
-            if(error && !error.message.includes('unique')) console.error("DB Err", error);
-
-            if(!manualEmail) {
-                const btn = document.querySelector('#ov-newsletter button');
-                btn.innerText = "SENDING...";
-                emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { user_email: email, message: "Welcome to FriendlyFire!" })
-                .then(() => {
-                    alert("ISCRITTO!");
-                    btn.innerText = "ISCRIVITI ORA";
-                    closeAll();
-                });
-            }
-            return true;
-        }
-
-        // --- CHECKOUT SIMULATO ---
         async function processPayment() {
             if(cart.length === 0) { alert("Il carrello è vuoto!"); return; }
-            let email = prompt("Inserisci la tua email per l'ordine:");
+            let email = prompt("Inserisci email per prenotare:");
             
             if(email && email.includes('@')) {
                 const btn = document.getElementById('btn-checkout');
                 btn.innerText = "ATTENDI...";
-                await subscribeNewsletter(email); // Salva nel DB
-
-                setTimeout(() => {
-                    alert(`ORDINE RICEVUTO! Ti scriveremo a: ${email}`);
-                    
-                    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { 
-                        user_email: email, 
-                        message: `NUOVO ORDINE: ${cart.map(i=>i.name).join(', ')} - TOT: ${document.getElementById('cart-total').innerText}` 
-                    });
-
-                    cart = [];
-                    updateCartUI();
-                    toggleCart();
-                    btn.innerText = "PRENOTA / ORDINA";
-                }, 1500);
-            } else if (email) {
-                alert("Email non valida.");
-            }
+                
+                await supabase.from('newsletter').insert([{ email: email }]);
+                
+                emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { 
+                    user_email: email, 
+                    message: `NUOVO ORDINE: ${cart.map(i=>i.name).join(', ')} - TOT: ${document.getElementById('cart-total').innerText}` 
+                }).then(() => {
+                    alert("RICHIESTA INVIATA! Grazie.");
+                    cart = []; updateCartUI(); toggleCart(); btn.innerText = "ORDINA / PRENOTA";
+                });
+            } else if (email) alert("Email non valida.");
         }
+
+        // --- 5. NEWSLETTER ---
+        async function subscribeNewsletter() {
+            let email = document.getElementById('newsletter-email').value;
+            if(!email || !email.includes('@')) { alert("Email non valida!"); return; }
+            const btn = document.querySelector('#ov-newsletter button');
+            btn.innerText = "SAVING...";
+            await supabase.from('newsletter').insert([{ email: email }]);
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { user_email: email, message: "Welcome to FriendlyFire!" })
+            .then(() => { alert("ISCRITTO!"); btn.innerText = "ISCRIVITI ORA"; closeAll(); });
+        }
+
+        // Funzioni Utility
+        function openPage(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeAll() { document.querySelectorAll('.overlay').forEach(o => o.style.display='none'); }
+        function refreshWorld() { 
+            // Funzione Brand Cliccable: ricarica la pagina per "pulire" la scena
+            if(confirm("Ricaricare il Mondo?")) location.reload(); 
+        }
+
     </script>
 </body>
 </html>
