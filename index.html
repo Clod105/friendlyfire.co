@@ -3,92 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE V500 | PLATINUM</title>
+    <title>FRIENDLYFIRE V700 | UNIVERSAL</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. BASE & SFONDO --- */
-        :root { --red: #ff3a3a; --green: #4AF626; }
+        /* --- 1. SETTAGGI GLOBALI --- */
+        :root { --red: #ff3a3a; --green: #4AF626; --bg-pongo: #2e4a1e; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
         
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Press Start 2P', cursive; 
-            background-color: #333; 
-            /* SFONDO RICHIESTO (Assicurati che il file sia sfondo2.jpg) */
+            background-color: var(--bg-pongo);
+            /* SFONDO - Assicurati che sia tutto minuscolo */
             background-image: url('sfondo2.jpg'); 
             background-size: cover; background-position: center; background-repeat: no-repeat;
             overscroll-behavior: none; position: fixed; 
         }
 
-        /* --- 2. LOADER --- */
+        /* --- 2. LOADER INDISTRUTTIBILE --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: #ffffff; z-index: 999999999; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            transition: opacity 0.5s ease;
         }
-        .loader-logo { width: 280px; max-width: 80%; margin-bottom: 30px; object-fit: contain; }
-        .loader-gif { width: 180px; height: 180px; object-fit: contain; margin-bottom: 30px; mix-blend-mode: multiply;}
         
-        .bar-container { width: 220px; height: 25px; border: 4px solid #000; padding: 3px; background: #fff; }
-        .bar-fill { height: 100%; width: 0%; background-color: var(--green); animation: load 2.5s forwards; }
-        @keyframes load { to { width: 100%; } }
-
-        #start-btn { 
-            display: none; margin-top: 20px; background: #000; color: #fff; 
-            border: 4px solid #000; padding: 15px 40px; font-size: 12px; cursor: pointer;
-            animation: pop 0.3s;
+        /* Loghi Grandi e Ben Dimensionati */
+        .loader-logo-top { width: 280px; max-width: 80%; margin-bottom: 30px; object-fit: contain; }
+        .loader-gif-center { width: 200px; height: 200px; object-fit: contain; margin-bottom: 30px; mix-blend-mode: multiply; }
+        
+        /* Barra Caricamento CSS Pura */
+        .bar-container { 
+            width: 250px; height: 25px; background: #fff; 
+            border: 4px solid #000; padding: 3px; 
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.15);
         }
-        @keyframes pop { from{transform:scale(0);} to{transform:scale(1);} }
+        
+        .bar-fill { 
+            height: 100%; width: 0%; 
+            background-color: var(--green); 
+            animation: forceFill 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
+        }
+        
+        @keyframes forceFill { 0% {width: 0%;} 100% {width: 100%;} }
 
-        /* --- 3. HEADER --- */
+        /* Tasto Start */
+        #start-btn { 
+            display: none; margin-top: 25px; background: #000; color: #fff; 
+            border: 4px solid #000; padding: 15px 50px; font-family: inherit; font-size: 14px; 
+            cursor: pointer; text-transform: uppercase; box-shadow: 6px 6px 0 #999;
+        }
+
+        /* --- 3. HEADER & NAVIGAZIONE --- */
         header { 
             position: fixed; top: 0; left: 0; width: 100%; height: 90px; 
             z-index: 10000; display: flex; justify-content: space-between; align-items: center;
-            padding: 0 15px; padding-top: env(safe-area-inset-top, 10px);
+            padding: 0 15px; padding-top: env(safe-area-inset-top, 15px);
             pointer-events: none; 
         }
-        .h-btn { 
+        
+        .header-icon { 
             width: 65px; height: 65px; object-fit: contain; pointer-events: auto; 
             cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5));
             transition: transform 0.1s;
         }
-        .h-btn:active { transform: scale(0.9); }
+        .header-icon:active { transform: scale(0.9); }
         
+        .pongo-anim { animation: squeeze 0.3s ease-in-out; }
+        @keyframes squeeze { 0%{transform:scale(1);} 40%{transform:scale(1.2,0.8);} 80%{transform:scale(0.9,1.1);} 100%{transform:scale(1);} }
+
+        #tank-wrapper { position: relative; pointer-events: auto; }
         #tank-badge { 
             position: absolute; top: 0; right: -5px; background: var(--red); 
             color: white; border: 2px solid #000; font-size: 9px; padding: 4px; 
             border-radius: 50%; display: none; 
         }
 
-        /* --- 4. SHOP & SCROLL (FIXATO) --- */
-        #shop-slider { 
+        /* --- 4. SHOP SLIDER --- */
+        #shop-view { 
             width: 100vw; height: 100%; 
-            display: flex; /* Flexbox per mettere le pagine in fila */
-            overflow-x: auto; overflow-y: hidden; 
-            scroll-snap-type: x mandatory; /* Scroll a scatti di pagina */
-            padding-top: 100px;
+            display: flex; overflow-x: auto; overflow-y: hidden; 
+            scroll-snap-type: x mandatory; 
+            padding-top: 100px; 
             -webkit-overflow-scrolling: touch;
         }
-        #shop-slider::-webkit-scrollbar { display: none; }
+        #shop-view::-webkit-scrollbar { display: none; }
         
         .shop-page { 
             min-width: 100vw; height: 100%; 
-            display: grid; grid-template-columns: repeat(3, 1fr); 
-            grid-template-rows: repeat(4, 1fr); 
-            gap: 10px; padding: 0 15px 100px 15px; 
-            scroll-snap-align: start; 
-            align-content: start;
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); 
+            gap: 10px; padding: 0 15px 120px 15px; 
+            scroll-snap-align: start; align-content: start;
         }
 
+        /* Card Prodotto */
         .item { 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            position: relative; 
-            /* Importante: lascia gestire il touch a JS ma permette lo scroll */
-            touch-action: pan-y; 
+            position: relative; touch-action: pan-y; 
         }
         .item img { 
             width: 85px; height: 85px; object-fit: contain; pointer-events: none; 
@@ -99,43 +114,54 @@
             color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; 
         }
 
-        /* --- 5. GHOST (ICONE CHE NON DIVENTANO GIGANTI) --- */
+        /* SOLD OUT STYLE */
+        .sold-out { opacity: 0.5; filter: grayscale(100%); pointer-events: none; }
+        .sold-out::after { 
+            content: "SOLD OUT"; position: absolute; background: var(--red); color: white; 
+            font-size: 8px; padding: 2px 4px; transform: rotate(-15deg); border: 1px solid #fff;
+        }
+
+        /* --- 5. DRAG & DROP GHOST --- */
         .ghost { 
             position: fixed; z-index: 99999; pointer-events: none; 
-            /* DIMENSIONI FORZATE PER EVITARE L'INGRANDIMENTO */
             width: 85px !important; height: 85px !important; 
             opacity: 0.9; transform: scale(1.1); 
         }
-        .sucked { transition: 0.4s; transform: scale(0) rotate(360deg) !important; opacity: 0; }
+        .sucked { 
+            transition: 0.4s ease-in; transform: scale(0) rotate(720deg) !important; opacity: 0; 
+        }
 
-        /* --- 6. POPUPS & WINDOWS --- */
+        /* --- 6. FINESTRE DRAGGABILI --- */
         .window {
             display: none; position: fixed; top: 15%; left: 5%; width: 90%; max-width: 380px;
             background: #fff; border: 3px solid #000; box-shadow: 10px 10px 0 rgba(0,0,0,0.6);
-            z-index: 50000; flex-direction: column; max-height: 70vh;
+            z-index: 50000; flex-direction: column; max-height: 75vh;
         }
-        .win-h { 
+        .win-header { 
             background: #eee; border-bottom: 2px solid #000; padding: 10px; 
             display: flex; justify-content: space-between; align-items: center; 
-            font-weight: bold; font-size: 10px;
+            font-weight: bold; font-size: 10px; cursor: move;
         }
-        .win-x { background: var(--red); width: 20px; height: 20px; border: 2px solid #000; cursor: pointer; }
-        .win-b { padding: 15px; overflow-y: auto; }
+        .win-close { 
+            background: var(--red); width: 20px; height: 20px; border: 2px solid #000; cursor: pointer; 
+        }
+        .win-body { padding: 15px; overflow-y: auto; }
         
-        .btn { width: 100%; padding: 12px; margin-top: 10px; background: #000; color: #fff; border: none; font-size: 10px; cursor: pointer; font-family: inherit; }
-        .row { display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; padding: 5px 0; font-size: 10px; align-items: center; }
-        input { width: 100%; padding: 8px; border: 2px solid #000; font-family: monospace; }
-
-        /* --- 7. FOOTER ADMIN --- */
-        footer { 
-            position: fixed; bottom: 20px; width: 100%; 
-            display: flex; justify-content: center; z-index: 9000; 
-            pointer-events: none; padding-bottom: env(safe-area-inset-bottom, 10px);
+        .btn { 
+            width: 100%; padding: 12px; margin-top: 10px; background: #000; color: #fff; 
+            border: none; font-size: 10px; cursor: pointer; font-family: inherit; 
         }
-        .brand { 
-            width: 160px; pointer-events: auto; cursor: pointer; 
-            /* Area di tocco aumentata invisibilmente */
-            padding: 10px; 
+        .btn:active { opacity: 0.8; transform: translateY(2px); }
+        .row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ccc; padding: 8px 0; font-size: 10px; }
+        input { width: 100%; padding: 8px; border: 2px solid #000; font-family: monospace; font-size: 10px; }
+
+        /* --- 7. FOOTER --- */
+        footer { 
+            position: fixed; bottom: 20px; width: 100%; display: flex; justify-content: center; 
+            z-index: 9000; pointer-events: none; padding-bottom: env(safe-area-inset-bottom, 10px);
+        }
+        .brand-logo { 
+            width: 160px; pointer-events: auto; cursor: pointer; padding: 10px;
         }
 
     </style>
@@ -143,162 +169,180 @@
 <body>
 
     <div id="loader-overlay">
-        <img src="logo_ff_loader.png" class="loader-logo" onerror="this.src='https://placehold.co/300x80?text=FRIENDLYFIRE'">
-        <img src="loadernob.gif" class="loader-gif" onerror="this.src='https://placehold.co/200?text=LOADING'">
-        <div class="bar-container"><div class="bar-fill"></div></div>
+        <img src="logo_ff_loader.png" class="loader-logo-top" onerror="this.src='https://placehold.co/300x80?text=FRIENDLYFIRE'">
+        
+        <img src="loadernob.gif" class="loader-gif-center" onerror="this.src='https://placehold.co/200?text=LOADING'">
+        
+        <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
         <button id="start-btn" onclick="startApp()">START</button>
     </div>
 
     <audio id="sfx-eat" src="suono_gnam.mp3" preload="auto"></audio>
 
     <header>
-        <img src="mondo_pongo.PNG" class="h-btn" onclick="uiAnim(this); openWin('win-news')" onerror="this.src='https://placehold.co/60?text=NEWS'">
-        <img src="fuochini_centrali.png" class="h-btn" onclick="uiAnim(this); openWin('win-prof')" onerror="this.src='https://placehold.co/60?text=PROF'">
-        <div style="position:relative;">
-            <img src="tank_header.PNG" id="tank-target" class="h-btn" onclick="uiAnim(this); toggleWin('win-cart')" onerror="this.src='https://placehold.co/60?text=TANK'">
+        <img src="mondo_pongo.png" class="header-icon" onclick="uiAnim(this); openWin('win-news')" onerror="this.src='https://placehold.co/60?text=NEWS'">
+        <img src="fuochini_centrali.png" class="header-icon" onclick="uiAnim(this); openWin('win-prof')" onerror="this.src='https://placehold.co/60?text=PROF'">
+        <div id="tank-wrapper">
+            <img src="tank_header.png" id="tank-target" class="header-icon" onclick="uiAnim(this); toggleWin('win-cart')" onerror="this.src='https://placehold.co/60?text=TANK'">
             <div id="tank-badge">0</div>
         </div>
     </header>
 
-    <div id="shop-slider">
+    <div id="shop-view">
         <div id="page-1" class="shop-page"></div>
         <div id="page-2" class="shop-page"></div>
     </div>
 
     <footer>
-        <img src="brand_name.png" class="brand" onclick="checkAdmin()" onerror="this.src='https://placehold.co/150x40?text=ADMIN'">
+        <img src="brand_name.png" class="brand-logo" onclick="adminCheck()" onerror="this.src='https://placehold.co/150x40?text=ADMIN'">
     </footer>
 
     <div id="win-cart" class="window">
-        <div class="win-h"><span>IL TUO TANK</span><div class="win-x" onclick="closeAll()"></div></div>
-        <div class="win-b">
+        <div class="win-header" onmousedown="dragWin(event, 'win-cart')" ontouchstart="dragWin(event, 'win-cart')">
+            <span>IL TUO TANK</span><div class="win-close" onclick="closeAll()"></div>
+        </div>
+        <div class="win-body">
             <div id="cart-list">VUOTO</div>
-            <div id="cart-tot" style="margin-top:10px; font-weight:bold; border-top:2px solid #000; padding-top:5px;">TOT: 0€</div>
-            <button class="btn" onclick="checkout()">ORDINA</button>
-            <button class="btn" style="background:var(--red);" onclick="cart=[];updateCart();">SVUOTA</button>
+            <div id="cart-total" style="margin-top:10px; border-top:2px solid #000; padding-top:5px; font-weight:bold;">TOT: 0€</div>
+            <button class="btn" onclick="checkout()">ORDINA / PRENOTA</button>
+            <button class="btn" style="background:var(--red);" onclick="cart=[]; updateCart();">SVUOTA</button>
         </div>
     </div>
 
     <div id="win-admin" class="window">
-        <div class="win-h"><span>ADMIN PANEL</span><div class="win-x" onclick="closeAll()"></div></div>
-        <div class="win-b">
-            <div id="adm-list"></div>
-            <button class="btn" onclick="saveAdmin()">SALVA</button>
+        <div class="win-header" onmousedown="dragWin(event, 'win-admin')" ontouchstart="dragWin(event, 'win-admin')">
+            <span>ADMIN PANEL</span><div class="win-close" onclick="closeAll()"></div>
+        </div>
+        <div class="win-body">
+            <div style="font-size:8px;">SFONDO URL:</div>
+            <div style="display:flex; gap:5px;"><input id="bg-in"><button style="width:40px;" onclick="changeBg()">OK</button></div>
+            <hr>
+            <div id="admin-list"></div>
+            <button class="btn" style="background:blue;" onclick="addNewItem()">+ NUOVO</button>
+            <button class="btn" onclick="saveAdmin()">SALVA MODIFICHE</button>
         </div>
     </div>
 
     <div id="win-news" class="window">
-        <div class="win-h"><span>NEWSLETTER</span><div class="win-x" onclick="closeAll()"></div></div>
-        <div class="win-b">
-            <input id="in-email" type="email" placeholder="Email...">
-            <button class="btn" onclick="doSub()">ISCRIVITI</button>
+        <div class="win-header" onmousedown="dragWin(event, 'win-news')" ontouchstart="dragWin(event, 'win-news')">
+            <span>NEWSLETTER</span><div class="win-close" onclick="closeAll()"></div>
+        </div>
+        <div class="win-body">
+            <p style="font-size:10px; margin-bottom:10px;">Iscriviti per i drop.</p>
+            <input id="news-email" type="email" placeholder="Email...">
+            <button class="btn" onclick="subscribe()">ISCRIVITI</button>
         </div>
     </div>
 
     <div id="win-prof" class="window">
-        <div class="win-h"><span>PROFILO</span><div class="win-x" onclick="closeAll()"></div></div>
-        <div class="win-b"><p>COMING SOON</p></div>
+        <div class="win-header" onmousedown="dragWin(event, 'win-prof')" ontouchstart="dragWin(event, 'win-prof')">
+            <span>PROFILO</span><div class="win-close" onclick="closeAll()"></div>
+        </div>
+        <div class="win-body"><p>AREA UTENTE (COMING SOON)</p></div>
     </div>
 
     <script>
-        // --- DATA & CONFIG ---
+        // --- CONFIGURAZIONE CHIAVI ---
         const CFG = {
             sbUrl: 'https://jwifyapbnsbbpsrstrow.supabase.co',
             sbKey: 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y',
             emKey: 'BThMV2knP0VG0s4nr', emSrv: 'service_4scv4hn', emTmp: 'template_8opoo1v'
         };
 
-        // Inventario più ricco per riempire le pagine
+        // --- STATO ---
+        // ATTENZIONE: Nomi file tutti minuscoli per compatibilità GitHub!
         let items = [
-            {id:0, name:'CAP', price:45, img:'image_cap.PNG'},
-            {id:1, name:'TEE', price:65, img:'image_tee.PNG'},
-            {id:2, name:'STICKER', price:10, img:'image_sticker.PNG'},
-            {id:3, name:'HOODIE', price:85, img:'image_hoodie.PNG'},
-            {id:4, name:'PANT', price:70, img:'image_pant.PNG'},
-            {id:5, name:'SOCKS', price:15, img:'image_socks.PNG'},
-            {id:6, name:'BEANIE', price:35, img:'image_cap.PNG'}, // Test scroll
-            {id:7, name:'BAG', price:120, img:'image_tee.PNG'}
+            {id:0, name:'CAP', price:45, qty:10, img:'image_cap.png'},
+            {id:1, name:'TEE', price:65, qty:5, img:'image_tee.png'},
+            {id:2, name:'STICKER', price:10, qty:100, img:'image_sticker.png'},
+            {id:3, name:'HOODIE', price:85, qty:0, img:'image_hoodie.png'}, // Sold Out Test
+            {id:4, name:'PANT', price:70, qty:8, img:'image_pant.png'},
+            {id:5, name:'SOCKS', price:15, qty:20, img:'image_socks.png'},
+            {id:6, name:'BEANIE', price:35, qty:5, img:'image_cap.png'}
         ];
         let cart = [];
         let supabase = null;
         let tapCount = 0;
 
-        // --- 1. LOADER (Timer Force) ---
-        setTimeout(() => { document.getElementById('start-btn').style.display = 'block'; }, 2600);
+        // --- 1. LOADER "SAFETY NET" ---
+        // Forza l'apparizione del tasto START dopo 3 secondi
+        setTimeout(() => {
+            const btn = document.getElementById('start-btn');
+            const bar = document.getElementById('bar-fill');
+            if(getComputedStyle(btn).display === 'none') {
+                bar.style.width = '100%';
+                btn.style.display = 'block';
+            }
+        }, 2800);
 
         function startApp() {
-            document.getElementById('loader-overlay').style.display='none';
+            document.getElementById('loader-overlay').style.opacity = '0';
+            setTimeout(() => document.getElementById('loader-overlay').style.display='none', 500);
+            
             try { document.getElementById('sfx-eat').play(); } catch(e){}
-            
-            // Tentativo Connessione (Senza blocco)
+
+            // Init Servizi
             try {
-                if(window.supabase) { supabase = window.supabase.createClient(CFG.sbUrl, CFG.sbKey); loadDB(); }
+                if(window.supabase) {
+                    supabase = window.supabase.createClient(CFG.sbUrl, CFG.sbKey);
+                    loadDB();
+                }
                 if(window.emailjs) emailjs.init(CFG.emKey);
-            } catch(e) { console.log("Offline"); }
-            
-            render();
+            } catch(e) { console.log("Modalità Offline"); }
+
+            renderShop();
         }
 
         async function loadDB() {
             if(!supabase) return;
             const { data } = await supabase.from('products').select('*');
-            if(data && data.length) { items = data; render(); }
+            if(data && data.length) { items = data; renderShop(); }
         }
 
-        // --- 2. RENDER GRIGLIA ---
-        function render() {
-            // Divido gli item nelle pagine (max 9 per pagina)
+        // --- 2. RENDER SHOP ---
+        function renderShop() {
             const p1 = document.getElementById('page-1');
             const p2 = document.getElementById('page-2');
             
-            p1.innerHTML = items.slice(0, 9).map((i, idx) => createCard(i, idx)).join('');
-            p2.innerHTML = items.slice(9, 18).map((i, idx) => createCard(i, idx+9)).join('');
+            p1.innerHTML = items.slice(0, 9).map((i, idx) => makeCard(i, idx)).join('');
+            p2.innerHTML = items.slice(9, 18).map((i, idx) => makeCard(i, idx+9)).join('');
         }
 
-        function createCard(item, i) {
+        function makeCard(item, i) {
+            const isSold = parseInt(item.qty) <= 0;
+            const cls = isSold ? 'item sold-out' : 'item';
+            const evts = isSold ? '' : `ontouchstart="holdDrag(event, ${i})" onmousedown="holdDrag(event, ${i})"`;
+            
             return `
-            <div class="item" id="itm-${i}" 
-                 ontouchstart="touchStart(event, ${i})" 
-                 onmousedown="touchStart(event, ${i})">
+            <div class="${cls}" id="itm-${i}" ${evts}>
                 <img src="${item.img}" onerror="this.src='https://placehold.co/80?text=${item.name}'">
                 <div class="label">${item.name}</div>
                 <div class="label">${item.price}€</div>
             </div>`;
         }
 
-        // --- 3. LOGICA SCROLL vs DRAG (CUORE DEL FIX) ---
+        // --- 3. PHYSICS (HOLD TO DRAG) ---
         let holdTimer = null;
 
-        function touchStart(e, idx) {
-            // Non prevenire default subito! Altrimenti lo scroll non parte.
-            
+        function holdDrag(e, idx) {
             const el = document.getElementById(`itm-${idx}`);
-            const ev = e.touches ? e.touches[0] : e;
             const rect = el.getBoundingClientRect();
-            
-            // TIMER: Se tieni premuto 200ms, inizia il DRAG
+            const ev = e.touches ? e.touches[0] : e;
+
             holdTimer = setTimeout(() => {
-                startDragProcess(idx, rect, ev.clientX, ev.clientY);
+                if(navigator.vibrate) navigator.vibrate(20);
+                startDrag(idx, rect, ev.clientX, ev.clientY);
             }, 200);
 
-            // Se l'utente muove il dito PRIMA dei 200ms, è uno SCROLL -> Cancella timer
-            const cancel = () => { clearTimeout(holdTimer); };
-            el.addEventListener('touchmove', cancel, {once:true});
+            const cancel = () => clearTimeout(holdTimer);
             el.addEventListener('touchend', cancel, {once:true});
-            // Per il mouse
-            el.addEventListener('mousemove', cancel, {once:true});
+            el.addEventListener('touchmove', cancel, {once:true});
             el.addEventListener('mouseup', cancel, {once:true});
         }
 
-        function startDragProcess(idx, rect, startX, startY) {
-            // Feedback vibrazione
-            if(navigator.vibrate) navigator.vibrate(20);
-
-            // Crea Ghost
+        function startDrag(idx, rect, startX, startY) {
             const ghost = document.getElementById(`itm-${idx}`).cloneNode(true);
             ghost.classList.add('ghost');
-            // Importante: setta dimensione fissa altrimenti esplode
-            ghost.style.width = '85px'; 
             ghost.style.left = rect.left + 'px';
             ghost.style.top = rect.top + 'px';
             document.body.appendChild(ghost);
@@ -307,22 +351,20 @@
             const offY = startY - rect.top;
 
             function move(e) {
-                e.preventDefault(); // ORA blocchiamo lo scroll perché stiamo draggando
+                e.preventDefault(); 
                 const t = e.touches ? e.touches[0] : e;
                 ghost.style.left = (t.clientX - offX) + 'px';
                 ghost.style.top = (t.clientY - offY) + 'px';
             }
 
-            function end(e) {
+            function end() {
                 document.removeEventListener('touchmove', move); document.removeEventListener('touchend', end);
                 document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', end);
 
-                // CONTROLLO TANK
                 const tank = document.getElementById('tank-target').getBoundingClientRect();
                 const gx = parseInt(ghost.style.left) + 40;
                 const gy = parseInt(ghost.style.top) + 40;
-                
-                const tx = tank.left + tank.width/2;
+                const tx = tank.left + tank.width/2; 
                 const ty = tank.top + tank.height/2;
 
                 if(Math.hypot(gx-tx, gy-ty) < 60) {
@@ -335,7 +377,17 @@
                         openWin('win-cart');
                     }, 400);
                 } else {
-                    ghost.remove(); // Niente switch per semplicità, solo ritorno
+                    ghost.style.display = 'none';
+                    let below = document.elementFromPoint(gx, gy);
+                    ghost.style.display = 'block';
+                    let target = below ? below.closest('.item') : null;
+                    
+                    if(target && target.id !== `itm-${idx}` && !target.classList.contains('sold-out')) {
+                        let tIdx = parseInt(target.id.split('-')[1]);
+                        [items[idx], items[tIdx]] = [items[tIdx], items[idx]];
+                        renderShop();
+                    }
+                    ghost.remove();
                 }
             }
 
@@ -347,52 +399,106 @@
 
         // --- 4. CART & UTILS ---
         function updateCart() {
-            document.getElementById('tank-badge').innerText = cart.length;
-            document.getElementById('tank-badge').style.display = cart.length ? 'block' : 'none';
+            const b = document.getElementById('tank-badge');
+            b.innerText = cart.length; b.style.display = cart.length ? 'block' : 'none';
             const list = document.getElementById('cart-list');
+            
             if(!cart.length) list.innerHTML = "VUOTO";
-            else list.innerHTML = cart.map((x,i)=>`<div class="row"><span>${x.name}</span><span style="cursor:pointer;color:red;" onclick="cart.splice(${i},1);updateCart()">X</span></div>`).join('');
-            document.getElementById('cart-tot').innerText = "TOT: " + cart.reduce((a,b)=>a+parseInt(b.price),0) + "€";
+            else {
+                list.innerHTML = cart.map((x,i) => `
+                    <div class="row">
+                        <span>${x.name}</span>
+                        <span>${x.price}€</span>
+                        <button style="background:var(--red); color:white; width:20px; border:1px solid #000;" onclick="delCart(${i})">X</button>
+                    </div>
+                `).join('');
+            }
+            let tot = cart.reduce((a,b)=>a+parseInt(b.price),0);
+            document.getElementById('cart-total').innerText = "TOT: " + tot + "€";
         }
+        function delCart(i) { cart.splice(i,1); updateCart(); }
 
         async function checkout() {
-            if(!cart.length) return alert("Vuoto!");
-            let m=prompt("Email:");
+            if(!cart.length) return alert("Carrello Vuoto!");
+            let m = prompt("Inserisci Email:");
             if(m) {
                 if(supabase) await supabase.from('newsletter').insert([{email:m}]);
                 if(window.emailjs) emailjs.send(CFG.emSrv, CFG.emTmp, {user_email:m, message:"ORDINE"});
-                alert("Ordine Inviato!"); cart=[]; updateCart(); closeAll();
+                alert("Grazie! Ordine Ricevuto."); cart=[]; updateCart(); closeAll();
             }
         }
 
-        function checkAdmin() {
+        // --- 5. ADMIN & WINDOWS ---
+        function adminCheck() {
             tapCount++;
-            if(tapCount>=5) {
-                if(prompt("PASSWORD")==="FRIENDLYFIRE26") {
-                    const l = document.getElementById('adm-list');
-                    l.innerHTML = items.map((x,i)=>`<div class="row"><input id="an${i}" value="${x.name}"><input id="ap${i}" value="${x.price}" type="number" style="width:30px"></div>`).join('');
-                    openWin('win-admin');
-                }
+            if(tapCount >= 5) {
+                if(prompt("PASSWORD")==="FRIENDLYFIRE26") showAdmin();
                 tapCount=0;
             }
-            setTimeout(()=>tapCount=0, 800);
+            setTimeout(() => tapCount=0, 800);
         }
 
+        function showAdmin() {
+            document.getElementById('admin-list').innerHTML = items.map((x,i) => `
+                <div class="row">
+                    <img src="${x.img}" style="width:20px;">
+                    <input id="an${i}" value="${x.name}">
+                    <input id="ap${i}" value="${x.price}" type="number" style="width:30px;">
+                    <input id="aq${i}" value="${x.qty}" type="number" style="width:30px;">
+                    <button style="width:20px; background:red; color:white;" onclick="delItem(${i})">X</button>
+                </div>
+            `).join('');
+            openWin('win-admin');
+        }
+
+        function addNewItem() { items.push({id:Date.now(), name:'NEW', price:0, qty:1, img:'logo_ff_loader.png'}); showAdmin(); }
+        function delItem(i) { if(confirm("Eliminare?")) { items.splice(i,1); showAdmin(); } }
+        function changeBg() { document.body.style.backgroundImage = `url('${document.getElementById('bg-in').value}')`; }
+
         async function saveAdmin() {
-            items.forEach((x,i)=>{
-                let n = document.getElementById(`an${i}`);
-                if(n) { x.name=n.value; x.price=document.getElementById(`ap${i}`).value; }
+            items.forEach((x,i) => {
+                if(document.getElementById(`an${i}`)) {
+                    x.name = document.getElementById(`an${i}`).value;
+                    x.price = document.getElementById(`ap${i}`).value;
+                    x.qty = document.getElementById(`aq${i}`).value;
+                }
             });
-            render(); if(supabase) await supabase.from('products').upsert(items);
+            renderShop();
+            if(supabase) await supabase.from('products').upsert(items);
             alert("Salvato!"); closeAll();
+        }
+
+        async function subscribe() {
+            let e = document.getElementById('news-email').value;
+            if(e && supabase) await supabase.from('newsletter').insert([{email:e}]);
+            alert("Iscritto!"); closeAll();
         }
 
         function uiAnim(el) { el.classList.remove('pongo-anim'); void el.offsetWidth; el.classList.add('pongo-anim'); try{document.getElementById('sfx-eat').play();}catch(e){} }
         function openWin(id) { closeAll(); document.getElementById(id).style.display='flex'; }
-        function toggleWin(id) { let e=document.getElementById(id); if(e.style.display==='flex') closeAll(); else { openWin(id); updateCart(); } }
-        function closeAll() { document.querySelectorAll('.window').forEach(e=>e.style.display='none'); }
-        async function doSub() { let e=document.getElementById('in-email').value; if(e&&supabase) await supabase.from('newsletter').insert([{email:e}]); alert("Iscritto!"); closeAll(); }
+        function toggleWin(id) { let w=document.getElementById(id); if(w.style.display==='flex') closeAll(); else { openWin(id); updateCart(); } }
+        function closeAll() { document.querySelectorAll('.window').forEach(w=>w.style.display='none'); }
 
+        let dragEl=null, dx=0, dy=0;
+        function dragWin(e, id) {
+            dragEl = document.getElementById(id);
+            const t = e.touches ? e.touches[0] : e;
+            const r = dragEl.getBoundingClientRect();
+            dx = t.clientX - r.left; dy = t.clientY - r.top;
+            
+            function move(ev) {
+                const c = ev.touches ? ev.touches[0] : ev;
+                dragEl.style.left = (c.clientX - dx) + 'px';
+                dragEl.style.top = (c.clientY - dy) + 'px';
+                ev.preventDefault();
+            }
+            function stop() {
+                document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', stop);
+                document.removeEventListener('touchmove', move); document.removeEventListener('touchend', stop);
+            }
+            document.addEventListener('mousemove', move); document.addEventListener('mouseup', stop);
+            document.addEventListener('touchmove', move, {passive:false}); document.addEventListener('touchend', stop);
+        }
     </script>
 </body>
 </html>
