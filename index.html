@@ -3,291 +3,396 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE V400 | UNCRASHABLE</title>
+    <title>FRIENDLYFIRE V500 | PLATINUM</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. BASE --- */
-        :root { --red: #ff3a3a; --green: #4AF626; --bg-pongo: #2e4a1e; }
+        /* --- 1. BASE & SFONDO --- */
+        :root { --red: #ff3a3a; --green: #4AF626; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
         
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Press Start 2P', cursive; 
-            background-color: var(--bg-pongo);
-            /* Fallback per l'immagine */
-            background-image: url('sfondo_pongo.PNG'); 
-            background-size: 450px; background-position: center;
+            background-color: #333; 
+            /* SFONDO RICHIESTO (Assicurati che il file sia sfondo2.jpg) */
+            background-image: url('sfondo2.jpg'); 
+            background-size: cover; background-position: center; background-repeat: no-repeat;
             overscroll-behavior: none; position: fixed; 
         }
 
-        /* --- 2. LOADER BLINDATO --- */
+        /* --- 2. LOADER --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: #ffffff; z-index: 999999999; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 20px;
         }
+        .loader-logo { width: 280px; max-width: 80%; margin-bottom: 30px; object-fit: contain; }
+        .loader-gif { width: 180px; height: 180px; object-fit: contain; margin-bottom: 30px; mix-blend-mode: multiply;}
         
-        .loader-logo { width: 80%; max-width: 280px; margin-bottom: 40px; object-fit: contain; }
-        
-        /* Fuochini Grandi */
-        .loader-gif { 
-            width: 220px; height: 220px; object-fit: contain; 
-            margin-bottom: 40px; mix-blend-mode: multiply;
-        }
-        
-        .bar-container { 
-            width: 240px; height: 25px; background: #fff; 
-            border: 4px solid #000; padding: 3px; 
-            box-shadow: 6px 6px 0 rgba(0,0,0,0.15);
-            margin-bottom: 20px;
-        }
-        
-        /* Animazione CSS pura (Non dipende da JS) */
-        .bar-fill { 
-            height: 100%; width: 0%; 
-            background-color: var(--green); 
-            animation: fillUp 2.5s cubic-bezier(0.1, 0.7, 1.0, 0.1) forwards; 
-        }
-        @keyframes fillUp { to { width: 100%; } }
+        .bar-container { width: 220px; height: 25px; border: 4px solid #000; padding: 3px; background: #fff; }
+        .bar-fill { height: 100%; width: 0%; background-color: var(--green); animation: load 2.5s forwards; }
+        @keyframes load { to { width: 100%; } }
 
-        /* Tasto Start che appare da solo col CSS */
         #start-btn { 
-            background: #000; color: #fff; border: 4px solid #000; 
-            padding: 15px 50px; font-family: inherit; font-size: 14px; 
-            cursor: pointer; text-transform: uppercase;
-            box-shadow: 6px 6px 0 #999;
-            /* Appare dopo 2.6 secondi (dopo la barra) */
-            opacity: 0; animation: fadeIn 0.5s ease 2.6s forwards;
-            pointer-events: auto; /* Cliccabile */
+            display: none; margin-top: 20px; background: #000; color: #fff; 
+            border: 4px solid #000; padding: 15px 40px; font-size: 12px; cursor: pointer;
+            animation: pop 0.3s;
         }
-        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes pop { from{transform:scale(0);} to{transform:scale(1);} }
 
-        /* --- 3. HEADER & UI --- */
+        /* --- 3. HEADER --- */
         header { 
             position: fixed; top: 0; left: 0; width: 100%; height: 90px; 
             z-index: 10000; display: flex; justify-content: space-between; align-items: center;
-            padding: 0 15px; padding-top: env(safe-area-inset-top, 10px); pointer-events: none; 
+            padding: 0 15px; padding-top: env(safe-area-inset-top, 10px);
+            pointer-events: none; 
         }
         .h-btn { 
             width: 65px; height: 65px; object-fit: contain; pointer-events: auto; 
-            cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5)); transition: transform 0.1s; 
+            cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5));
+            transition: transform 0.1s;
         }
         .h-btn:active { transform: scale(0.9); }
-        .pongo-anim { animation: sq 0.3s; } @keyframes sq { 0%,100%{transform:scale(1);} 50%{transform:scale(0.8);} }
-
+        
         #tank-badge { 
-            position: absolute; top: 0; right: -5px; background: var(--red); color: white; 
-            border: 2px solid #000; font-size: 8px; padding: 4px; border-radius: 50%; display: none; 
+            position: absolute; top: 0; right: -5px; background: var(--red); 
+            color: white; border: 2px solid #000; font-size: 9px; padding: 4px; 
+            border-radius: 50%; display: none; 
         }
 
-        /* --- 4. SHOP --- */
-        #shop-view { width: 100vw; height: 100%; overflow-x: scroll; overflow-y: hidden; white-space: nowrap; padding-top: 100px; }
-        #shop-view::-webkit-scrollbar { display: none; }
-        .grid { display: inline-grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); width: 100vw; height: 75vh; gap: 5px; padding: 0 15px; vertical-align: top; }
+        /* --- 4. SHOP & SCROLL (FIXATO) --- */
+        #shop-slider { 
+            width: 100vw; height: 100%; 
+            display: flex; /* Flexbox per mettere le pagine in fila */
+            overflow-x: auto; overflow-y: hidden; 
+            scroll-snap-type: x mandatory; /* Scroll a scatti di pagina */
+            padding-top: 100px;
+            -webkit-overflow-scrolling: touch;
+        }
+        #shop-slider::-webkit-scrollbar { display: none; }
         
-        .item { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; touch-action: none; }
-        .item img { width: 90px; height: 90px; object-fit: contain; pointer-events: none; filter: drop-shadow(0 5px 6px rgba(0,0,0,0.5)); }
-        .label { font-family: sans-serif; font-weight: 900; font-size: 8px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; }
+        .shop-page { 
+            min-width: 100vw; height: 100%; 
+            display: grid; grid-template-columns: repeat(3, 1fr); 
+            grid-template-rows: repeat(4, 1fr); 
+            gap: 10px; padding: 0 15px 100px 15px; 
+            scroll-snap-align: start; 
+            align-content: start;
+        }
+
+        .item { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            position: relative; 
+            /* Importante: lascia gestire il touch a JS ma permette lo scroll */
+            touch-action: pan-y; 
+        }
+        .item img { 
+            width: 85px; height: 85px; object-fit: contain; pointer-events: none; 
+            filter: drop-shadow(0 5px 6px rgba(0,0,0,0.5));
+        }
+        .label { 
+            font-family: sans-serif; font-weight: 900; font-size: 9px; 
+            color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; 
+        }
+
+        /* --- 5. GHOST (ICONE CHE NON DIVENTANO GIGANTI) --- */
+        .ghost { 
+            position: fixed; z-index: 99999; pointer-events: none; 
+            /* DIMENSIONI FORZATE PER EVITARE L'INGRANDIMENTO */
+            width: 85px !important; height: 85px !important; 
+            opacity: 0.9; transform: scale(1.1); 
+        }
+        .sucked { transition: 0.4s; transform: scale(0) rotate(360deg) !important; opacity: 0; }
+
+        /* --- 6. POPUPS & WINDOWS --- */
+        .window {
+            display: none; position: fixed; top: 15%; left: 5%; width: 90%; max-width: 380px;
+            background: #fff; border: 3px solid #000; box-shadow: 10px 10px 0 rgba(0,0,0,0.6);
+            z-index: 50000; flex-direction: column; max-height: 70vh;
+        }
+        .win-h { 
+            background: #eee; border-bottom: 2px solid #000; padding: 10px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            font-weight: bold; font-size: 10px;
+        }
+        .win-x { background: var(--red); width: 20px; height: 20px; border: 2px solid #000; cursor: pointer; }
+        .win-b { padding: 15px; overflow-y: auto; }
         
-        .sold-out { opacity: 0.5; filter: grayscale(1); pointer-events: none; }
-        .sold-out::after { content: "SOLD"; position: absolute; background: red; color: white; font-size: 8px; padding: 2px; transform: rotate(-15deg); }
+        .btn { width: 100%; padding: 12px; margin-top: 10px; background: #000; color: #fff; border: none; font-size: 10px; cursor: pointer; font-family: inherit; }
+        .row { display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; padding: 5px 0; font-size: 10px; align-items: center; }
+        input { width: 100%; padding: 8px; border: 2px solid #000; font-family: monospace; }
 
-        /* --- 5. WINDOWS --- */
-        .win { display: none; position: fixed; top: 15%; left: 5%; width: 90%; max-width: 380px; background: #fff; border: 3px solid #000; box-shadow: 10px 10px 0 rgba(0,0,0,0.5); z-index: 50000; flex-direction: column; }
-        .win-h { background: #eee; border-bottom: 2px solid #000; padding: 10px; cursor: move; display: flex; justify-content: space-between; }
-        .win-b { padding: 15px; max-height: 60vh; overflow-y: auto; }
-        .btn { width: 100%; padding: 12px; margin-top: 10px; background: #000; color: #fff; border: none; font-family: inherit; font-size: 10px; }
-        .row { display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; padding: 5px 0; font-size: 10px; }
+        /* --- 7. FOOTER ADMIN --- */
+        footer { 
+            position: fixed; bottom: 20px; width: 100%; 
+            display: flex; justify-content: center; z-index: 9000; 
+            pointer-events: none; padding-bottom: env(safe-area-inset-bottom, 10px);
+        }
+        .brand { 
+            width: 160px; pointer-events: auto; cursor: pointer; 
+            /* Area di tocco aumentata invisibilmente */
+            padding: 10px; 
+        }
 
-        /* --- 6. PHYSICS --- */
-        .ghost { position: fixed; z-index: 99999; pointer-events: none; width: 90px; opacity: 0.9; transform: scale(1.1); }
-        .sucked { transition: 0.5s; transform: scale(0) rotate(720deg) !important; opacity: 0; }
-
-        footer { position: fixed; bottom: 20px; width: 100%; display: flex; justify-content: center; z-index: 9000; pointer-events: none; padding-bottom: env(safe-area-inset-bottom, 10px); }
-        .brand { width: 150px; pointer-events: auto; }
     </style>
 </head>
 <body>
 
     <div id="loader-overlay">
-        <img src="logo_ff_loader.png" class="loader-logo" onerror="this.style.display='none'; document.getElementById('alt-logo').style.display='block'">
-        <div id="alt-logo" style="display:none; font-size:20px; margin-bottom:40px;">FRIENDLYFIRE</div>
-
-        <img src="loadernob.gif" class="loader-gif" onerror="this.src='https://placehold.co/200x200?text=LOADING...'">
-        
+        <img src="logo_ff_loader.png" class="loader-logo" onerror="this.src='https://placehold.co/300x80?text=FRIENDLYFIRE'">
+        <img src="loadernob.gif" class="loader-gif" onerror="this.src='https://placehold.co/200?text=LOADING'">
         <div class="bar-container"><div class="bar-fill"></div></div>
-        <button id="start-btn" onclick="enterWorld()">START</button>
+        <button id="start-btn" onclick="startApp()">START</button>
     </div>
 
     <audio id="sfx-eat" src="suono_gnam.mp3" preload="auto"></audio>
 
     <header>
-        <img src="mondo_pongo.PNG" class="h-btn" onclick="anim(this); openW('win-news')" onerror="this.src='https://placehold.co/60?text=NEWS'">
-        <img src="fuochini_centrali.png" class="h-btn" onclick="anim(this); openW('win-prof')" onerror="this.src='https://placehold.co/60?text=PROF'">
+        <img src="mondo_pongo.PNG" class="h-btn" onclick="uiAnim(this); openWin('win-news')" onerror="this.src='https://placehold.co/60?text=NEWS'">
+        <img src="fuochini_centrali.png" class="h-btn" onclick="uiAnim(this); openWin('win-prof')" onerror="this.src='https://placehold.co/60?text=PROF'">
         <div style="position:relative;">
-            <img src="tank_header.PNG" id="tank-target" class="h-btn" onclick="anim(this); toggleW('win-cart')" onerror="this.src='https://placehold.co/60?text=TANK'">
+            <img src="tank_header.PNG" id="tank-target" class="h-btn" onclick="uiAnim(this); toggleWin('win-cart')" onerror="this.src='https://placehold.co/60?text=TANK'">
             <div id="tank-badge">0</div>
         </div>
     </header>
 
-    <div id="shop-view"><div id="grid" class="grid"></div></div>
-    <footer><img src="brand_name.png" class="brand" onclick="admCheck()" onerror="this.src='https://placehold.co/150x40?text=ADMIN'"></footer>
+    <div id="shop-slider">
+        <div id="page-1" class="shop-page"></div>
+        <div id="page-2" class="shop-page"></div>
+    </div>
 
-    <div id="win-cart" class="win">
-        <div class="win-h" onmousedown="dS(event,'win-cart')" ontouchstart="dS(event,'win-cart')"><span>TANK</span><span onclick="closeAll()">X</span></div>
+    <footer>
+        <img src="brand_name.png" class="brand" onclick="checkAdmin()" onerror="this.src='https://placehold.co/150x40?text=ADMIN'">
+    </footer>
+
+    <div id="win-cart" class="window">
+        <div class="win-h"><span>IL TUO TANK</span><div class="win-x" onclick="closeAll()"></div></div>
         <div class="win-b">
-            <div id="cart-l">VUOTO</div><div id="cart-t" style="margin-top:10px; font-weight:bold;">TOT: 0€</div>
-            <button class="btn" onclick="check()">ORDINA</button><button class="btn" style="background:red;" onclick="cart=[];upC();">SVUOTA</button>
+            <div id="cart-list">VUOTO</div>
+            <div id="cart-tot" style="margin-top:10px; font-weight:bold; border-top:2px solid #000; padding-top:5px;">TOT: 0€</div>
+            <button class="btn" onclick="checkout()">ORDINA</button>
+            <button class="btn" style="background:var(--red);" onclick="cart=[];updateCart();">SVUOTA</button>
         </div>
     </div>
 
-    <div id="win-admin" class="win">
-        <div class="win-h" onmousedown="dS(event,'win-admin')" ontouchstart="dS(event,'win-admin')"><span>ADMIN</span><span onclick="closeAll()">X</span></div>
-        <div class="win-b"><div id="adm-l"></div><button class="btn" onclick="add()">+ ITEM</button><button class="btn" onclick="save()">SALVA</button></div>
+    <div id="win-admin" class="window">
+        <div class="win-h"><span>ADMIN PANEL</span><div class="win-x" onclick="closeAll()"></div></div>
+        <div class="win-b">
+            <div id="adm-list"></div>
+            <button class="btn" onclick="saveAdmin()">SALVA</button>
+        </div>
     </div>
 
-    <div id="win-news" class="win"><div class="win-h"><span>NEWS</span><span onclick="closeAll()">X</span></div><div class="win-b"><input id="nm" type="email" placeholder="Email"><button class="btn" onclick="sub()">ISCRIVITI</button></div></div>
-    <div id="win-prof" class="win"><div class="win-h"><span>PROFILO</span><span onclick="closeAll()">X</span></div><div class="win-b"><p>COMING SOON</p></div></div>
+    <div id="win-news" class="window">
+        <div class="win-h"><span>NEWSLETTER</span><div class="win-x" onclick="closeAll()"></div></div>
+        <div class="win-b">
+            <input id="in-email" type="email" placeholder="Email...">
+            <button class="btn" onclick="doSub()">ISCRIVITI</button>
+        </div>
+    </div>
+
+    <div id="win-prof" class="window">
+        <div class="win-h"><span>PROFILO</span><div class="win-x" onclick="closeAll()"></div></div>
+        <div class="win-b"><p>COMING SOON</p></div>
+    </div>
 
     <script>
-        // --- DATA ---
+        // --- DATA & CONFIG ---
         const CFG = {
-            sbUrl:'https://jwifyapbnsbbpsrstrow.supabase.co',
-            sbKey:'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y',
-            emKey:'BThMV2knP0VG0s4nr', emSrv:'service_4scv4hn', emTmp:'template_8opoo1v'
+            sbUrl: 'https://jwifyapbnsbbpsrstrow.supabase.co',
+            sbKey: 'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y',
+            emKey: 'BThMV2knP0VG0s4nr', emSrv: 'service_4scv4hn', emTmp: 'template_8opoo1v'
         };
+
+        // Inventario più ricco per riempire le pagine
         let items = [
-            {id:0, name:'CAP', price:45, qty:10, img:'image_cap.PNG'},
-            {id:1, name:'TEE', price:65, qty:5, img:'image_tee.PNG'},
-            {id:2, name:'STICKER', price:10, qty:100, img:'image_sticker.PNG'},
-            {id:3, name:'HOODIE', price:85, qty:0, img:'image_hoodie.PNG'},
-            {id:4, name:'PANT', price:70, qty:8, img:'image_pant.PNG'},
-            {id:5, name:'SOCKS', price:15, qty:20, img:'image_socks.PNG'}
+            {id:0, name:'CAP', price:45, img:'image_cap.PNG'},
+            {id:1, name:'TEE', price:65, img:'image_tee.PNG'},
+            {id:2, name:'STICKER', price:10, img:'image_sticker.PNG'},
+            {id:3, name:'HOODIE', price:85, img:'image_hoodie.PNG'},
+            {id:4, name:'PANT', price:70, img:'image_pant.PNG'},
+            {id:5, name:'SOCKS', price:15, img:'image_socks.PNG'},
+            {id:6, name:'BEANIE', price:35, img:'image_cap.PNG'}, // Test scroll
+            {id:7, name:'BAG', price:120, img:'image_tee.PNG'}
         ];
-        let cart=[]; let sb=null; let tap=0;
+        let cart = [];
+        let supabase = null;
+        let tapCount = 0;
 
-        // --- 1. FUNZIONE START BLINDATA ---
-        function enterWorld() {
-            // 1. RIMUOVI LOADER SUBITO (Priorità massima)
-            document.getElementById('loader-overlay').style.display = 'none';
+        // --- 1. LOADER (Timer Force) ---
+        setTimeout(() => { document.getElementById('start-btn').style.display = 'block'; }, 2600);
+
+        function startApp() {
+            document.getElementById('loader-overlay').style.display='none';
+            try { document.getElementById('sfx-eat').play(); } catch(e){}
             
-            // 2. TENTA AUDIO (Se fallisce, pace)
-            try { document.getElementById('sfx-eat').play(); } catch(e) { console.log("Audio no"); }
-
-            // 3. TENTA CONNESSIONI (Senza bloccare)
-            setTimeout(() => {
-                try {
-                    if(window.supabase) { sb=window.supabase.createClient(CFG.sbUrl, CFG.sbKey); loadDB(); }
-                    if(window.emailjs) emailjs.init(CFG.emKey);
-                } catch(e) { console.log("Offline"); }
-            }, 100);
-
+            // Tentativo Connessione (Senza blocco)
+            try {
+                if(window.supabase) { supabase = window.supabase.createClient(CFG.sbUrl, CFG.sbKey); loadDB(); }
+                if(window.emailjs) emailjs.init(CFG.emKey);
+            } catch(e) { console.log("Offline"); }
+            
             render();
         }
 
         async function loadDB() {
-            if(!sb) return;
-            const { data } = await sb.from('products').select('*');
+            if(!supabase) return;
+            const { data } = await supabase.from('products').select('*');
             if(data && data.length) { items = data; render(); }
         }
 
-        // --- 2. RENDER & PHYSICS ---
+        // --- 2. RENDER GRIGLIA ---
         function render() {
-            document.getElementById('grid').innerHTML = items.map((i, idx) => {
-                const sold = i.qty<=0;
-                return `<div class="item ${sold?'sold-out':''}" id="i-${idx}" 
-                ontouchstart="${sold?'':'dS_I(event,'+idx+')'}" onmousedown="${sold?'':'dS_I(event,'+idx+')'}">
-                <img src="${i.img}" onerror="this.src='https://placehold.co/80?text=${i.name}'"><div class="label">${i.name}</div><div class="label">${i.price}€</div></div>`;
-            }).join('');
+            // Divido gli item nelle pagine (max 9 per pagina)
+            const p1 = document.getElementById('page-1');
+            const p2 = document.getElementById('page-2');
+            
+            p1.innerHTML = items.slice(0, 9).map((i, idx) => createCard(i, idx)).join('');
+            p2.innerHTML = items.slice(9, 18).map((i, idx) => createCard(i, idx+9)).join('');
         }
 
-        function dS_I(e, idx) {
-            const el = document.getElementById(`i-${idx}`);
-            const r = el.getBoundingClientRect();
-            const g = el.cloneNode(true);
-            g.className='ghost'; g.style.left=r.left+'px'; g.style.top=r.top+'px';
-            document.body.appendChild(g);
+        function createCard(item, i) {
+            return `
+            <div class="item" id="itm-${i}" 
+                 ontouchstart="touchStart(event, ${i})" 
+                 onmousedown="touchStart(event, ${i})">
+                <img src="${item.img}" onerror="this.src='https://placehold.co/80?text=${item.name}'">
+                <div class="label">${item.name}</div>
+                <div class="label">${item.price}€</div>
+            </div>`;
+        }
+
+        // --- 3. LOGICA SCROLL vs DRAG (CUORE DEL FIX) ---
+        let holdTimer = null;
+
+        function touchStart(e, idx) {
+            // Non prevenire default subito! Altrimenti lo scroll non parte.
             
-            const ev = e.touches?e.touches[0]:e;
-            const ox = ev.clientX-r.left; const oy = ev.clientY-r.top;
-            let moved=false;
+            const el = document.getElementById(`itm-${idx}`);
+            const ev = e.touches ? e.touches[0] : e;
+            const rect = el.getBoundingClientRect();
+            
+            // TIMER: Se tieni premuto 200ms, inizia il DRAG
+            holdTimer = setTimeout(() => {
+                startDragProcess(idx, rect, ev.clientX, ev.clientY);
+            }, 200);
 
-            function mv(event) {
-                const t = event.touches?event.touches[0]:event;
-                if(Math.abs(t.clientX-ev.clientX)>5) { moved=true; if(event.preventDefault) event.preventDefault(); }
-                g.style.left=(t.clientX-ox)+'px'; g.style.top=(t.clientY-oy)+'px';
+            // Se l'utente muove il dito PRIMA dei 200ms, è uno SCROLL -> Cancella timer
+            const cancel = () => { clearTimeout(holdTimer); };
+            el.addEventListener('touchmove', cancel, {once:true});
+            el.addEventListener('touchend', cancel, {once:true});
+            // Per il mouse
+            el.addEventListener('mousemove', cancel, {once:true});
+            el.addEventListener('mouseup', cancel, {once:true});
+        }
+
+        function startDragProcess(idx, rect, startX, startY) {
+            // Feedback vibrazione
+            if(navigator.vibrate) navigator.vibrate(20);
+
+            // Crea Ghost
+            const ghost = document.getElementById(`itm-${idx}`).cloneNode(true);
+            ghost.classList.add('ghost');
+            // Importante: setta dimensione fissa altrimenti esplode
+            ghost.style.width = '85px'; 
+            ghost.style.left = rect.left + 'px';
+            ghost.style.top = rect.top + 'px';
+            document.body.appendChild(ghost);
+
+            const offX = startX - rect.left;
+            const offY = startY - rect.top;
+
+            function move(e) {
+                e.preventDefault(); // ORA blocchiamo lo scroll perché stiamo draggando
+                const t = e.touches ? e.touches[0] : e;
+                ghost.style.left = (t.clientX - offX) + 'px';
+                ghost.style.top = (t.clientY - offY) + 'px';
             }
-            function end() {
-                document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',end);
-                document.removeEventListener('touchmove',mv); document.removeEventListener('touchend',end);
-                if(!moved) { g.remove(); return; }
 
-                const tk = document.getElementById('tank-target').getBoundingClientRect();
-                const gx = parseInt(g.style.left)+45; const gy = parseInt(g.style.top)+45;
-                if(Math.hypot(gx-(tk.left+30), gy-(tk.top+30)) < 60) {
-                    g.classList.add('sucked'); try{document.getElementById('sfx-eat').play();}catch(e){}
-                    setTimeout(()=>{ cart.push(items[idx]); upC(); g.remove(); openW('win-cart'); },400);
+            function end(e) {
+                document.removeEventListener('touchmove', move); document.removeEventListener('touchend', end);
+                document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', end);
+
+                // CONTROLLO TANK
+                const tank = document.getElementById('tank-target').getBoundingClientRect();
+                const gx = parseInt(ghost.style.left) + 40;
+                const gy = parseInt(ghost.style.top) + 40;
+                
+                const tx = tank.left + tank.width/2;
+                const ty = tank.top + tank.height/2;
+
+                if(Math.hypot(gx-tx, gy-ty) < 60) {
+                    ghost.classList.add('sucked');
+                    try{document.getElementById('sfx-eat').play();}catch(e){}
+                    setTimeout(() => {
+                        cart.push(items[idx]);
+                        updateCart();
+                        ghost.remove();
+                        openWin('win-cart');
+                    }, 400);
                 } else {
-                    g.style.display='none'; let bel = document.elementFromPoint(gx, gy); g.style.display='block';
-                    let trg = bel?bel.closest('.item'):null;
-                    if(trg && trg.id!==`i-${idx}`) {
-                        let tid = parseInt(trg.id.split('-')[1]);
-                        [items[idx], items[tid]] = [items[tid], items[idx]]; render();
-                    }
-                    g.remove();
+                    ghost.remove(); // Niente switch per semplicità, solo ritorno
                 }
             }
-            document.addEventListener('mousemove',mv); document.addEventListener('mouseup',end);
-            document.addEventListener('touchmove',mv,{passive:false}); document.addEventListener('touchend',end);
+
+            document.addEventListener('touchmove', move, {passive: false});
+            document.addEventListener('touchend', end);
+            document.addEventListener('mousemove', move);
+            document.addEventListener('mouseup', end);
         }
 
-        // --- 3. CART & ADMIN ---
-        function upC() {
-            document.getElementById('tank-badge').innerText=cart.length;
-            document.getElementById('tank-badge').style.display=cart.length?'block':'none';
-            document.getElementById('cart-l').innerHTML=cart.length?cart.map((x,i)=>`<div class="row"><span>${x.name}</span><span onclick="cart.splice(${i},1);upC();" style="color:red;cursor:pointer;">X</span></div>`).join(''):"VUOTO";
-            document.getElementById('cart-t').innerText="TOT: "+cart.reduce((a,b)=>a+parseInt(b.price),0)+"€";
+        // --- 4. CART & UTILS ---
+        function updateCart() {
+            document.getElementById('tank-badge').innerText = cart.length;
+            document.getElementById('tank-badge').style.display = cart.length ? 'block' : 'none';
+            const list = document.getElementById('cart-list');
+            if(!cart.length) list.innerHTML = "VUOTO";
+            else list.innerHTML = cart.map((x,i)=>`<div class="row"><span>${x.name}</span><span style="cursor:pointer;color:red;" onclick="cart.splice(${i},1);updateCart()">X</span></div>`).join('');
+            document.getElementById('cart-tot').innerText = "TOT: " + cart.reduce((a,b)=>a+parseInt(b.price),0) + "€";
         }
-        async function check() {
-            if(!cart.length) return alert("Vuoto");
+
+        async function checkout() {
+            if(!cart.length) return alert("Vuoto!");
             let m=prompt("Email:");
             if(m) {
-                if(sb) await sb.from('newsletter').insert([{email:m}]);
+                if(supabase) await supabase.from('newsletter').insert([{email:m}]);
                 if(window.emailjs) emailjs.send(CFG.emSrv, CFG.emTmp, {user_email:m, message:"ORDINE"});
-                alert("Grazie!"); cart=[]; upC(); closeAll();
+                alert("Ordine Inviato!"); cart=[]; updateCart(); closeAll();
             }
         }
 
-        function admCheck() { tap++; if(tap>=5){ if(prompt("PWD")==="FRIENDLYFIRE26") rendAdm(); tap=0; } setTimeout(()=>tap=0,800); }
-        function rendAdm() {
-            document.getElementById('adm-l').innerHTML=items.map((x,i)=>`<div class="row"><input id="n${i}" value="${x.name}"><input id="p${i}" value="${x.price}" type="number" style="width:30px"><input id="q${i}" value="${x.qty}" type="number" style="width:30px"><span onclick="items.splice(${i},1);rendAdm();" style="color:red;">X</span></div>`).join('');
-            openW('win-admin');
-        }
-        function add() { items.push({id:Date.now(), name:'NEW', price:0, qty:1, img:''}); rendAdm(); }
-        async function save() {
-            items.forEach((x,i)=>{ if(document.getElementById(`n${i}`)) { x.name=document.getElementById(`n${i}`).value; x.price=document.getElementById(`p${i}`).value; x.qty=document.getElementById(`q${i}`).value; } });
-            render(); if(sb) await sb.from('products').upsert(items); alert("OK"); closeAll();
+        function checkAdmin() {
+            tapCount++;
+            if(tapCount>=5) {
+                if(prompt("PASSWORD")==="FRIENDLYFIRE26") {
+                    const l = document.getElementById('adm-list');
+                    l.innerHTML = items.map((x,i)=>`<div class="row"><input id="an${i}" value="${x.name}"><input id="ap${i}" value="${x.price}" type="number" style="width:30px"></div>`).join('');
+                    openWin('win-admin');
+                }
+                tapCount=0;
+            }
+            setTimeout(()=>tapCount=0, 800);
         }
 
-        // --- 4. UTILS ---
-        function anim(el) { el.classList.remove('pongo-anim'); void el.offsetWidth; el.classList.add('pongo-anim'); try{document.getElementById('sfx-eat').play();}catch(e){} }
-        function openW(id) { closeAll(); document.getElementById(id).style.display='flex'; }
-        function toggleW(id) { let e=document.getElementById(id); if(e.style.display==='flex') closeAll(); else { openW(id); upC(); } }
-        function closeAll() { document.querySelectorAll('.win').forEach(e=>e.style.display='none'); }
-        async function sub() { let e=document.getElementById('nm').value; if(e&&sb) await sb.from('newsletter').insert([{email:e}]); alert("OK"); closeAll(); }
-
-        let dx=0, dy=0, de=null;
-        function dS(e,id) {
-            de=document.getElementById(id); const t=e.touches?e.touches[0]:e; const r=de.getBoundingClientRect(); dx=t.clientX-r.left; dy=t.clientY-r.top;
-            function mv(ev) { const c=ev.touches?ev.touches[0]:ev; de.style.left=(c.clientX-dx)+'px'; de.style.top=(c.clientY-dy)+'px'; ev.preventDefault(); }
-            function st() { document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',st); document.removeEventListener('touchmove',mv); document.removeEventListener('touchend',st); }
-            document.addEventListener('mousemove',mv); document.addEventListener('mouseup',st); document.addEventListener('touchmove',mv,{passive:false}); document.addEventListener('touchend',st);
+        async function saveAdmin() {
+            items.forEach((x,i)=>{
+                let n = document.getElementById(`an${i}`);
+                if(n) { x.name=n.value; x.price=document.getElementById(`ap${i}`).value; }
+            });
+            render(); if(supabase) await supabase.from('products').upsert(items);
+            alert("Salvato!"); closeAll();
         }
+
+        function uiAnim(el) { el.classList.remove('pongo-anim'); void el.offsetWidth; el.classList.add('pongo-anim'); try{document.getElementById('sfx-eat').play();}catch(e){} }
+        function openWin(id) { closeAll(); document.getElementById(id).style.display='flex'; }
+        function toggleWin(id) { let e=document.getElementById(id); if(e.style.display==='flex') closeAll(); else { openWin(id); updateCart(); } }
+        function closeAll() { document.querySelectorAll('.window').forEach(e=>e.style.display='none'); }
+        async function doSub() { let e=document.getElementById('in-email').value; if(e&&supabase) await supabase.from('newsletter').insert([{email:e}]); alert("Iscritto!"); closeAll(); }
+
     </script>
 </body>
 </html>
