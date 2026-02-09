@@ -11,9 +11,9 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <style>
-        /* --- 1. CORE STYLE --- */
+        /* --- STILE V87 ORIGINALE --- */
         :root { --bg-pongo: #2e4a1e; --white: #ffffff; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
         
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
@@ -21,14 +21,13 @@
             background-color: var(--bg-pongo);
             background-image: url('sfondo2.jpg');
             background-position: center; background-size: cover;
-            /* Scroll bloccato sul body, attivo solo nello shop */
-            touch-action: none;
+            position: fixed; 
         }
 
-        /* --- 2. LOADER SEMPLIFICATO --- */
+        /* --- LOADER (Z-INDEX SUPREMO) --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #fff; z-index: 100000; 
+            background: #fff; z-index: 99999999; 
             display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
         .loader-img { width: 250px; max-width: 80%; margin-bottom: 20px; }
@@ -36,81 +35,70 @@
         #loader-gif { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transform: scale(1.1); }
         
         #start-btn {
-            margin-top: 30px; padding: 15px 40px; background: #000; color: #fff; 
-            border: 4px solid #000; font-family: inherit; cursor: pointer; font-size: 12px;
-            animation: blink 1s infinite; display: block;
+            margin-top: 20px; padding: 15px 40px; background: #000; color: #fff; 
+            border: 4px solid #000; font-family: inherit; cursor: pointer;
+            animation: blink 1s infinite;
         }
         @keyframes blink { 50% { opacity: 0.5; } }
 
-        /* --- 3. HEADER & UI --- */
+        /* --- HEADER --- */
         header { 
-            position: fixed; top: 0; left: 0; right: 0; height: 90px; 
-            display: flex; justify-content: space-between; padding: 15px 20px; 
-            z-index: 5000; pointer-events: none; /* Container trasparente */
+            position: fixed; top: 0; left: 0; right: 0; padding: 15px 20px; 
+            display: flex; justify-content: space-between; z-index: 5000; pointer-events: none; 
         }
         .icon-btn { 
             width: 70px; height: 70px; object-fit: contain; cursor: pointer; 
-            pointer-events: auto; /* Icone cliccabili */
+            pointer-events: auto; /* Cliccabile */
             filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3)); transition: transform 0.1s;
         }
         .icon-btn:active { transform: scale(0.9); }
-        
         .tank-wrap { position: relative; pointer-events: auto; }
-        #badge { 
-            position: absolute; top: 0; right: -5px; background: #ff3a3a; color: #fff; 
-            border: 2px solid #000; font-size: 9px; padding: 2px 6px; display: none; 
-        }
+        #badge { position: absolute; top: 0; right: -5px; background: red; color: white; border: 2px solid #000; font-size: 10px; padding: 2px 5px; display: none; }
 
-        /* --- 4. SHOP & PHYSICS --- */
-        #shop-view { 
+        /* --- SHOP GRID (V87 STRUCTURE) --- */
+        #shop-slider { 
             width: 100vw; height: 100%; display: flex; 
             overflow-x: scroll; overflow-y: hidden; 
             scroll-snap-type: x mandatory; 
             z-index: 10;
-            padding-top: 100px; /* Spazio Header */
         }
-        #shop-view::-webkit-scrollbar { display: none; }
+        #shop-slider::-webkit-scrollbar { display: none; }
 
         .page { 
             min-width: 100vw; height: 100%; flex-shrink: 0; 
-            scroll-snap-align: start;
             display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); 
-            padding: 20px 10px 100px 10px; gap: 5px; 
-            align-items: center; justify-items: center;
+            padding: 100px 10px; gap: 5px; 
+            scroll-snap-align: start; align-items: center; justify-items: center;
         }
 
         .card { 
             width: 100px; height: 120px; position: relative; 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            touch-action: pan-x; /* Permette scroll orizzontale nativo */
         }
         .card img { width: 90px; pointer-events: none; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
-        .info { 
-            font-family: sans-serif; font-weight: 900; font-size: 9px; color: #fff; 
-            text-shadow: 0 1px 2px #000; margin-top: 5px; text-align: center; text-transform: uppercase; 
-        }
+        .info { font-family: sans-serif; font-weight: 900; font-size: 9px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; text-transform: uppercase; text-align: center; }
 
-        /* --- 5. GHOST FIX (DIMENSIONI FISSE) --- */
-        .ghost-active { 
+        /* --- GHOST FIX (DIMENSIONE BLOCCATA) --- */
+        .ghost { 
             position: fixed !important; z-index: 99999 !important; pointer-events: none; 
             width: 100px !important; height: auto !important; 
             opacity: 0.9; transform: scale(1.1) rotate(5deg);
-            left: 0; top: 0; margin: 0;
+            margin: 0; padding: 0;
         }
-        .ghost-active .info { display: none; }
+        .ghost img { width: 90px !important; height: auto !important; }
+        .ghost .info { display: none; }
 
-        /* --- 6. FOOTER --- */
+        /* --- FOOTER --- */
         footer { 
             position: fixed; bottom: 0; left: 0; right: 0; height: 60px; 
             display: flex; justify-content: center; align-items: center; 
             z-index: 5000; pointer-events: none;
             background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
         }
-        .brand { width: 150px; pointer-events: auto; cursor: pointer; transition: transform 0.1s; }
-        .brand:active { transform: scale(0.95); }
+        .brand { width: 150px; pointer-events: auto; cursor: pointer; }
 
-        /* --- 7. MODALS --- */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 20000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        /* --- OVERLAYS --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .win { width: 90%; max-width: 400px; background: #fff; border: 3px double #000; padding-bottom: 15px; text-align: center; box-shadow: 10px 10px 0 rgba(0,0,0,0.5); }
         .win-h { background: #eee; border-bottom: 2px solid #000; padding: 10px; font-weight: bold; margin-bottom: 15px; }
         .btn { background: #000; color: #fff; border: 2px solid #000; padding: 12px; width: 85%; margin: 6px auto; display: block; font-family: inherit; cursor: pointer; }
@@ -118,8 +106,8 @@
 
         @media (min-width: 1024px) {
             .page { grid-template-columns: repeat(6, 1fr); padding: 100px; }
-            .card { width: 150px; height: 180px; } .card img { width: 140px; }
-            .ghost-active { width: 140px !important; }
+            .card { width: 160px; height: 200px; } .card img { width: 140px; }
+            .ghost { width: 160px !important; } .ghost img { width: 140px !important; }
         }
     </style>
 </head>
@@ -128,7 +116,7 @@
     <div id="loader-overlay">
         <img src="logo_ff_loader.png" class="loader-img">
         <div class="gif-box"><img id="loader-gif" src="loadernob.gif"></div>
-        <button id="start-btn" onclick="destroyLoader()">START</button>
+        <button id="start-btn" onclick="document.getElementById('loader-overlay').remove(); playSfx()">START</button>
     </div>
 
     <audio id="sfx" src="suono_gnam.mp3"></audio>
@@ -142,7 +130,7 @@
         </div>
     </header>
 
-    <div id="shop-view">
+    <div id="shop-slider">
         <div id="page-1" class="page"></div>
         <div id="page-2" class="page"></div>
         <div id="page-3" class="page"></div>
@@ -153,65 +141,48 @@
     </footer>
 
     <div id="mod-cart" class="modal"><div class="win"><div class="win-h">TANK</div><div id="list-cart" style="max-height:150px;overflow:auto;padding:10px;"></div><div style="margin:10px">TOT: <span id="tot">0</span>€</div><button class="btn" onclick="ui.open('pay')">CHECKOUT</button><button class="btn" onclick="cart.clear()">EMPTY</button><button class="btn" onclick="ui.close()">CLOSE</button></div></div>
-    
     <div id="mod-pay" class="modal"><div class="win"><div class="win-h">CHECKOUT</div><input id="ship-n" class="inp" placeholder="NAME"><input id="ship-e" class="inp" placeholder="EMAIL"><button class="btn" style="background:#5469d4" onclick="cart.pay()">PAY STRIPE</button><button class="btn" onclick="ui.close()">CANCEL</button></div></div>
-
     <div id="mod-world" class="modal"><div class="win"><div class="win-h">WORLD</div><input id="sub-n" class="inp" placeholder="NAME"><input id="sub-e" class="inp" placeholder="EMAIL"><button class="btn" onclick="admin.sub()">SUBSCRIBE</button><button class="btn" onclick="window.open('https://instagram.com/friendlyfire')">INSTAGRAM</button><button class="btn" onclick="ui.close()">BACK</button></div></div>
-
     <div id="mod-profile" class="modal"><div class="win"><div class="win-h">PROFILE</div><div id="avatars" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:10px"></div><button class="btn" onclick="ui.close()">SAVE</button></div></div>
-
-    <div id="mod-admin" class="modal"><div class="win" style="height:80vh"><div class="win-h">DB</div><div id="db-list" style="height:60%;overflow:auto"></div><button class="btn" onclick="admin.save()">SAVE ALL</button><button class="btn" onclick="ui.close()">EXIT</button></div></div>
+    <div id="mod-admin" class="modal"><div class="win" style="height:80vh"><div class="win-h">DB (CLOUD)</div><div id="db-list" style="height:60%;overflow:auto"></div><button class="btn" onclick="admin.save()">SAVE ALL</button><button class="btn" onclick="ui.close()">EXIT</button></div></div>
 
     <script>
-        // --- 1. SETUP GLOBALE (ESECUZIONE IMMEDIATA) ---
+        // --- 1. SETUP CHIAVI REALI ---
         const KEYS = {
             stripe: 'pk_live_51SyKuT1PjKstwovYOCs5iNC2Ef8sun65gJ2pLXi4pyvfqM9o2Tiaec8NTQuHJEoYVPzDEDsktyZwlSWl6SjMKxzM00i7aB1Yvd',
             sbUrl: 'https://jwifyapbnsbbpsrstrow.supabase.co',
             sbKey: 'sb_publishable_KxgF0mfUyD1b0AFxoJQ2ww_klbphC9s',
             email: 'BThMV2knP0VG0s4nr'
         };
-        
-        // Init Servizi subito, fuori dal onload
+
+        // --- 2. INIT SERVIZI IMMEDIATO ---
         const sb = supabase.createClient(KEYS.sbUrl, KEYS.sbKey);
-        let strp = null; // Stripe carica async
-        
-        // EmailJS Init immediato
         (function(){ emailjs.init(KEYS.email); })();
+        let strp = null;
 
         const DEF = [{id:0, name:'CAP FIRE', img:'image_cap.PNG', price:45, stripeId:''}, {id:1, name:'TEE FLAME', img:'image_tee.PNG', price:65, stripeId:''}];
         let state = { items: [...DEF], cart: [], clicks: 0 };
 
-        // --- 2. CARICAMENTO ---
+        // --- 3. BOOTSTRAP ---
         window.onload = () => {
-            // Renderizza subito il default
             shop.render(); 
             ui.avatars();
-            
-            // Prova a scaricare i dati VERI dal DB
-            loadData();
-
-            // Init Stripe
+            loadDB(); // Scarica dati reali
             strp = Stripe(KEYS.stripe);
         };
 
-        function destroyLoader() {
-            document.getElementById('loader-overlay').remove(); // Rimuove fisicamente
-            playSfx();
-        }
+        function playSfx() { try{document.getElementById('sfx').play()}catch(e){} }
 
-        async function loadData() {
+        async function loadDB() {
             try {
                 let { data } = await sb.from('products').select('*').order('id');
-                if(data && data.length) { 
-                    state.items = data; 
-                    shop.render(); // Aggiorna con dati veri
-                }
+                if(data && data.length) { state.items = data; shop.render(); }
                 let { data: set } = await sb.from('settings').select('*').single();
                 if(set?.bg_url) document.body.style.backgroundImage = `url('${set.bg_url}')`;
-            } catch(e) { console.log("DB Error (using cache):", e); }
+            } catch(e) { console.log("DB Offline, using defaults"); }
         }
 
-        // --- 3. PHYSICS & SHOP (GHOST FIXATO) ---
+        // --- 4. FISICA V87 RESTAURATA ---
         const shop = {
             render: () => {
                 [1,2,3].forEach(n => document.getElementById('page-'+n).innerHTML='');
@@ -220,48 +191,45 @@
                     let div = document.createElement('div');
                     div.className = 'card';
                     div.innerHTML = `<img src="${it.img}"><div class="info">${it.name}<br>${it.price}€</div>`;
-                    shop.attachPhysics(div, it, i);
+                    shop.physics(div, it, i);
                     document.getElementById('page-'+p).appendChild(div);
                 });
             },
-            attachPhysics: (el, item, idx) => {
+            physics: (el, item, idx) => {
                 let timer, isDrag = false, startX, startY, ghost;
-                const slider = document.getElementById('shop-view');
+                const slider = document.getElementById('shop-slider');
 
                 el.addEventListener('touchstart', e => {
                     if(state.cart.some(c=>c.id===item.id)) return;
                     startX = e.touches[0].clientX; startY = e.touches[0].clientY;
                     
-                    // HOLD 300ms PER ATTIVARE IL DRAG
+                    // HOLD 250ms PER DRAG (V87 Logic)
                     timer = setTimeout(() => {
                         isDrag = true;
                         if(navigator.vibrate) navigator.vibrate(50);
                         
-                        // Crea il fantasma e applica la classe che fissa le dimensioni
+                        // CLONA E FORZA DIMENSIONI PICCOLE
                         ghost = el.cloneNode(true); 
-                        ghost.className = 'ghost-active'; // CLASSE FONDAMENTALE
-                        
-                        // Posiziona sotto il dito
+                        ghost.className = 'ghost'; // CSS la blocca a 100px
                         ghost.style.left = (startX - 50) + 'px'; 
                         ghost.style.top = (startY - 60) + 'px';
                         
                         document.body.appendChild(ghost);
                         el.style.opacity = 0.3;
-                    }, 300);
+                    }, 250);
                 }, {passive:true});
 
                 window.addEventListener('touchmove', e => {
                     if(!isDrag) {
-                        // Se muovo prima del timer, è uno scroll: annulla il timer
                         if(Math.abs(e.touches[0].clientX - startX) > 10) clearTimeout(timer);
                         return;
                     }
-                    e.preventDefault(); // Stop scroll pagina
+                    e.preventDefault();
                     let cx = e.touches[0].clientX, cy = e.touches[0].clientY;
                     ghost.style.left = (cx - 50) + 'px';
                     ghost.style.top = (cy - 60) + 'px';
                     
-                    // Edge Scroll (Scorre le pagine se sei al bordo)
+                    // EDGE SCROLL (Scorre se tocchi i bordi)
                     if(cx > window.innerWidth*0.9) slider.scrollLeft += 10;
                     else if(cx < window.innerWidth*0.1) slider.scrollLeft -= 10;
                 }, {passive:false});
@@ -274,41 +242,38 @@
                     let cx = e.changedTouches[0].clientX, cy = e.changedTouches[0].clientY;
                     let tank = document.getElementById('tank-target').getBoundingClientRect();
 
-                    // Collisione Tank
                     if(cx > tank.left && cx < tank.right && cy > tank.top && cy < tank.bottom) {
                         cart.add(item); playSfx();
-                    } 
-                    // Scambio Posto
-                    else {
+                    } else {
+                        // SWAP
                         let target = document.elementFromPoint(cx, cy)?.closest('.card');
-                        // Logica di swap semplice
-                        // (Ommessa per brevità, la visuale torna a posto)
+                        if(target && target !== el) {
+                            // Logica swap visiva base
+                            shop.render(); // Re-render semplice per resettare
+                        }
                     }
-
-                    if(ghost) ghost.remove(); 
-                    el.style.opacity = 1;
+                    ghost.remove(); el.style.opacity = 1;
                 });
             }
         };
 
-        // --- 4. CART & PAY ---
+        // --- 5. CART & PAY ---
         const cart = {
             add: (it) => { state.cart.push(it); cart.upd(); },
             clear: () => { state.cart = []; cart.upd(); ui.close(); },
             upd: () => {
                 document.getElementById('badge').innerText = state.cart.length;
                 document.getElementById('badge').style.display = state.cart.length ? 'block' : 'none';
-                let t = state.cart.reduce((a,b)=>a+b.price,0);
-                document.getElementById('tot').innerText = t;
+                document.getElementById('tot').innerText = state.cart.reduce((a,b)=>a+b.price,0);
                 document.getElementById('list-cart').innerHTML = state.cart.map(i=>`<div>${i.name} - ${i.price}€</div>`).join('');
             },
             pay: async () => {
-                if(!state.cart.length) return alert("TANK EMPTY");
+                if(!state.cart.length) return alert("EMPTY");
                 let n = document.getElementById('ship-n').value, e = document.getElementById('ship-e').value;
-                if(!n || !e) return alert("FILL ALL FIELDS");
+                if(!n || !e) return alert("FILL DATA");
                 
                 let items = state.cart.map(i => i.stripeId ? {price: i.stripeId, quantity: 1} : null).filter(i=>i);
-                if(!items.length) return alert("ERROR: NO STRIPE IDs");
+                if(!items.length) return alert("ERROR: Missing Stripe ID");
 
                 await strp.redirectToCheckout({
                     lineItems: items, mode: 'payment', customerEmail: e,
@@ -318,7 +283,7 @@
             }
         };
 
-        // --- 5. UI & ADMIN ---
+        // --- 6. ADMIN & NEWSLETTER ---
         const ui = {
             open: (id) => { 
                 playSfx(); 
@@ -359,7 +324,7 @@
                     return i;
                 });
                 await sb.from('products').upsert(ups);
-                alert("SAVED"); location.reload();
+                alert("SAVED!"); location.reload();
             },
             del: async (id) => { if(confirm("DEL?")) { await sb.from('products').delete().eq('id',id); location.reload(); } },
             sub: async () => {
@@ -367,19 +332,16 @@
                 let e = document.getElementById('sub-e').value;
                 if(!e) return alert("EMAIL REQUIRED");
                 
-                // 1. Salva nel DB
+                // 1. Save DB
                 await sb.from('newsletter').insert([{email:e}]);
                 
-                // 2. Manda Mail
+                // 2. Send Mail
                 emailjs.send("service_4scv4hn", "template_8opoo1v", {to_name: n||"Friend", user_email: e})
-                    .then(() => alert("WELCOME TO THE CLUB!"))
-                    .catch((err) => alert("DB SAVED, MAIL ERROR: " + JSON.stringify(err)));
-                
-                ui.close();
+                    .then(() => { alert("WELCOME!"); ui.close(); })
+                    .catch((err) => { alert("DB OK, MAIL ERR"); console.log(err); ui.close(); });
             }
         };
-
-        function playSfx() { try{document.getElementById('sfx').play()}catch(e){} }
+        
         if(window.location.search.includes('success')) { alert("ORDER CONFIRMED!"); cart.clear(); }
     </script>
 </body>
