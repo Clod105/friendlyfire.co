@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | MASTERPIECE V2000</title>
+    <title>FRIENDLYFIRE | V3000 FINAL</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -23,14 +23,13 @@
             overscroll-behavior: none; position: fixed; 
         }
 
-        /* --- 2. LOADER BLINDATO (Z-INDEX MASSIMO) --- */
+        /* --- 2. LOADER --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: #ffffff; z-index: 2147483647; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
             transition: opacity 0.5s ease;
         }
-        
         .loader-logo { width: 80%; max-width: 280px; margin-bottom: 20px; object-fit: contain; }
         .loader-gif { width: 200px; height: 200px; object-fit: contain; margin-bottom: 20px; mix-blend-mode: multiply; }
         
@@ -38,11 +37,9 @@
             width: 250px; height: 30px; background: #fff; border: 4px solid #000; padding: 4px; 
             box-shadow: 6px 6px 0 rgba(0,0,0,0.15); margin-bottom: 20px;
         }
-        /* Animazione CSS pura: non si blocca mai */
         .bar-fill { height: 100%; width: 0%; background-color: var(--green); animation: fillLoad 2.5s forwards; }
         @keyframes fillLoad { 0%{width:0%} 100%{width:100%} }
 
-        /* TASTO START: CLICCABILE AL 100% */
         #start-btn { 
             display: none; background: #000; color: #fff; border: 4px solid #000; 
             padding: 20px 60px; font-family: inherit; font-size: 16px; 
@@ -70,7 +67,7 @@
             border: 2px solid #000; font-size: 9px; padding: 4px; border-radius: 50%; display: none; 
         }
 
-        /* --- 4. SHOP & ITEMS --- */
+        /* --- 4. SHOP --- */
         #shop-view { 
             width: 100vw; height: 100%; display: flex; overflow-x: auto; overflow-y: hidden; 
             scroll-snap-type: x mandatory; padding-top: 100px; -webkit-overflow-scrolling: touch; 
@@ -98,16 +95,24 @@
         .sold-out { opacity: 0.5; filter: grayscale(1); pointer-events: none; }
         .sold-out::after { content: "SOLD OUT"; position: absolute; background: var(--red); color: white; font-size: 8px; padding: 2px 4px; transform: rotate(-15deg); border: 1px solid #fff; }
 
-        /* --- 5. GHOST (FIX DIMENSIONI GIGANTI) --- */
+        /* --- 5. GHOST (FIX DIMENSIONI GIGANTI & CONTENIMENTO) --- */
         .ghost { 
             position: fixed; z-index: 99999; pointer-events: none; 
-            /* QUESTE RIGHE EVITANO CHE DIVENTI GIGANTE */
-            width: 85px !important; 
-            height: 85px !important; 
+            /* FORZA LE DIMENSIONI FISSE: */
+            width: 80px !important; 
+            height: 80px !important; 
+            /* Assicura che l'immagine dentro non sbordi */
+            display: flex; justify-content: center; align-items: center;
             opacity: 0.9; transform: scale(1.1); 
-            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+            filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6));
         }
-        .ghost img { width: 100%; height: 100%; object-fit: contain; }
+        /* L'immagine dentro il ghost deve adattarsi al contenitore 80px */
+        .ghost img { 
+            width: 100% !important; 
+            height: 100% !important; 
+            object-fit: contain !important; 
+        }
+        
         .sucked { transition: 0.4s; transform: scale(0) rotate(720deg) !important; opacity: 0; }
 
         /* --- 6. WINDOWS --- */
@@ -126,15 +131,18 @@
         .row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ccc; padding: 8px 0; font-size: 10px; }
         input { width: 100%; padding: 8px; border: 2px solid #000; font-family: monospace; font-size: 10px; }
 
-        /* --- 7. FOOTER (ADMIN FIX) --- */
+        /* --- 7. FOOTER (ADMIN FIX 3 CLICK) --- */
         footer { 
-            position: fixed; bottom: 0; width: 100%; height: 80px; /* Altezza fissa per area click */
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 90px;
             display: flex; justify-content: center; align-items: center;
-            z-index: 9000; pointer-events: none; 
+            z-index: 12000; /* Più alto dello shop */
+            pointer-events: none; /* Lascia passare i click ai lati */
         }
         .brand { 
             width: 160px; pointer-events: auto; cursor: pointer; 
-            padding: 20px; /* AUMENTA L'AREA DI CLICK */
+            /* Padding gigante per facilitare il tocco */
+            padding: 25px; 
+            margin-bottom: 20px;
         }
 
     </style>
@@ -145,7 +153,6 @@
         <img src="logo_ff_loader.png" class="loader-logo" onerror="this.src='https://placehold.co/300x80?text=FRIENDLYFIRE'">
         <img src="loadernob.gif" class="loader-gif" onerror="this.src='https://placehold.co/200?text=LOADING'">
         <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
-        
         <button id="start-btn" onclick="startApp()" ontouchstart="startApp()" onmousedown="startApp()">ENTER WORLD</button>
     </div>
 
@@ -191,7 +198,7 @@
         let items=[{id:0,name:'CAP',p:45,q:10,i:'image_cap.png'},{id:1,name:'TEE',p:65,q:5,i:'image_tee.png'},{id:2,name:'STICKER',p:10,q:100,i:'image_sticker.png'},{id:3,name:'HOODIE',p:85,q:0,i:'image_hoodie.png'},{id:4,name:'PANT',p:70,q:8,i:'image_pant.png'},{id:5,name:'SOCKS',p:15,q:20,i:'image_socks.png'},{id:6,name:'BEANIE',p:35,q:5,i:'image_cap.png'}];
         let cart=[], sb=null, taps=0;
 
-        // --- 1. START LOGIC ---
+        // --- START ---
         setTimeout(()=>{ 
             let b = document.getElementById('start-btn'); 
             b.style.display='block'; 
@@ -209,7 +216,7 @@
 
         async function loadDB(){ if(!sb)return; const{data}=await sb.from('products').select('*'); if(data&&data.length){ items=data.map(x=>({id:x.id,name:x.name,p:x.price,q:x.qty,i:x.img})); render(); } }
 
-        // --- 2. RENDER ---
+        // --- RENDER ---
         function render(){
             document.getElementById('page-1').innerHTML=items.slice(0,9).map((x,i)=>mkC(x,i)).join('');
             document.getElementById('page-2').innerHTML=items.slice(9,18).map((x,i)=>mkC(x,i+9)).join('');
@@ -220,18 +227,25 @@
             <img src="${x.i}" onerror="this.src='https://placehold.co/80?text=${x.name}'"><div class="label">${x.name}</div><div class="label">${x.p}€</div></div>`;
         }
 
-        // --- 3. PHYSICS (FIXED SIZE) ---
+        // --- PHYSICS (SENSIBILITA' AUMENTATA & FIX ICONE) ---
         let tmr=null;
         function hld(e,i){
             let el=document.getElementById(`i-${i}`), ev=e.touches?e.touches[0]:e, r=el.getBoundingClientRect();
-            tmr=setTimeout(()=>{ if(navigator.vibrate)navigator.vibrate(20); drag(i,r,ev.clientX,ev.clientY); },200);
+            // Timer ridotto a 120ms per maggiore sensibilità
+            tmr=setTimeout(()=>{ if(navigator.vibrate)navigator.vibrate(20); drag(i,r,ev.clientX,ev.clientY); }, 120);
             let c=()=>{clearTimeout(tmr)}; el.addEventListener('touchend',c,{once:true}); el.addEventListener('touchmove',c,{once:true}); el.addEventListener('mouseup',c,{once:true});
         }
         function drag(i,r,sx,sy){
-            let g=document.getElementById(`i-${i}`).cloneNode(true);
-            g.className='ghost'; g.style.left=r.left+'px'; g.style.top=r.top+'px'; 
-            // FIX ICONE GIGANTI: L'immagine dentro eredita le dimensioni dal CSS .ghost
+            let orig = document.getElementById(`i-${i}`);
+            let g = orig.cloneNode(true);
+            g.className='ghost'; 
+            // Forza dimensione esplicita al momento della creazione
+            g.style.width = '80px';
+            g.style.height = '80px';
+            g.style.left=r.left+'px'; 
+            g.style.top=r.top+'px';
             document.body.appendChild(g);
+            
             let ox=sx-r.left, oy=sy-r.top;
 
             function mv(e){
@@ -262,11 +276,11 @@
             document.addEventListener('mousemove',mv); document.addEventListener('mouseup',end);
         }
 
-        // --- 4. CART ---
+        // --- CART & ADMIN ---
         function upCart(){
             document.getElementById('tank-badge').innerText=cart.length;
             document.getElementById('tank-badge').style.display=cart.length?'block':'none';
-            document.getElementById('cart-list').innerHTML=cart.length?cart.map((x,n)=>`<div class="row"><span>${x.name}</span><span>${x.p}€</span><span onclick="cart.splice(${n},1);upCart()" style="color:red;cursor:pointer;">X</span></div>`).join(''):"VUOTO";
+            document.getElementById('cart-list').innerHTML=cart.length?cart.map((x,n)=>`<div class="row"><span>${x.name}</span><span>${x.p}€</span><span onclick="cart.splice(${n},1);upCart()" style="color:red;">X</span></div>`).join(''):"VUOTO";
             document.getElementById('cart-tot').innerText="TOT: "+cart.reduce((a,b)=>a+parseInt(b.p),0)+"€";
         }
         async function pay(){
@@ -279,15 +293,14 @@
             }
         }
 
-        // --- 5. ADMIN (FIX CLICK) ---
-        function adminTrigger() {
-            taps++;
-            if(taps>=5){
-                if(prompt("PWD")==="FRIENDLYFIRE26") showAdm();
-                taps=0;
-            }
-            // Reset timer più lungo per permettere tocchi lenti
-            setTimeout(()=>taps=0, 1000);
+        // ADMIN TRIGGER FIXATO A 3 CLICK
+        function adminTrigger(){ 
+            taps++; 
+            if(taps>=3){ // CAMBIATO A 3
+                if(prompt("PWD")==="FRIENDLYFIRE26") showAdm(); 
+                taps=0; 
+            } 
+            setTimeout(()=>taps=0, 1000); // Reset dopo 1 secondo
         }
 
         function showAdm(){
@@ -301,7 +314,7 @@
         }
         function setBg(){ document.body.style.backgroundImage=`url('${document.getElementById('bg-in').value}')`; }
 
-        // --- 6. UTILS ---
+        // UI
         function anim(el){ el.classList.remove('pongo-anim'); void el.offsetWidth; el.classList.add('pongo-anim'); try{document.getElementById('sfx-eat').play();}catch(e){} }
         function showWin(id){ hideAll(); document.getElementById(id).style.display='flex'; }
         function toggleWin(id){ let w=document.getElementById(id); if(w.style.display==='flex') hideAll(); else { showWin(id); upCart(); } }
