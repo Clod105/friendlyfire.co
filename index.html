@@ -3,121 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V8000 HOLOGRAM</title>
+    <title>FRIENDLYFIRE | V9000 BOMB</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. SETTAGGI UNIVERSALI & VARIABILI --- */
+        /* --- 1. SETTAGGI UNIVERSALI --- */
         :root { 
-            --main-bg: #2e4a1e; /* Pongo Green */
-            --text-col: #000;
-            --win-bg: #fff;
-            --win-head: #eee;
-            --border-col: #000;
-            --red: #ff3a3a;
-            --green: #4AF626;
+            --red: #ff3a3a; 
+            --green: #4AF626; 
+            --bg-pongo: #2e4a1e; 
+            --holo-cyan: #00f3ff;
         }
-
-        /* --- MODALITÀ HOLOGRAM (LABORATORIO) --- */
-        body.hologram-mode {
-            --main-bg: #020a14; /* Dark Cyber Blue */
-            --text-col: #00f3ff; /* Neon Cyan */
-            --win-bg: rgba(0, 20, 40, 0.9); /* Vetro Scuro */
-            --win-head: rgba(0, 40, 80, 0.9);
-            --border-col: #00f3ff;
-            --red: #ff0055; /* Neon Pink per i dettagli */
-        }
-
-        /* Sovrascritture specifiche per Hologram */
-        body.hologram-mode {
-            background-image: none !important; /* Toglie sfondo pongo */
-            background-color: var(--main-bg);
-            /* Griglia futuristica di sfondo */
-            background-image: linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px) !important;
-            background-size: 40px 40px !important;
-        }
-        
-        /* I VESTITI DEVONO RIMANERE ORIGINALI */
-        body.hologram-mode .item img, 
-        body.hologram-mode .ghost img,
-        body.hologram-mode .sticker {
-            filter: none !important; /* Nessun filtro sui prodotti */
-            z-index: 20;
-        }
-
-        /* Testi e bordi in Hologram */
-        body.hologram-mode .label, 
-        body.hologram-mode .win-h, 
-        body.hologram-mode .win-b,
-        body.hologram-mode input {
-            color: var(--text-col) !important;
-            border-color: var(--border-col) !important;
-            text-shadow: 0 0 5px rgba(0, 243, 255, 0.7);
-        }
-        
-        /* --- BASE CSS --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
         
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Press Start 2P', cursive; 
-            background-color: var(--main-bg);
+            background-color: var(--bg-pongo);
             background-image: url('sfondo2.jpg'); 
             background-size: cover; background-position: center; background-repeat: no-repeat;
             overscroll-behavior: none; position: fixed; 
-            transition: background 0.5s ease, color 0.5s ease;
+            transition: all 0.4s ease;
         }
 
-        /* --- 2. LOADER STABILE (NO SBALZI) --- */
+        /* --- 2. HOLOGRAM / LAB MODE --- */
+        body.hologram-mode {
+            background-image: none !important; /* Sovrascritto via JS se c'è custom BG */
+            background-color: #050a14; /* Blu Notte base */
+        }
+
+        /* TEXTURE OLOGRAFICA (SCANLINES) */
+        body.hologram-mode::after {
+            content: " "; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 255, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none; z-index: 1;
+        }
+
+        /* LOGHI AZZURRI IN LAB MODE */
+        body.hologram-mode header img,
+        body.hologram-mode footer img {
+            filter: grayscale(100%) sepia(100%) hue-rotate(130deg) saturate(400%) brightness(1.5) drop-shadow(0 0 8px var(--holo-cyan));
+            transition: filter 0.4s ease;
+        }
+
+        /* TESTI E BORDI NEON */
+        body.hologram-mode .window {
+            background: rgba(0, 15, 30, 0.85);
+            border-color: var(--holo-cyan);
+            color: var(--holo-cyan);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+        }
+        body.hologram-mode .win-h { background: rgba(0, 243, 255, 0.1); border-bottom: 1px solid var(--holo-cyan); color: var(--holo-cyan); }
+        body.hologram-mode .btn { background: transparent; border: 1px solid var(--holo-cyan); color: var(--holo-cyan); }
+        body.hologram-mode #cart-tot { border-top-color: var(--holo-cyan) !important; }
+        body.hologram-mode .label { color: var(--holo-cyan); text-shadow: 0 0 5px var(--holo-cyan); }
+
+        /* --- 3. LOADER VELOCE (NITRO) --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: #ffffff; z-index: 2147483647; 
-            display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; 
-            padding: 20px; transition: opacity 0.5s ease;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            padding: 20px; transition: opacity 0.3s ease-out; /* Velocizzato */
         }
-        
-        .loader-logo { width: 80%; max-width: 300px; object-fit: contain; }
-        .loader-gif { 
-            width: 70vw; max-width: 350px; height: auto; 
-            object-fit: contain; mix-blend-mode: multiply; 
-        }
+        .loader-logo { width: 80%; max-width: 280px; margin-bottom: 30px; object-fit: contain; }
+        .loader-gif { width: 65vw; max-width: 320px; height: auto; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 30px; }
         
         .bar-container { 
-            width: 80%; max-width: 300px; height: 30px; background: #fff; 
-            border: 4px solid #000; padding: 4px; box-shadow: 6px 6px 0 rgba(0,0,0,0.15);
+            width: 80%; max-width: 280px; height: 20px; background: #fff; 
+            border: 3px solid #000; padding: 2px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
         }
-        .bar-fill { height: 100%; width: 0%; background-color: var(--green); animation: fillLoad 2.5s forwards; }
+        /* Animazione 1.5s (Veloce) */
+        .bar-fill { height: 100%; width: 0%; background-color: var(--green); animation: fillLoad 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
         @keyframes fillLoad { 0%{width:0%} 100%{width:100%} }
 
-        /* PULSANTE START WORLD FIXATO */
         #start-btn { 
-            visibility: hidden; /* Occupa spazio ma non si vede = NESSUN SALTO */
-            background: #000; color: #fff; 
-            border: 4px solid #000; 
-            padding: 20px 40px; 
-            font-family: 'Press Start 2P', cursive; font-size: 14px; 
-            cursor: pointer; text-transform: uppercase; 
-            box-shadow: 6px 6px 0 #999;
+            display: none; background: #000; color: #fff; border: 3px solid #000; 
+            padding: 15px 40px; font-family: inherit; font-size: 12px; margin-top: 20px;
+            cursor: pointer; text-transform: uppercase; box-shadow: 5px 5px 0 #999;
             pointer-events: auto !important; position: relative; z-index: 2147483647;
-            margin-top: 10px;
         }
-        /* Quando appare */
-        #start-btn.visible {
-            visibility: visible;
-            animation: flashBtn 1s infinite alternate;
-        }
-        @keyframes flashBtn { from{transform:scale(1);} to{transform:scale(1.05);} }
-
+        
         @media (min-width: 1024px) {
-            .loader-gif { width: 250px; }
-            #loader-overlay { justify-content: center; gap: 30px; }
+            .loader-gif { width: 220px; }
         }
 
-        /* --- 3. HEADER --- */
+        /* --- 4. HEADER --- */
         header { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100px; 
             z-index: 20000; display: flex; justify-content: space-between; align-items: center;
@@ -127,7 +101,7 @@
         .h-btn { 
             width: 65px; height: 65px; object-fit: contain; 
             pointer-events: auto; cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5)); 
-            transition: transform 0.1s; background: transparent; 
+            transition: transform 0.1s; 
         }
         .h-btn:active { transform: scale(0.9); }
         .pongo-anim { animation: sq 0.3s; } @keyframes sq { 0%,100%{transform:scale(1);} 50%{transform:scale(0.8);} }
@@ -135,10 +109,10 @@
         #tank-wrapper { position: relative; pointer-events: auto; }
         #tank-badge { 
             position: absolute; top: 0; right: -5px; background: var(--red); color: white; 
-            border: 2px solid var(--border-col); font-size: 9px; padding: 4px; border-radius: 50%; display: none; 
+            border: 2px solid #000; font-size: 9px; padding: 4px; border-radius: 50%; display: none; 
         }
 
-        /* --- 4. SHOP --- */
+        /* --- 5. SHOP --- */
         #shop-view { 
             width: 100vw; height: 100%; display: flex; overflow-x: auto; overflow-y: hidden; 
             scroll-snap-type: x mandatory; padding-top: 110px; -webkit-overflow-scrolling: touch; 
@@ -153,17 +127,12 @@
         }
 
         .item { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; touch-action: pan-y; }
-        .item img { width: 85px; height: 85px; object-fit: contain; pointer-events: none; filter: drop-shadow(0 5px 6px rgba(0,0,0,0.5)); transition: filter 0.3s; }
-        .label { 
-            font-family: sans-serif; font-weight: 900; font-size: 8px; 
-            color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; 
-        }
+        .item img { width: 85px; height: 85px; object-fit: contain; pointer-events: none; filter: drop-shadow(0 5px 6px rgba(0,0,0,0.5)); }
+        .label { font-family: sans-serif; font-weight: 900; font-size: 8px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; }
         .sold-out { opacity: 0.5; filter: grayscale(1); pointer-events: none; }
         .sold-out::after { content: "SOLD"; position: absolute; background: var(--red); color: white; font-size: 8px; padding: 2px 4px; transform: rotate(-15deg); border: 1px solid #fff; }
 
-        /* --- 5. STICKER & GHOST --- */
-        .sticker { position: absolute; width: 60px; height: 60px; z-index: 5; transform: rotate(10deg); filter: drop-shadow(2px 2px 0 #000); touch-action: none; }
-
+        /* --- 6. GHOST & STICKER --- */
         .ghost { 
             position: fixed; z-index: 99999; pointer-events: none; 
             width: 85px !important; height: 85px !important; 
@@ -173,45 +142,19 @@
         .ghost img { width: 100% !important; height: 100% !important; object-fit: contain !important; }
         .sucked { transition: 0.4s; transform: scale(0) rotate(720deg) !important; opacity: 0; }
 
-        /* --- 6. WINDOWS (STYLED FOR HOLOGRAM) --- */
-        .window { 
-            display: none; position: fixed; top: 15%; left: 5%; width: 90%; max-width: 380px; 
-            background: var(--win-bg); border: 3px solid var(--border-col); 
-            box-shadow: 10px 10px 0 rgba(0,0,0,0.6); 
-            z-index: 50000; flex-direction: column; max-height: 75vh; 
-            color: var(--text-col);
-        }
-        .win-h { 
-            background: var(--win-head); border-bottom: 2px solid var(--border-col); 
-            padding: 12px; cursor: move; display: flex; justify-content: space-between; align-items: center; 
-            font-weight: bold; font-size: 10px; color: var(--text-col);
-        }
+        /* Sticker libero (se vuoi rimetterlo, altrimenti nascosto per pulizia) */
+        .sticker { display:none; } 
+
+        /* --- 7. WINDOWS --- */
+        .window { display: none; position: fixed; top: 15%; left: 5%; width: 90%; max-width: 380px; background: #fff; border: 3px solid #000; box-shadow: 10px 10px 0 rgba(0,0,0,0.6); z-index: 50000; flex-direction: column; max-height: 75vh; }
+        .win-h { background: #eee; border-bottom: 2px solid #000; padding: 12px; cursor: move; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 10px; }
         .win-x { background: var(--red); width: 20px; height: 20px; border: 2px solid #000; cursor: pointer; }
         .win-b { padding: 15px; overflow-y: auto; }
-        
-        .btn { 
-            width: 100%; padding: 12px; margin-top: 10px; 
-            background: #000; color: #fff; border: 2px solid #000; 
-            font-size: 10px; cursor: pointer; font-family: inherit; 
-        }
-        /* Hologram Button Override */
-        body.hologram-mode .btn {
-            background: transparent; color: var(--text-col); border: 2px solid var(--border-col);
-        }
-        body.hologram-mode .btn:hover {
-            background: rgba(0, 243, 255, 0.2);
-        }
-
+        .btn { width: 100%; padding: 12px; margin-top: 10px; background: #000; color: #fff; border: none; font-size: 10px; cursor: pointer; font-family: inherit; }
         .row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ccc; padding: 8px 0; font-size: 10px; }
-        input { 
-            width: 100%; padding: 8px; border: 2px solid var(--border-col); 
-            font-family: monospace; font-size: 10px; background: #fff; color: #000; 
-        }
-        body.hologram-mode input {
-            background: transparent; color: var(--text-col);
-        }
+        input { width: 100%; padding: 8px; border: 2px solid #000; font-family: monospace; font-size: 10px; }
 
-        /* --- 7. FOOTER --- */
+        /* --- 8. FOOTER --- */
         footer { position: fixed; bottom: 0; left: 0; width: 100%; height: 80px; display: flex; justify-content: center; align-items: center; z-index: 12000; pointer-events: none; }
         .brand { width: 160px; pointer-events: auto; cursor: pointer; padding: 20px; }
 
@@ -219,19 +162,10 @@
 </head>
 <body>
 
-    <div id="living-bg" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden;">
-        <img src="mondo_pongo.PNG" class="floater" style="position:absolute; top:10%; left:10%; width:50px; opacity:0.4; animation:floatA 25s infinite linear;">
-        <img src="fuochini_centrali.png" class="floater" style="position:absolute; top:60%; right:10%; width:40px; opacity:0.4; animation:floatA 30s infinite linear; animation-delay:2s;">
-    </div>
-    <style>@keyframes floatA { 0%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-20px) rotate(5deg)} 100%{transform:translateY(0) rotate(0deg)} }</style>
-
-    <img src="logo_ff_loader.png" class="sticker" style="top: 120px; left: 20px; width: 80px;" ontouchstart="holdSticker(event, this)" onmousedown="holdSticker(event, this)">
-
     <div id="loader-overlay">
         <img src="logo_ff_loader.png" class="loader-logo" onerror="this.src='https://placehold.co/300x80?text=FRIENDLYFIRE'">
         <img src="loadernob.gif" class="loader-gif" onerror="this.src='https://placehold.co/200?text=LOADING'">
         <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
-        
         <button id="start-btn" onclick="startApp()" ontouchstart="startApp()">START WORLD</button>
     </div>
 
@@ -257,16 +191,22 @@
 
     <div id="win-cart" class="window">
         <div class="win-h" onmousedown="dragWin(event,'win-cart')" ontouchstart="dragWin(event,'win-cart')"><span>IL TUO TANK</span><div class="win-x" onclick="hideAll()"></div></div>
-        <div class="win-b"><div id="cart-list">VUOTO</div><div id="cart-tot" style="margin-top:10px;border-top:2px solid var(--border-col);font-weight:bold;">TOT: 0€</div><button class="btn" onclick="pay()">ORDINA / PRENOTA</button><button class="btn" style="background:var(--red); border-color:#000;" onclick="cart=[];upCart();">SVUOTA</button></div>
+        <div class="win-b"><div id="cart-list">VUOTO</div><div id="cart-tot" style="margin-top:10px;border-top:2px solid #000;font-weight:bold;">TOT: 0€</div><button class="btn" onclick="pay()">ORDINA / PRENOTA</button><button class="btn" style="background:var(--red);" onclick="cart=[];upCart();">SVUOTA</button></div>
     </div>
 
     <div id="win-admin" class="window">
         <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN</span><div class="win-x" onclick="hideAll()"></div></div>
         <div class="win-b">
-            <div style="font-size:8px;">SFONDO URL:</div><div style="display:flex;gap:5px;"><input id="bg-in"><button style="width:40px;" onclick="setBg()">OK</button></div>
+            <div style="font-size:8px; margin-bottom:2px;">URL SFONDO NORMALE:</div>
+            <div style="display:flex;gap:5px;margin-bottom:5px;"><input id="bg-in"><button style="width:30px;" onclick="setBg(false)">OK</button></div>
+            <div style="font-size:8px; margin-bottom:2px; color:blue;">URL SFONDO LAB MODE:</div>
+            <div style="display:flex;gap:5px;"><input id="lab-bg-in"><button style="width:30px; background:blue; color:white;" onclick="setBg(true)">OK</button></div>
             <hr>
+            <div style="display:flex; justify-content:space-between; font-size:8px; font-weight:bold; margin-bottom:5px;">
+                <span style="width:25%">FILE IMG</span><span style="width:25%">NOME</span><span style="width:15%">€</span><span style="width:15%">QTY</span><span style="width:10%">X</span>
+            </div>
             <div id="adm-list"></div>
-            <button class="btn" style="background:blue; color:white; border-color:#000;" onclick="addItm()">+ ITEM</button><button class="btn" onclick="saveAdm()">SALVA</button>
+            <button class="btn" style="background:blue; color:white;" onclick="addItm()">+ ITEM</button><button class="btn" onclick="saveAdm()">SALVA</button>
         </div>
     </div>
 
@@ -278,17 +218,18 @@
         
         let items=[{id:0,name:'CAP',p:45,q:10,i:'image_cap.png'},{id:1,name:'TEE',p:65,q:5,i:'image_tee.png'},{id:2,name:'STICKER',p:10,q:100,i:'image_sticker.png'},{id:3,name:'HOODIE',p:85,q:0,i:'image_hoodie.png'},{id:4,name:'PANT',p:70,q:8,i:'image_pant.png'},{id:5,name:'SOCKS',p:15,q:20,i:'image_socks.png'},{id:6,name:'BEANIE',p:35,q:5,i:'image_cap.png'}];
         let cart=[], sb=null, taps=0;
+        let labBgUrl = ''; // Variabile per lo sfondo Lab
 
-        // START (FIX: VISIBILITY invece di DISPLAY per non muovere nulla)
+        // START VELOCE
         setTimeout(()=>{ 
-            document.getElementById('start-btn').classList.add('visible'); 
+            let b=document.getElementById('start-btn'); b.style.display='block'; 
             document.getElementById('bar-fill').style.width='100%'; 
-        }, 2600);
+        }, 1600); // 1.6 Secondi
 
         function startApp() {
             let o = document.getElementById('loader-overlay');
             o.style.opacity='0'; o.style.pointerEvents='none';
-            setTimeout(()=>{o.style.display='none'},500);
+            setTimeout(()=>{o.style.display='none'},300);
             try{document.getElementById('sfx-eat').play();}catch(e){}
             try{ if(window.supabase){ sb=window.supabase.createClient(CFG.u,CFG.k); loadDB(); } if(window.emailjs)emailjs.init(CFG.ek); }catch(e){}
             render();
@@ -342,9 +283,7 @@
                 
                 let ft=document.getElementById('brand-target').getBoundingClientRect();
                 if(Math.hypot(gx-(ft.left+ft.width/2), gy-(ft.top+ft.height/2))<60){
-                    // HOLOGRAM MODE TRIGGER
-                    document.body.classList.toggle('hologram-mode');
-                    if(navigator.vibrate) navigator.vibrate([50,50,50]);
+                    toggleLabMode();
                     g.remove();
                     return;
                 }
@@ -363,11 +302,16 @@
             document.addEventListener('mousemove',mv); document.addEventListener('mouseup',end);
         }
 
-        function holdSticker(e, el) {
-            e.preventDefault(); let rect=el.getBoundingClientRect(); let t=e.touches?e.touches[0]:e; let ox=t.clientX-rect.left, oy=t.clientY-rect.top;
-            function move(ev) { let c=ev.touches?ev.touches[0]:ev; el.style.left=(c.clientX-ox)+'px'; el.style.top=(c.clientY-oy)+'px'; }
-            function stop() { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', stop); document.removeEventListener('touchmove', move); document.removeEventListener('touchend', stop); }
-            document.addEventListener('mousemove',move); document.addEventListener('mouseup',stop); document.addEventListener('touchmove',move,{passive:false}); document.addEventListener('touchend',stop);
+        // LAB MODE TOGGLE
+        function toggleLabMode() {
+            document.body.classList.toggle('hologram-mode');
+            if(document.body.classList.contains('hologram-mode') && labBgUrl) {
+                document.body.style.backgroundImage = `url('${labBgUrl}')`;
+            } else {
+                // Restore original (Pongo)
+                document.body.style.backgroundImage = "url('sfondo2.jpg')"; 
+            }
+            if(navigator.vibrate) navigator.vibrate([50,50,50]);
         }
 
         function upCart(){
@@ -391,11 +335,17 @@
             showWin('win-admin');
         }
         function addItm(){ items.push({id:Date.now(),name:'NEW',p:0,q:1,i:'image_cap.png'}); showAdm(); }
+        
+        // SAVE & SET BG
         async function saveAdm(){ 
             items.forEach((x,i)=>{ let n=document.getElementById(`n${i}`); if(n){ x.name=n.value; x.p=document.getElementById(`p${i}`).value; x.q=document.getElementById(`q${i}`).value; x.i=document.getElementById(`i${i}`).value; } });
             render(); if(sb) await sb.from('products').upsert(items.map(x=>({name:x.name,price:x.p,qty:x.q,img:x.i}))); alert("Salvato"); hideAll();
         }
-        function setBg(){ document.body.style.backgroundImage=`url('${document.getElementById('bg-in').value}')`; }
+        function setBg(isLab){ 
+            let val = document.getElementById(isLab ? 'lab-bg-in' : 'bg-in').value;
+            if(isLab) { labBgUrl = val; alert("Lab BG Impostato"); }
+            else { document.body.style.backgroundImage=`url('${val}')`; }
+        }
 
         function anim(el){ el.classList.remove('pongo-anim'); void el.offsetWidth; el.classList.add('pongo-anim'); try{document.getElementById('sfx-eat').play();}catch(e){} }
         function showWin(id){ hideAll(); document.getElementById(id).style.display='flex'; }
