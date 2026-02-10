@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V13000 GOLD</title>
+    <title>FRIENDLYFIRE | V14000 SMOOTH</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -219,7 +219,6 @@
             if(!sb)return; 
             const{data}=await sb.from('products').select('*'); 
             if(data&&data.length){ 
-                // Assicurati di avere la colonna 'desc' su supabase
                 items=data.map(x=>({id:x.id,name:x.name,p:x.price,q:x.qty,i:x.img, d:x.desc || ''})); 
                 render(); 
             } 
@@ -245,7 +244,7 @@
             <img src="${x.i}" onerror="this.src='https://placehold.co/80?text=${x.name}'"><div class="label">${x.name}</div><div class="label">${x.p}€</div></div>`;
         }
 
-        // --- SMART INTERACTION (EDGE SCROLL FIX) ---
+        // --- SMART INTERACTION (FIX DOPPIO TOCCO) ---
         let lastTap = 0;
         let dragTimer = null;
         let startX=0, startY=0;
@@ -255,8 +254,10 @@
             let now = new Date().getTime();
             let touch = e.touches[0];
             
-            if (now - lastTap < 300) {
-                clearTimeout(dragTimer);
+            // Finestra di tempo per doppio tap allargata a 400ms per maggiore fluidità
+            if (now - lastTap < 400) {
+                e.preventDefault(); // Previene comportamenti indesiderati
+                clearTimeout(dragTimer); // Blocca istantaneamente il drag
                 showDetails(i);
                 lastTap = 0;
                 return;
@@ -266,6 +267,7 @@
             startY = touch.clientY;
             isDragging = false;
 
+            // Avvio Drag se il dito rimane fermo per 250ms
             dragTimer = setTimeout(() => {
                 if (!isDragging) {
                     isDragging = true;
@@ -274,7 +276,7 @@
                     let rect = el.getBoundingClientRect();
                     startGhostDrag(i, rect, touch.clientX, touch.clientY);
                 }
-            }, 200);
+            }, 250);
 
             let el = document.getElementById(`i-${i}`);
             
@@ -283,6 +285,7 @@
                 let moveX = Math.abs(t.clientX - startX);
                 let moveY = Math.abs(t.clientY - startY);
                 
+                // Se si muove il dito prima del timer, significa che vuole fare SCROLL. Elimina il drag.
                 if (!isDragging && (moveX > 10 || moveY > 10)) {
                     clearTimeout(dragTimer);
                     el.removeEventListener('touchmove', onMove);
@@ -290,7 +293,7 @@
             }
             
             function onEnd() {
-                clearTimeout(dragTimer);
+                clearTimeout(dragTimer); // Se alza il dito veloce, annulla il drag timer
                 el.removeEventListener('touchmove', onMove);
                 el.removeEventListener('touchend', onEnd);
             }
@@ -312,7 +315,7 @@
             document.addEventListener('mouseup', onUp);
         }
 
-        // --- GHOST DRAG & EDGE SNAP (SCROLLING FIX) ---
+        // --- GHOST DRAG & EDGE SNAP ---
         function startGhostDrag(i, rect, inputX, inputY) {
             let g = document.getElementById(`i-${i}`).cloneNode(true);
             g.className = 'ghost'; 
@@ -322,8 +325,7 @@
 
             let offsetX = inputX - rect.left;
             let offsetY = inputY - rect.top;
-            
-            let lastEdgeScroll = 0; // Cooldown timer per lo snap della pagina
+            let lastEdgeScroll = 0;
 
             function move(ev) {
                 ev.preventDefault();
@@ -333,10 +335,9 @@
                 g.style.left = (cx - offsetX) + 'px';
                 g.style.top = (cy - offsetY) + 'px';
 
-                // EDGE SNAP LOGIC (Gira pagina automaticamente se tieni sui bordi)
                 let sv = document.getElementById('shop-view');
                 let now = Date.now();
-                if (now - lastEdgeScroll > 800) { // aspetta 0.8s prima di girare ancora pagina
+                if (now - lastEdgeScroll > 800) { 
                     if (cx > window.innerWidth - 60) {
                         sv.scrollBy({left: window.innerWidth, behavior: 'smooth'});
                         lastEdgeScroll = now;
@@ -354,7 +355,6 @@
                 let gx = parseInt(g.style.left) + 40; 
                 let gy = parseInt(g.style.top) + 40;
 
-                // TANK
                 let tk = document.getElementById('tank-target').getBoundingClientRect();
                 if (Math.hypot(gx - (tk.left + tk.width/2), gy - (tk.top + tk.height/2)) < 60) {
                     g.classList.add('sucked'); try{document.getElementById('sfx-eat').play();}catch(e){}
@@ -362,13 +362,11 @@
                     return;
                 }
 
-                // EASTER EGG
                 let ft = document.getElementById('brand-target').getBoundingClientRect();
                 if (Math.hypot(gx - (ft.left + ft.width/2), gy - (ft.top + ft.height/2)) < 60) {
                     toggleLabMode(); g.remove(); return;
                 }
 
-                // SWITCH LOGIC
                 g.style.display='none'; 
                 let bel=document.elementFromPoint(gx,gy); 
                 g.style.display='flex';
@@ -377,7 +375,6 @@
                     let ti=parseInt(trg.id.split('-')[1]);
                     [items[i],items[ti]]=[items[ti],items[i]]; render();
                 }
-
                 g.remove();
             }
 
@@ -429,19 +426,15 @@
         function upCart(){ document.getElementById('tank-badge').innerText=cart.length; document.getElementById('tank-badge').style.display=cart.length?'block':'none'; document.getElementById('cart-list').innerHTML=cart.length?cart.map((x,n)=>`<div class="row"><span>${x.name}</span><span>${x.p}€</span><span onclick="cart.splice(${n},1);upCart()" style="color:red;cursor:pointer;">X</span></div>`).join(''):"VUOTO"; document.getElementById('cart-tot').innerText="TOT: "+cart.reduce((a,b)=>a+parseInt(b.p),0)+"€"; }
         async function pay(){ if(!cart.length)return alert("Vuoto"); let m=prompt("Email:"); if(m){ if(sb) await sb.from('newsletter').insert([{email:m}]); if(window.emailjs) emailjs.send(CFG.es,CFG.et,{user_email:m,message:"ORDINE"}); alert("Grazie!"); cart=[]; upCart(); hideAll(); } }
 
-        // --- NEWSLETTER FIXATA CON EMAILJS ---
+        // --- NEWSLETTER ---
         async function sub(){ 
             let m=document.getElementById('nm').value; 
             if(m) { 
-                if(sb) await sb.from('newsletter').insert([{email:m}]); // Salva su Supabase
-                // Invia la Mail Automatica tramite EmailJS
+                if(sb) await sb.from('newsletter').insert([{email:m}]);
                 if(window.emailjs) {
                     try {
-                        await emailjs.send(CFG.es, CFG.et, {
-                            user_email: m,
-                            message: "BENVENUTO NEL MONDO FRIENDLYFIRE! Ti sei iscritto con successo alla Newsletter per i Drop Segreti."
-                        });
-                    } catch(e) { console.log("Errore EmailJS:", e); }
+                        await emailjs.send(CFG.es, CFG.et, { user_email: m, message: "BENVENUTO NEL MONDO FRIENDLYFIRE!" });
+                    } catch(e) { console.log(e); }
                 }
                 alert("Iscritto e Mail Inviata!"); 
                 hideAll(); 
