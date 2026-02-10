@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V3000 FINAL</title>
+    <title>FRIENDLYFIRE | V4000 FINAL</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -23,19 +23,30 @@
             overscroll-behavior: none; position: fixed; 
         }
 
-        /* --- 2. LOADER --- */
+        /* --- 2. LOADER RESPONSIVE (FIX DIMENSIONI) --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: #ffffff; z-index: 2147483647; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            transition: opacity 0.5s ease;
+            display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; 
+            padding: 20px; transition: opacity 0.5s ease;
         }
-        .loader-logo { width: 80%; max-width: 280px; margin-bottom: 20px; object-fit: contain; }
-        .loader-gif { width: 200px; height: 200px; object-fit: contain; margin-bottom: 20px; mix-blend-mode: multiply; }
         
+        /* Logo Alto */
+        .loader-logo { 
+            width: 80%; max-width: 300px; object-fit: contain; 
+        }
+        
+        /* GIF CENTRALE (Fuochini) */
+        .loader-gif { 
+            object-fit: contain; mix-blend-mode: multiply; 
+            /* Default Mobile: Grande */
+            width: 75vw; max-width: 350px; height: auto;
+        }
+
+        /* Barra */
         .bar-container { 
-            width: 250px; height: 30px; background: #fff; border: 4px solid #000; padding: 4px; 
-            box-shadow: 6px 6px 0 rgba(0,0,0,0.15); margin-bottom: 20px;
+            width: 80%; max-width: 300px; height: 30px; background: #fff; 
+            border: 4px solid #000; padding: 4px; box-shadow: 6px 6px 0 rgba(0,0,0,0.15);
         }
         .bar-fill { height: 100%; width: 0%; background-color: var(--green); animation: fillLoad 2.5s forwards; }
         @keyframes fillLoad { 0%{width:0%} 100%{width:100%} }
@@ -45,32 +56,43 @@
             padding: 20px 60px; font-family: inherit; font-size: 16px; 
             cursor: pointer; text-transform: uppercase; box-shadow: 8px 8px 0 #999;
             pointer-events: auto !important; position: relative; z-index: 2147483647;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: popIn 0.3s; margin-top: 20px;
         }
         @keyframes popIn { from{transform:scale(0)} to{transform:scale(1)} }
 
-        /* --- 3. HEADER --- */
+        /* MEDIA QUERY PC (Adatta spazi su schermi grandi) */
+        @media (min-width: 1024px) {
+            .loader-gif { width: 300px; height: 300px; } /* Più contenuto su PC */
+            #loader-overlay { justify-content: center; gap: 40px; }
+        }
+
+        /* --- 3. HEADER (FIX VISIBILITÀ) --- */
         header { 
             position: fixed; top: 0; left: 0; width: 100%; height: 90px; 
             z-index: 10000; display: flex; justify-content: space-between; align-items: center;
-            padding: 0 15px; padding-top: env(safe-area-inset-top, 10px); pointer-events: none; 
+            padding: 0 20px; padding-top: env(safe-area-inset-top, 10px); 
+            pointer-events: none; /* Click passano */
         }
         .h-btn { 
-            width: 65px; height: 65px; object-fit: contain; pointer-events: auto; 
-            cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5)); transition: transform 0.1s; 
+            width: 65px; height: 65px; object-fit: contain; 
+            pointer-events: auto; /* Click attivi sulle icone */
+            cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5)); 
+            transition: transform 0.1s; 
         }
         .h-btn:active { transform: scale(0.9); }
         .pongo-anim { animation: sq 0.3s; } @keyframes sq { 0%,100%{transform:scale(1);} 50%{transform:scale(0.8);} }
 
+        #tank-wrapper { position: relative; pointer-events: auto; }
         #tank-badge { 
             position: absolute; top: 0; right: -5px; background: var(--red); color: white; 
             border: 2px solid #000; font-size: 9px; padding: 4px; border-radius: 50%; display: none; 
         }
 
-        /* --- 4. SHOP --- */
+        /* --- 4. SHOP & SLIDER --- */
         #shop-view { 
             width: 100vw; height: 100%; display: flex; overflow-x: auto; overflow-y: hidden; 
             scroll-snap-type: x mandatory; padding-top: 100px; -webkit-overflow-scrolling: touch; 
+            scroll-behavior: smooth; /* Scroll fluido */
         }
         #shop-view::-webkit-scrollbar { display: none; }
         
@@ -95,24 +117,15 @@
         .sold-out { opacity: 0.5; filter: grayscale(1); pointer-events: none; }
         .sold-out::after { content: "SOLD OUT"; position: absolute; background: var(--red); color: white; font-size: 8px; padding: 2px 4px; transform: rotate(-15deg); border: 1px solid #fff; }
 
-        /* --- 5. GHOST (FIX DIMENSIONI GIGANTI & CONTENIMENTO) --- */
+        /* --- 5. GHOST (NO GIGANTE) --- */
         .ghost { 
             position: fixed; z-index: 99999; pointer-events: none; 
-            /* FORZA LE DIMENSIONI FISSE: */
-            width: 80px !important; 
-            height: 80px !important; 
-            /* Assicura che l'immagine dentro non sbordi */
+            width: 85px !important; height: 85px !important; /* BLOCCO DIMENSIONI */
             display: flex; justify-content: center; align-items: center;
             opacity: 0.9; transform: scale(1.1); 
             filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6));
         }
-        /* L'immagine dentro il ghost deve adattarsi al contenitore 80px */
-        .ghost img { 
-            width: 100% !important; 
-            height: 100% !important; 
-            object-fit: contain !important; 
-        }
-        
+        .ghost img { width: 100% !important; height: 100% !important; object-fit: contain !important; }
         .sucked { transition: 0.4s; transform: scale(0) rotate(720deg) !important; opacity: 0; }
 
         /* --- 6. WINDOWS --- */
@@ -131,18 +144,14 @@
         .row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ccc; padding: 8px 0; font-size: 10px; }
         input { width: 100%; padding: 8px; border: 2px solid #000; font-family: monospace; font-size: 10px; }
 
-        /* --- 7. FOOTER (ADMIN FIX 3 CLICK) --- */
+        /* --- 7. FOOTER (ADMIN) --- */
         footer { 
             position: fixed; bottom: 0; left: 0; width: 100%; height: 90px;
             display: flex; justify-content: center; align-items: center;
-            z-index: 12000; /* Più alto dello shop */
-            pointer-events: none; /* Lascia passare i click ai lati */
+            z-index: 12000; pointer-events: none; 
         }
         .brand { 
-            width: 160px; pointer-events: auto; cursor: pointer; 
-            /* Padding gigante per facilitare il tocco */
-            padding: 25px; 
-            margin-bottom: 20px;
+            width: 160px; pointer-events: auto; cursor: pointer; padding: 25px; 
         }
 
     </style>
@@ -153,7 +162,7 @@
         <img src="logo_ff_loader.png" class="loader-logo" onerror="this.src='https://placehold.co/300x80?text=FRIENDLYFIRE'">
         <img src="loadernob.gif" class="loader-gif" onerror="this.src='https://placehold.co/200?text=LOADING'">
         <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
-        <button id="start-btn" onclick="startApp()" ontouchstart="startApp()" onmousedown="startApp()">ENTER WORLD</button>
+        <button id="start-btn" onclick="startApp()" ontouchstart="startApp()">ENTER WORLD</button>
     </div>
 
     <audio id="sfx-eat" src="suono_gnam.mp3" preload="auto"></audio>
@@ -161,7 +170,7 @@
     <header>
         <img src="mondo_pongo.png" class="h-btn" onclick="anim(this); showWin('win-news')" onerror="this.src='https://placehold.co/60?text=NEWS'">
         <img src="fuochini_centrali.png" class="h-btn" onclick="anim(this); showWin('win-prof')" onerror="this.src='https://placehold.co/60?text=PROF'">
-        <div style="position:relative;">
+        <div id="tank-wrapper">
             <img src="tank_header.png" id="tank-target" class="h-btn" onclick="anim(this); toggleWin('win-cart')" onerror="this.src='https://placehold.co/60?text=TANK'">
             <div id="tank-badge">0</div>
         </div>
@@ -195,16 +204,11 @@
     <script>
         const CFG = { u:'https://jwifyapbnsbbpsrstrow.supabase.co', k:'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y', ek:'BThMV2knP0VG0s4nr', es:'service_4scv4hn', et:'template_8opoo1v' };
         
-        let items=[{id:0,name:'CAP',p:45,q:10,i:'image_cap.png'},{id:1,name:'TEE',p:65,q:5,i:'image_tee.png'},{id:2,name:'STICKER',p:10,q:100,i:'image_sticker.png'},{id:3,name:'HOODIE',p:85,q:0,i:'image_hoodie.png'},{id:4,name:'PANT',p:70,q:8,i:'image_pant.png'},{id:5,name:'SOCKS',p:15,q:20,i:'image_socks.png'},{id:6,name:'BEANIE',p:35,q:5,i:'image_cap.png'}];
+        let items=[{id:0,name:'CAP',p:45,q:10,i:'image_cap.png'},{id:1,name:'TEE',p:65,q:5,i:'image_tee.png'},{id:2,name:'STICKER',p:10,q:100,i:'image_sticker.png'},{id:3,name:'HOODIE',p:85,q:0,i:'image_hoodie.png'},{id:4,name:'PANT',p:70,q:8,i:'image_pant.png'},{id:5,name:'SOCKS',p:15,q:20,i:'image_socks.png'},{id:6,name:'BEANIE',p:35,q:5,i:'image_cap.png'},{id:7,name:'BAG',p:120,q:3,i:'image_tee.png'}];
         let cart=[], sb=null, taps=0;
 
-        // --- START ---
-        setTimeout(()=>{ 
-            let b = document.getElementById('start-btn'); 
-            b.style.display='block'; 
-            document.getElementById('bar-fill').style.width='100%';
-        }, 2600);
-
+        // START
+        setTimeout(()=>{ document.getElementById('start-btn').style.display='block'; document.getElementById('bar-fill').style.width='100%'; }, 2600);
         function startApp() {
             let o = document.getElementById('loader-overlay');
             o.style.opacity='0'; o.style.pointerEvents='none';
@@ -213,10 +217,9 @@
             try{ if(window.supabase){ sb=window.supabase.createClient(CFG.u,CFG.k); loadDB(); } if(window.emailjs)emailjs.init(CFG.ek); }catch(e){}
             render();
         }
-
         async function loadDB(){ if(!sb)return; const{data}=await sb.from('products').select('*'); if(data&&data.length){ items=data.map(x=>({id:x.id,name:x.name,p:x.price,q:x.qty,i:x.img})); render(); } }
 
-        // --- RENDER ---
+        // RENDER
         function render(){
             document.getElementById('page-1').innerHTML=items.slice(0,9).map((x,i)=>mkC(x,i)).join('');
             document.getElementById('page-2').innerHTML=items.slice(9,18).map((x,i)=>mkC(x,i+9)).join('');
@@ -227,31 +230,32 @@
             <img src="${x.i}" onerror="this.src='https://placehold.co/80?text=${x.name}'"><div class="label">${x.name}</div><div class="label">${x.p}€</div></div>`;
         }
 
-        // --- PHYSICS (SENSIBILITA' AUMENTATA & FIX ICONE) ---
+        // PHYSICS (AUTO-SCROLL & DRAG FIX)
         let tmr=null;
         function hld(e,i){
             let el=document.getElementById(`i-${i}`), ev=e.touches?e.touches[0]:e, r=el.getBoundingClientRect();
-            // Timer ridotto a 120ms per maggiore sensibilità
-            tmr=setTimeout(()=>{ if(navigator.vibrate)navigator.vibrate(20); drag(i,r,ev.clientX,ev.clientY); }, 120);
+            tmr=setTimeout(()=>{ if(navigator.vibrate)navigator.vibrate(20); drag(i,r,ev.clientX,ev.clientY); }, 200);
             let c=()=>{clearTimeout(tmr)}; el.addEventListener('touchend',c,{once:true}); el.addEventListener('touchmove',c,{once:true}); el.addEventListener('mouseup',c,{once:true});
         }
-        function drag(i,r,sx,sy){
-            let orig = document.getElementById(`i-${i}`);
-            let g = orig.cloneNode(true);
-            g.className='ghost'; 
-            // Forza dimensione esplicita al momento della creazione
-            g.style.width = '80px';
-            g.style.height = '80px';
-            g.style.left=r.left+'px'; 
-            g.style.top=r.top+'px';
-            document.body.appendChild(g);
-            
-            let ox=sx-r.left, oy=sy-r.top;
 
+        function drag(i,r,sx,sy){
+            let g=document.getElementById(`i-${i}`).cloneNode(true);
+            g.className='ghost'; g.style.left=r.left+'px'; g.style.top=r.top+'px'; 
+            document.body.appendChild(g);
+            let ox=sx-r.left, oy=sy-r.top;
+            
             function mv(e){
-                e.preventDefault(); let t=e.touches?e.touches[0]:e;
-                g.style.left=(t.clientX-ox)+'px'; g.style.top=(t.clientY-oy)+'px';
+                e.preventDefault(); 
+                let t=e.touches?e.touches[0]:e;
+                let cx=t.clientX, cy=t.clientY;
+                g.style.left=(cx-ox)+'px'; g.style.top=(cy-oy)+'px';
+
+                // AUTO-SCROLL LOGIC
+                let sv = document.getElementById('shop-view');
+                if(cx > window.innerWidth - 50) sv.scrollBy({left:10, behavior:'auto'});
+                else if(cx < 50) sv.scrollBy({left:-10, behavior:'auto'});
             }
+
             function end(){
                 document.removeEventListener('touchmove',mv); document.removeEventListener('touchend',end);
                 document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',end);
@@ -263,7 +267,10 @@
                     g.classList.add('sucked'); try{document.getElementById('sfx-eat').play();}catch(e){}
                     setTimeout(()=>{cart.push(items[i]);upCart();g.remove();showWin('win-cart')},400);
                 } else {
-                    g.style.display='none'; let bel=document.elementFromPoint(gx,gy); g.style.display='block';
+                    // SWITCH LOGIC (FUNZIONA ANCHE TRA PAGINE)
+                    g.style.display='none'; 
+                    let bel=document.elementFromPoint(gx,gy); 
+                    g.style.display='block';
                     let trg=bel?bel.closest('.item'):null;
                     if(trg && trg.id!==`i-${i}` && !trg.classList.contains('sold-out')){
                         let ti=parseInt(trg.id.split('-')[1]);
@@ -276,11 +283,11 @@
             document.addEventListener('mousemove',mv); document.addEventListener('mouseup',end);
         }
 
-        // --- CART & ADMIN ---
+        // UTILS
         function upCart(){
             document.getElementById('tank-badge').innerText=cart.length;
             document.getElementById('tank-badge').style.display=cart.length?'block':'none';
-            document.getElementById('cart-list').innerHTML=cart.length?cart.map((x,n)=>`<div class="row"><span>${x.name}</span><span>${x.p}€</span><span onclick="cart.splice(${n},1);upCart()" style="color:red;">X</span></div>`).join(''):"VUOTO";
+            document.getElementById('cart-list').innerHTML=cart.length?cart.map((x,n)=>`<div class="row"><span>${x.name}</span><span>${x.p}€</span><span onclick="cart.splice(${n},1);upCart()" style="color:red;cursor:pointer;">X</span></div>`).join(''):"VUOTO";
             document.getElementById('cart-tot').innerText="TOT: "+cart.reduce((a,b)=>a+parseInt(b.p),0)+"€";
         }
         async function pay(){
@@ -293,16 +300,12 @@
             }
         }
 
-        // ADMIN TRIGGER FIXATO A 3 CLICK
+        // ADMIN (3 CLICK)
         function adminTrigger(){ 
             taps++; 
-            if(taps>=3){ // CAMBIATO A 3
-                if(prompt("PWD")==="FRIENDLYFIRE26") showAdm(); 
-                taps=0; 
-            } 
-            setTimeout(()=>taps=0, 1000); // Reset dopo 1 secondo
+            if(taps>=3){ if(prompt("PWD")==="FRIENDLYFIRE26") showAdm(); taps=0; } 
+            setTimeout(()=>taps=0, 1000); 
         }
-
         function showAdm(){
             document.getElementById('adm-list').innerHTML=items.map((x,i)=>`<div class="row"><input id="n${i}" value="${x.name}"><input id="p${i}" value="${x.p}" type="number" style="width:30px"><input id="q${i}" value="${x.q}" type="number" style="width:30px"><button style="color:red;" onclick="if(confirm('Del?')){items.splice(${i},1);showAdm();}">X</button></div>`).join('');
             showWin('win-admin');
