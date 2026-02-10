@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V9001 DB MASTER</title>
+    <title>FRIENDLYFIRE | V10000 FINAL</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -175,7 +175,13 @@
     <div id="win-prof" class="window"><div class="win-h"><span>PROFILO</span><div class="win-x" onclick="hideAll()"></div></div><div class="win-b"><p>COMING SOON</p></div></div>
 
     <script>
-        const CFG = { u:'https://jwifyapbnsbbpsrstrow.supabase.co', k:'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y', ek:'BThMV2knP0VG0s4nr', es:'service_4scv4hn', et:'template_8opoo1v' };
+        // CONFIGURAZIONE CHIAVE AGGIORNATA
+        const CFG = { 
+            u:'https://jwifyapbnsbbpsrstrow.supabase.co', 
+            // CHIAVE CORRETTA (inizia con 'e' minuscola)
+            k:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y', 
+            ek:'BThMV2knP0VG0s4nr', es:'service_4scv4hn', et:'template_8opoo1v' 
+        };
         
         let items=[{id:0,name:'CAP',p:45,q:10,i:'image_cap.png'},{id:1,name:'TEE',p:65,q:5,i:'image_tee.png'},{id:2,name:'STICKER',p:10,q:100,i:'image_sticker.png'},{id:3,name:'HOODIE',p:85,q:0,i:'image_hoodie.png'},{id:4,name:'PANT',p:70,q:8,i:'image_pant.png'},{id:5,name:'SOCKS',p:15,q:20,i:'image_socks.png'},{id:6,name:'BEANIE',p:35,q:5,i:'image_cap.png'}];
         let cart=[], sb=null, taps=0, labBgUrl='';
@@ -295,9 +301,7 @@
         }
         function addItm(){ items.push({id:Date.now(),name:'NEW',p:0,q:1,i:'image_cap.png'}); showAdm(); }
         
-        // --- FUNZIONE SALVATAGGIO FIXATA ---
         async function saveAdm(){ 
-            // 1. Aggiorna Locale
             items.forEach((x,i)=>{ 
                 let n=document.getElementById(`n${i}`); 
                 if(n){ 
@@ -308,8 +312,6 @@
                 } 
             });
             render(); 
-            
-            // 2. Aggiorna DB (INCLUDENDO ID)
             if(sb) {
                 const updates = items.map(x => ({
                     id: x.id, // ID FONDAMENTALE
