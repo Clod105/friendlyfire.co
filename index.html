@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V5000 FINAL</title>
+    <title>FRIENDLYFIRE | V6000 FINAL</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -23,7 +23,7 @@
             overscroll-behavior: none; position: fixed; 
         }
 
-        /* --- 2. LOADER RESPONSIVE & ADAPTIVE --- */
+        /* --- 2. LOADER --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: #ffffff; z-index: 2147483647; 
@@ -32,11 +32,7 @@
         }
         
         .loader-logo { width: 80%; max-width: 300px; object-fit: contain; }
-        /* Gif Fuochini: Grande su Mobile, Contenuta su PC */
-        .loader-gif { 
-            width: 70vw; max-width: 350px; height: auto; 
-            object-fit: contain; mix-blend-mode: multiply; 
-        }
+        .loader-gif { width: 70vw; max-width: 350px; height: auto; object-fit: contain; mix-blend-mode: multiply; }
         
         .bar-container { 
             width: 80%; max-width: 300px; height: 30px; background: #fff; 
@@ -54,26 +50,22 @@
         }
         @keyframes popIn { from{transform:scale(0)} to{transform:scale(1)} }
 
-        /* Media Query per PC */
         @media (min-width: 1024px) {
             .loader-gif { width: 250px; }
             #loader-overlay { justify-content: center; gap: 30px; }
         }
 
-        /* --- 3. HEADER (FIX VISIBILITÀ) --- */
+        /* --- 3. HEADER --- */
         header { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100px; 
-            z-index: 20000; /* Altissimo */
-            display: flex; justify-content: space-between; align-items: center;
+            z-index: 20000; display: flex; justify-content: space-between; align-items: center;
             padding: 0 20px; padding-top: env(safe-area-inset-top, 10px); 
             pointer-events: none; 
         }
         .h-btn { 
             width: 65px; height: 65px; object-fit: contain; 
-            pointer-events: auto; /* IMPORTANTE */
-            cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5)); 
-            transition: transform 0.1s; 
-            background: transparent; /* Fix per alcuni browser */
+            pointer-events: auto; cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5)); 
+            transition: transform 0.1s; background: transparent; 
         }
         .h-btn:active { transform: scale(0.9); }
         .pongo-anim { animation: sq 0.3s; } @keyframes sq { 0%,100%{transform:scale(1);} 50%{transform:scale(0.8);} }
@@ -84,11 +76,11 @@
             border: 2px solid #000; font-size: 9px; padding: 4px; border-radius: 50%; display: none; 
         }
 
-        /* --- 4. SHOP & SLIDER --- */
+        /* --- 4. SHOP --- */
         #shop-view { 
             width: 100vw; height: 100%; display: flex; overflow-x: auto; overflow-y: hidden; 
-            scroll-snap-type: x mandatory; padding-top: 110px; /* Spazio per header */
-            -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
+            scroll-snap-type: x mandatory; padding-top: 110px; -webkit-overflow-scrolling: touch; 
+            scroll-behavior: smooth;
         }
         #shop-view::-webkit-scrollbar { display: none; }
         
@@ -98,18 +90,9 @@
             gap: 10px; padding: 0 15px 120px 15px; scroll-snap-align: start; align-content: start; 
         }
 
-        .item { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            position: relative; touch-action: pan-y; 
-        }
-        .item img { 
-            width: 85px; height: 85px; object-fit: contain; pointer-events: none; 
-            filter: drop-shadow(0 5px 6px rgba(0,0,0,0.5)); 
-        }
-        .label { 
-            font-family: sans-serif; font-weight: 900; font-size: 8px; 
-            color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; 
-        }
+        .item { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; touch-action: pan-y; }
+        .item img { width: 85px; height: 85px; object-fit: contain; pointer-events: none; filter: drop-shadow(0 5px 6px rgba(0,0,0,0.5)); }
+        .label { font-family: sans-serif; font-weight: 900; font-size: 8px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; }
         .sold-out { opacity: 0.5; filter: grayscale(1); pointer-events: none; }
         .sold-out::after { content: "SOLD"; position: absolute; background: var(--red); color: white; font-size: 8px; padding: 2px 4px; transform: rotate(-15deg); border: 1px solid #fff; }
 
@@ -129,22 +112,15 @@
             background: #fff; border: 3px solid #000; box-shadow: 10px 10px 0 rgba(0,0,0,0.6); 
             z-index: 50000; flex-direction: column; max-height: 75vh; 
         }
-        .win-h { 
-            background: #eee; border-bottom: 2px solid #000; padding: 12px; cursor: move; 
-            display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 10px; 
-        }
+        .win-h { background: #eee; border-bottom: 2px solid #000; padding: 12px; cursor: move; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 10px; }
         .win-x { background: var(--red); width: 20px; height: 20px; border: 2px solid #000; cursor: pointer; }
         .win-b { padding: 15px; overflow-y: auto; }
         .btn { width: 100%; padding: 12px; margin-top: 10px; background: #000; color: #fff; border: none; font-size: 10px; cursor: pointer; font-family: inherit; }
         .row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ccc; padding: 8px 0; font-size: 10px; }
         input { width: 100%; padding: 8px; border: 2px solid #000; font-family: monospace; font-size: 10px; }
 
-        /* --- 7. FOOTER (ADMIN) --- */
-        footer { 
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 80px;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 12000; pointer-events: none; 
-        }
+        /* --- 7. FOOTER --- */
+        footer { position: fixed; bottom: 20px; width: 100%; display: flex; justify-content: center; z-index: 9000; pointer-events: none; padding-bottom: env(safe-area-inset-bottom, 10px); }
         .brand { width: 160px; pointer-events: auto; cursor: pointer; padding: 20px; }
 
     </style>
@@ -179,15 +155,21 @@
     </footer>
 
     <div id="win-cart" class="window">
-        <div class="win-h" onmousedown="dragWin(event,'win-cart')" ontouchstart="dragWin(event,'win-cart')"><span>TANK</span><div class="win-x" onclick="hideAll()"></div></div>
-        <div class="win-b"><div id="cart-list">VUOTO</div><div id="cart-tot" style="margin-top:10px;border-top:2px solid #000;font-weight:bold;">TOT: 0€</div><button class="btn" onclick="pay()">ORDINA</button><button class="btn" style="background:var(--red);" onclick="cart=[];upCart();">SVUOTA</button></div>
+        <div class="win-h" onmousedown="dragWin(event,'win-cart')" ontouchstart="dragWin(event,'win-cart')"><span>IL TUO TANK</span><div class="win-x" onclick="hideAll()"></div></div>
+        <div class="win-b"><div id="cart-list">VUOTO</div><div id="cart-tot" style="margin-top:10px;border-top:2px solid #000;font-weight:bold;">TOT: 0€</div><button class="btn" onclick="pay()">ORDINA / PRENOTA</button><button class="btn" style="background:var(--red);" onclick="cart=[];upCart();">SVUOTA</button></div>
     </div>
 
     <div id="win-admin" class="window">
-        <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN</span><div class="win-x" onclick="hideAll()"></div></div>
+        <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN PANEL</span><div class="win-x" onclick="hideAll()"></div></div>
         <div class="win-b">
             <div style="font-size:8px;">SFONDO URL:</div><div style="display:flex;gap:5px;"><input id="bg-in"><button style="width:40px;" onclick="setBg()">OK</button></div>
-            <hr><div id="adm-list"></div><button class="btn" style="background:blue;" onclick="addItm()">+ ITEM</button><button class="btn" onclick="saveAdm()">SALVA</button>
+            <hr>
+            <div style="display:flex; justify-content:space-between; font-size:8px; font-weight:bold; margin-bottom:5px;">
+                <span style="width:25%">FILE IMG</span><span style="width:25%">NOME</span><span style="width:15%">€</span><span style="width:15%">QTY</span><span style="width:10%">X</span>
+            </div>
+            <div id="adm-list"></div>
+            <button class="btn" style="background:blue;" onclick="addItm()">+ ITEM</button>
+            <button class="btn" onclick="saveAdm()">SALVA</button>
         </div>
     </div>
 
@@ -197,7 +179,15 @@
     <script>
         const CFG = { u:'https://jwifyapbnsbbpsrstrow.supabase.co', k:'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y', ek:'BThMV2knP0VG0s4nr', es:'service_4scv4hn', et:'template_8opoo1v' };
         
-        let items=[{id:0,name:'CAP',p:45,q:10,i:'image_cap.png'},{id:1,name:'TEE',p:65,q:5,i:'image_tee.png'},{id:2,name:'STICKER',p:10,q:100,i:'image_sticker.png'},{id:3,name:'HOODIE',p:85,q:0,i:'image_hoodie.png'},{id:4,name:'PANT',p:70,q:8,i:'image_pant.png'},{id:5,name:'SOCKS',p:15,q:20,i:'image_socks.png'},{id:6,name:'BEANIE',p:35,q:5,i:'image_cap.png'},{id:7,name:'BAG',p:120,q:3,i:'image_tee.png'}];
+        let items=[
+            {id:0,name:'CAP',p:45,q:10,i:'image_cap.png'},
+            {id:1,name:'TEE',p:65,q:5,i:'image_tee.png'},
+            {id:2,name:'STICKER',p:10,q:100,i:'image_sticker.png'},
+            {id:3,name:'HOODIE',p:85,q:0,i:'image_hoodie.png'},
+            {id:4,name:'PANT',p:70,q:8,i:'image_pant.png'},
+            {id:5,name:'SOCKS',p:15,q:20,i:'image_socks.png'},
+            {id:6,name:'BEANIE',p:35,q:5,i:'image_cap.png'}
+        ];
         let cart=[], sb=null, taps=0;
 
         // START
@@ -223,7 +213,7 @@
             <img src="${x.i}" onerror="this.src='https://placehold.co/80?text=${x.name}'"><div class="label">${x.name}</div><div class="label">${x.p}€</div></div>`;
         }
 
-        // PHYSICS (AUTO-SCROLL & DRAG FIX)
+        // PHYSICS
         let tmr=null;
         function hld(e,i){
             let el=document.getElementById(`i-${i}`), ev=e.touches?e.touches[0]:e, r=el.getBoundingClientRect();
@@ -243,7 +233,7 @@
                 let cx=t.clientX, cy=t.clientY;
                 g.style.left=(cx-ox)+'px'; g.style.top=(cy-oy)+'px';
 
-                // AUTO-SCROLL (Destra/Sinistra)
+                // AUTO-SCROLL
                 let sv = document.getElementById('shop-view');
                 if(cx > window.innerWidth - 50) sv.scrollBy({left:15, behavior:'smooth'});
                 else if(cx < 50) sv.scrollBy({left:-15, behavior:'smooth'});
@@ -262,7 +252,7 @@
                 } else {
                     g.style.display='none'; 
                     let bel=document.elementFromPoint(gx,gy); 
-                    g.style.display='flex'; // Rimetto flex per centrare img
+                    g.style.display='flex';
                     let trg=bel?bel.closest('.item'):null;
                     if(trg && trg.id!==`i-${i}` && !trg.classList.contains('sold-out')){
                         let ti=parseInt(trg.id.split('-')[1]);
@@ -292,19 +282,36 @@
             }
         }
 
-        // ADMIN (3 CLICK)
         function adminTrigger(){ 
             taps++; 
             if(taps>=3){ if(prompt("PWD")==="FRIENDLYFIRE26") showAdm(); taps=0; } 
             setTimeout(()=>taps=0, 1000); 
         }
+        
+        // ADMIN PANEL AGGIORNATO (INPUT IMMAGINE)
         function showAdm(){
-            document.getElementById('adm-list').innerHTML=items.map((x,i)=>`<div class="row"><input id="n${i}" value="${x.name}"><input id="p${i}" value="${x.p}" type="number" style="width:30px"><input id="q${i}" value="${x.q}" type="number" style="width:30px"><button style="color:red;" onclick="if(confirm('Del?')){items.splice(${i},1);showAdm();}">X</button></div>`).join('');
+            document.getElementById('adm-list').innerHTML=items.map((x,i)=>`
+                <div class="row">
+                    <input id="i${i}" value="${x.i}" style="width:25%; color:blue; font-size:8px;">
+                    <input id="n${i}" value="${x.name}" style="width:25%;">
+                    <input id="p${i}" value="${x.p}" type="number" style="width:15%;">
+                    <input id="q${i}" value="${x.q}" type="number" style="width:15%;">
+                    <button style="width:10%; background:red; color:white;" onclick="if(confirm('Del?')){items.splice(${i},1);showAdm();}">X</button>
+                </div>
+            `).join('');
             showWin('win-admin');
         }
         function addItm(){ items.push({id:Date.now(),name:'NEW',p:0,q:1,i:'image_cap.png'}); showAdm(); }
         async function saveAdm(){ 
-            items.forEach((x,i)=>{ let n=document.getElementById(`n${i}`); if(n){ x.name=n.value; x.p=document.getElementById(`p${i}`).value; x.q=document.getElementById(`q${i}`).value; } });
+            items.forEach((x,i)=>{ 
+                let n=document.getElementById(`n${i}`); 
+                if(n){ 
+                    x.name=n.value; 
+                    x.p=document.getElementById(`p${i}`).value; 
+                    x.q=document.getElementById(`q${i}`).value;
+                    x.i=document.getElementById(`i${i}`).value; // SALVA IMMAGINE
+                } 
+            });
             render(); if(sb) await sb.from('products').upsert(items.map(x=>({name:x.name,price:x.p,qty:x.q,img:x.i}))); alert("Salvato"); hideAll();
         }
         function setBg(){ document.body.style.backgroundImage=`url('${document.getElementById('bg-in').value}')`; }
