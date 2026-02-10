@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V16001 SIGNATURE</title>
+    <title>FRIENDLYFIRE | V16002 FINAL MARK</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -39,8 +39,14 @@
         body.hologram-mode textarea, body.hologram-mode select { background: transparent; color: var(--holo-cyan); border: 1px solid var(--holo-cyan); }
         body.hologram-mode .label { color: var(--holo-cyan); text-shadow: 0 0 5px var(--holo-cyan); }
 
-        /* --- 3. LOADER --- */
-        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.3s ease-out; }
+        /* --- 3. LOADER (AGGIORNATO CON MARK) --- */
+        #loader-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background-color: #ffffff; z-index: 2147483647; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            padding: 20px; padding-bottom: 60px; /* Spazio extra in basso per spingere su il contenuto */
+            transition: opacity 0.3s ease-out; 
+        }
         .loader-logo { width: 80%; max-width: 280px; margin-bottom: 30px; object-fit: contain; }
         .loader-gif { width: 65vw; max-width: 320px; height: auto; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 30px; }
         .bar-container { width: 80%; max-width: 280px; height: 20px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1); }
@@ -50,14 +56,14 @@
         #start-btn.visible { visibility: visible; animation: flash 1s infinite alternate; }
         @keyframes flash { from{transform:scale(1)} to{transform:scale(1.05)} }
         
-        /* LA FIRMA DI CLOD */
+        /* LA FIRMA DI CLOD CON MARK */
+        .clod-mark {
+            position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+            width: 18px; height: auto; opacity: 0.5;
+        }
         .powered-by {
-            position: absolute;
-            bottom: 20px;
-            font-size: 6px;
-            color: #666;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center;
+            font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase;
         }
 
         @media (min-width: 1024px) { .loader-gif { width: 220px; } }
@@ -112,6 +118,8 @@
         <img src="loadernob.gif" class="loader-gif" onerror="this.src='https://placehold.co/200?text=LOADING'">
         <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
         <button id="start-btn" onclick="startApp()" ontouchstart="startApp()">START WORLD</button>
+        
+        <img src="mark_c.png" class="clod-mark" onerror="this.style.display='none'">
         <div class="powered-by">Powered by Clod™</div>
     </div>
 
