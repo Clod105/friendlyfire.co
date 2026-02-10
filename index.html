@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V9000 BOMB</title>
+    <title>FRIENDLYFIRE | V9001 DB MASTER</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -31,30 +31,20 @@
 
         /* --- 2. HOLOGRAM / LAB MODE --- */
         body.hologram-mode {
-            background-image: none !important; /* Sovrascritto via JS se c'è custom BG */
-            background-color: #050a14; /* Blu Notte base */
+            background-image: none !important; 
+            background-color: #050a14; 
         }
-
-        /* TEXTURE OLOGRAFICA (SCANLINES) */
         body.hologram-mode::after {
             content: " "; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 255, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 4px, 6px 100%;
-            pointer-events: none; z-index: 1;
+            background-size: 100% 4px, 6px 100%; pointer-events: none; z-index: 1;
         }
-
-        /* LOGHI AZZURRI IN LAB MODE */
-        body.hologram-mode header img,
-        body.hologram-mode footer img {
+        body.hologram-mode header img, body.hologram-mode footer img {
             filter: grayscale(100%) sepia(100%) hue-rotate(130deg) saturate(400%) brightness(1.5) drop-shadow(0 0 8px var(--holo-cyan));
             transition: filter 0.4s ease;
         }
-
-        /* TESTI E BORDI NEON */
         body.hologram-mode .window {
-            background: rgba(0, 15, 30, 0.85);
-            border-color: var(--holo-cyan);
-            color: var(--holo-cyan);
+            background: rgba(0, 15, 30, 0.85); border-color: var(--holo-cyan); color: var(--holo-cyan);
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
         }
         body.hologram-mode .win-h { background: rgba(0, 243, 255, 0.1); border-bottom: 1px solid var(--holo-cyan); color: var(--holo-cyan); }
@@ -62,88 +52,59 @@
         body.hologram-mode #cart-tot { border-top-color: var(--holo-cyan) !important; }
         body.hologram-mode .label { color: var(--holo-cyan); text-shadow: 0 0 5px var(--holo-cyan); }
 
-        /* --- 3. LOADER VELOCE (NITRO) --- */
+        /* --- 3. LOADER VELOCE --- */
         #loader-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: #ffffff; z-index: 2147483647; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 20px; transition: opacity 0.3s ease-out; /* Velocizzato */
+            padding: 20px; transition: opacity 0.3s ease-out;
         }
         .loader-logo { width: 80%; max-width: 280px; margin-bottom: 30px; object-fit: contain; }
         .loader-gif { width: 65vw; max-width: 320px; height: auto; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 30px; }
-        
         .bar-container { 
             width: 80%; max-width: 280px; height: 20px; background: #fff; 
             border: 3px solid #000; padding: 2px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
         }
-        /* Animazione 1.5s (Veloce) */
         .bar-fill { height: 100%; width: 0%; background-color: var(--green); animation: fillLoad 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
         @keyframes fillLoad { 0%{width:0%} 100%{width:100%} }
 
         #start-btn { 
-            display: none; background: #000; color: #fff; border: 3px solid #000; 
+            visibility: hidden; background: #000; color: #fff; border: 3px solid #000; 
             padding: 15px 40px; font-family: inherit; font-size: 12px; margin-top: 20px;
             cursor: pointer; text-transform: uppercase; box-shadow: 5px 5px 0 #999;
             pointer-events: auto !important; position: relative; z-index: 2147483647;
         }
+        #start-btn.visible { visibility: visible; animation: flash 1s infinite alternate; }
+        @keyframes flash { from{transform:scale(1)} to{transform:scale(1.05)} }
         
-        @media (min-width: 1024px) {
-            .loader-gif { width: 220px; }
-        }
+        @media (min-width: 1024px) { .loader-gif { width: 220px; } }
 
         /* --- 4. HEADER --- */
         header { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100px; 
             z-index: 20000; display: flex; justify-content: space-between; align-items: center;
-            padding: 0 20px; padding-top: env(safe-area-inset-top, 10px); 
-            pointer-events: none; 
+            padding: 0 20px; padding-top: env(safe-area-inset-top, 10px); pointer-events: none; 
         }
-        .h-btn { 
-            width: 65px; height: 65px; object-fit: contain; 
-            pointer-events: auto; cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5)); 
-            transition: transform 0.1s; 
-        }
+        .h-btn { width: 65px; height: 65px; object-fit: contain; pointer-events: auto; cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5)); transition: transform 0.1s; }
         .h-btn:active { transform: scale(0.9); }
         .pongo-anim { animation: sq 0.3s; } @keyframes sq { 0%,100%{transform:scale(1);} 50%{transform:scale(0.8);} }
-
         #tank-wrapper { position: relative; pointer-events: auto; }
-        #tank-badge { 
-            position: absolute; top: 0; right: -5px; background: var(--red); color: white; 
-            border: 2px solid #000; font-size: 9px; padding: 4px; border-radius: 50%; display: none; 
-        }
+        #tank-badge { position: absolute; top: 0; right: -5px; background: var(--red); color: white; border: 2px solid #000; font-size: 9px; padding: 4px; border-radius: 50%; display: none; }
 
         /* --- 5. SHOP --- */
-        #shop-view { 
-            width: 100vw; height: 100%; display: flex; overflow-x: auto; overflow-y: hidden; 
-            scroll-snap-type: x mandatory; padding-top: 110px; -webkit-overflow-scrolling: touch; 
-            scroll-behavior: smooth; position: relative; z-index: 10;
-        }
+        #shop-view { width: 100vw; height: 100%; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; padding-top: 110px; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; position: relative; z-index: 10; }
         #shop-view::-webkit-scrollbar { display: none; }
-        
-        .shop-page { 
-            min-width: 100vw; height: 100%; display: grid; 
-            grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); 
-            gap: 10px; padding: 0 15px 120px 15px; scroll-snap-align: start; align-content: start; 
-        }
-
+        .shop-page { min-width: 100vw; height: 100%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); gap: 10px; padding: 0 15px 120px 15px; scroll-snap-align: start; align-content: start; }
         .item { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; touch-action: pan-y; }
         .item img { width: 85px; height: 85px; object-fit: contain; pointer-events: none; filter: drop-shadow(0 5px 6px rgba(0,0,0,0.5)); }
         .label { font-family: sans-serif; font-weight: 900; font-size: 8px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; }
         .sold-out { opacity: 0.5; filter: grayscale(1); pointer-events: none; }
         .sold-out::after { content: "SOLD"; position: absolute; background: var(--red); color: white; font-size: 8px; padding: 2px 4px; transform: rotate(-15deg); border: 1px solid #fff; }
 
-        /* --- 6. GHOST & STICKER --- */
-        .ghost { 
-            position: fixed; z-index: 99999; pointer-events: none; 
-            width: 85px !important; height: 85px !important; 
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0.9; transform: scale(1.1); filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6));
-        }
+        /* --- 6. GHOST --- */
+        .ghost { position: fixed; z-index: 99999; pointer-events: none; width: 85px !important; height: 85px !important; display: flex; justify-content: center; align-items: center; opacity: 0.9; transform: scale(1.1); filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6)); }
         .ghost img { width: 100% !important; height: 100% !important; object-fit: contain !important; }
         .sucked { transition: 0.4s; transform: scale(0) rotate(720deg) !important; opacity: 0; }
-
-        /* Sticker libero (se vuoi rimetterlo, altrimenti nascosto per pulizia) */
-        .sticker { display:none; } 
 
         /* --- 7. WINDOWS --- */
         .window { display: none; position: fixed; top: 15%; left: 5%; width: 90%; max-width: 380px; background: #fff; border: 3px solid #000; box-shadow: 10px 10px 0 rgba(0,0,0,0.6); z-index: 50000; flex-direction: column; max-height: 75vh; }
@@ -197,16 +158,16 @@
     <div id="win-admin" class="window">
         <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN</span><div class="win-x" onclick="hideAll()"></div></div>
         <div class="win-b">
-            <div style="font-size:8px; margin-bottom:2px;">URL SFONDO NORMALE:</div>
+            <div style="font-size:8px;">SFONDO URL:</div>
             <div style="display:flex;gap:5px;margin-bottom:5px;"><input id="bg-in"><button style="width:30px;" onclick="setBg(false)">OK</button></div>
-            <div style="font-size:8px; margin-bottom:2px; color:blue;">URL SFONDO LAB MODE:</div>
-            <div style="display:flex;gap:5px;"><input id="lab-bg-in"><button style="width:30px; background:blue; color:white;" onclick="setBg(true)">OK</button></div>
+            <div style="font-size:8px; color:blue;">LAB BG URL:</div>
+            <div style="display:flex;gap:5px;"><input id="lab-bg-in"><button style="width:30px;background:blue;color:white;" onclick="setBg(true)">OK</button></div>
             <hr>
             <div style="display:flex; justify-content:space-between; font-size:8px; font-weight:bold; margin-bottom:5px;">
                 <span style="width:25%">FILE IMG</span><span style="width:25%">NOME</span><span style="width:15%">€</span><span style="width:15%">QTY</span><span style="width:10%">X</span>
             </div>
             <div id="adm-list"></div>
-            <button class="btn" style="background:blue; color:white;" onclick="addItm()">+ ITEM</button><button class="btn" onclick="saveAdm()">SALVA</button>
+            <button class="btn" style="background:blue; color:white;" onclick="addItm()">+ ITEM</button><button class="btn" onclick="saveAdm()">SALVA (DB)</button>
         </div>
     </div>
 
@@ -217,14 +178,14 @@
         const CFG = { u:'https://jwifyapbnsbbpsrstrow.supabase.co', k:'EyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aWZ5YXBibnNiYnBzcnN0cm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzM1OTUsImV4cCI6MjA4NjE0OTU5NX0.dmhdHZRJuYo7-OlpSR3S5ca7ink9w6a5DM-u2ac4c2Y', ek:'BThMV2knP0VG0s4nr', es:'service_4scv4hn', et:'template_8opoo1v' };
         
         let items=[{id:0,name:'CAP',p:45,q:10,i:'image_cap.png'},{id:1,name:'TEE',p:65,q:5,i:'image_tee.png'},{id:2,name:'STICKER',p:10,q:100,i:'image_sticker.png'},{id:3,name:'HOODIE',p:85,q:0,i:'image_hoodie.png'},{id:4,name:'PANT',p:70,q:8,i:'image_pant.png'},{id:5,name:'SOCKS',p:15,q:20,i:'image_socks.png'},{id:6,name:'BEANIE',p:35,q:5,i:'image_cap.png'}];
-        let cart=[], sb=null, taps=0;
-        let labBgUrl = ''; // Variabile per lo sfondo Lab
+        let cart=[], sb=null, taps=0, labBgUrl='';
 
-        // START VELOCE
+        // START
         setTimeout(()=>{ 
-            let b=document.getElementById('start-btn'); b.style.display='block'; 
+            let b=document.getElementById('start-btn'); 
+            if(b) b.classList.add('visible'); 
             document.getElementById('bar-fill').style.width='100%'; 
-        }, 1600); // 1.6 Secondi
+        }, 1600);
 
         function startApp() {
             let o = document.getElementById('loader-overlay');
@@ -302,13 +263,11 @@
             document.addEventListener('mousemove',mv); document.addEventListener('mouseup',end);
         }
 
-        // LAB MODE TOGGLE
         function toggleLabMode() {
             document.body.classList.toggle('hologram-mode');
             if(document.body.classList.contains('hologram-mode') && labBgUrl) {
                 document.body.style.backgroundImage = `url('${labBgUrl}')`;
             } else {
-                // Restore original (Pongo)
                 document.body.style.backgroundImage = "url('sfondo2.jpg')"; 
             }
             if(navigator.vibrate) navigator.vibrate([50,50,50]);
@@ -336,11 +295,36 @@
         }
         function addItm(){ items.push({id:Date.now(),name:'NEW',p:0,q:1,i:'image_cap.png'}); showAdm(); }
         
-        // SAVE & SET BG
+        // --- FUNZIONE SALVATAGGIO FIXATA ---
         async function saveAdm(){ 
-            items.forEach((x,i)=>{ let n=document.getElementById(`n${i}`); if(n){ x.name=n.value; x.p=document.getElementById(`p${i}`).value; x.q=document.getElementById(`q${i}`).value; x.i=document.getElementById(`i${i}`).value; } });
-            render(); if(sb) await sb.from('products').upsert(items.map(x=>({name:x.name,price:x.p,qty:x.q,img:x.i}))); alert("Salvato"); hideAll();
+            // 1. Aggiorna Locale
+            items.forEach((x,i)=>{ 
+                let n=document.getElementById(`n${i}`); 
+                if(n){ 
+                    x.name=n.value; 
+                    x.p=document.getElementById(`p${i}`).value; 
+                    x.q=document.getElementById(`q${i}`).value; 
+                    x.i=document.getElementById(`i${i}`).value; 
+                } 
+            });
+            render(); 
+            
+            // 2. Aggiorna DB (INCLUDENDO ID)
+            if(sb) {
+                const updates = items.map(x => ({
+                    id: x.id, // ID FONDAMENTALE
+                    name: x.name,
+                    price: x.p,
+                    qty: x.q,
+                    img: x.i
+                }));
+                const { error } = await sb.from('products').upsert(updates);
+                if(error) alert("Errore: " + error.message);
+                else alert("Salvato nel Database!");
+            }
+            hideAll();
         }
+
         function setBg(isLab){ 
             let val = document.getElementById(isLab ? 'lab-bg-in' : 'bg-in').value;
             if(isLab) { labBgUrl = val; alert("Lab BG Impostato"); }
