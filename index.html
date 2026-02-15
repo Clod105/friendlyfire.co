@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V28000 LAB FIX</title>
+    <title>FRIENDLYFIRE | V29000 THE ULTIMATE FIX</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -25,32 +25,41 @@
             overscroll-behavior: none; position: fixed; transition: all 0.4s ease;
         }
 
-        /* --- 2. MODALITÀ HOLOGRAM (LAB MODE) --- */
-        body.hologram-mode { background-image: none !important; background-color: #050a14; }
+        /* --- 2. MODALITÀ HOLOGRAM (LAB MODE FORZATO) --- */
+        body.hologram-mode { background-image: none !important; background-color: #050a14 !important; }
         body.hologram-mode::after {
             content: " "; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 255, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
             background-size: 100% 4px, 6px 100%; pointer-events: none; z-index: 1;
         }
-        /* FIX: Le icone header e footer diventano ologrammi */
-        body.hologram-mode header img, body.hologram-mode footer img { 
-            filter: grayscale(100%) sepia(100%) hue-rotate(130deg) saturate(400%) brightness(1.5) drop-shadow(0 0 8px var(--holo-cyan)); 
-            transition: filter 0.4s ease; 
-        }
         
+        /* FIX DEFINITIVO: Icone Ologramma Fluorescenti */
+        body.hologram-mode .h-btn, 
+        body.hologram-mode .brand {
+            filter: grayscale(100%) sepia(100%) hue-rotate(180deg) saturate(500%) brightness(1.5) drop-shadow(0 0 10px #00f3ff) !important;
+        }
+
+        /* FIX DEFINITIVO: Immagini Prodotti Shop (Glow Azzurro) */
+        body.hologram-mode .item img {
+            filter: drop-shadow(0 0 10px var(--holo-cyan)) !important;
+        }
+
+        /* FIX DEFINITIVO: Dettaglio Immagine Scura (Annulla Multiply, Aggiunge Sfondo Bianco Protetto) */
+        body.hologram-mode #det-img {
+            mix-blend-mode: normal !important;
+            background-color: #fff !important;
+            border-radius: 12px !important;
+            padding: 8px !important;
+            filter: drop-shadow(0 0 15px var(--holo-cyan)) !important;
+        }
+
         body.hologram-mode .window { background: rgba(0, 15, 30, 0.9); border-color: var(--holo-cyan); color: var(--holo-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
         body.hologram-mode .win-h { background: rgba(0, 243, 255, 0.1); border-bottom: 1px solid var(--holo-cyan); color: var(--holo-cyan); }
         body.hologram-mode .btn { background: transparent !important; border: 1px solid var(--holo-cyan); color: var(--holo-cyan) !important; }
         body.hologram-mode input, body.hologram-mode select, body.hologram-mode textarea { background: transparent; color: var(--holo-cyan); border: 1px solid var(--holo-cyan); }
 
-        /* FIX: Spegne la moltiplicazione colore nel Lab Mode e aggiunge glow */
-        body.hologram-mode .magic-img {
-            mix-blend-mode: normal !important;
-            filter: drop-shadow(0 0 10px var(--holo-cyan)) contrast(1.1) !important;
-        }
-
         /* --- 3. LOADER --- */
-        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; padding-bottom: 60px; transition: opacity 0.3s ease-out; }
+        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.3s ease-out; }
         .loader-logo { width: 80%; max-width: 280px; margin-bottom: 30px; object-fit: contain; }
         .loader-gif { width: 65vw; max-width: 320px; height: auto; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 30px; }
         .bar-container { width: 80%; max-width: 280px; height: 20px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1); }
@@ -59,16 +68,17 @@
         #start-btn { visibility: hidden; background: #000; color: #fff; border: 3px solid #000; padding: 15px 40px; font-family: inherit; font-size: 12px; margin-top: 20px; cursor: pointer; text-transform: uppercase; box-shadow: 5px 5px 0 #999; pointer-events: auto !important; position: relative; z-index: 2147483647; }
         #start-btn.visible { visibility: visible; animation: flash 1s infinite alternate; }
         @keyframes flash { from{transform:scale(1)} to{transform:scale(1.05)} }
-        
-        /* FIX: Reinserito Powered by Clod */
-        .clod-mark { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 18px; height: auto; opacity: 0.5; }
-        .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; }
+
+        /* FIX DEFINITIVO: CLOD ALZATO DAL FONDO PER NON ESSERE TAGLIATO */
+        .clod-wrapper { position: absolute; bottom: 12%; left: 0; width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 9999; }
+        .clod-mark { width: 35px; height: auto; opacity: 0.8; margin-bottom: 8px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
+        .powered-by { font-size: 10px; color: #000; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; text-shadow: 1px 1px 0 #fff; }
 
         @media (min-width: 1024px) { .loader-gif { width: 220px; } }
 
         /* --- 4. HEADER --- */
         header { position: fixed; top: 0; left: 0; width: 100%; height: 100px; z-index: 20000; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; padding-top: env(safe-area-inset-top, 10px); pointer-events: none; }
-        .h-btn { width: 65px; height: 65px; object-fit: contain; pointer-events: auto; cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5)); transition: transform 0.1s; }
+        .h-btn { width: 65px; height: 65px; object-fit: contain; pointer-events: auto; cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5)); transition: filter 0.4s ease, transform 0.1s; }
         .h-btn:active { transform: scale(0.9); }
         .pongo-anim { animation: sq 0.3s; } @keyframes sq { 0%,100%{transform:scale(1);} 50%{transform:scale(0.8);} }
         #tank-wrapper { position: relative; pointer-events: auto; }
@@ -81,7 +91,7 @@
 
         .item { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; touch-action: pan-x pan-y; width: 100%; height: 100%; min-height: 100px; cursor: grab; }
         .item:active { cursor: grabbing; }
-        .item img { width: 85px; height: 85px; object-fit: contain; pointer-events: none; filter: contrast(1.1) drop-shadow(0 5px 8px rgba(0,0,0,0.8)); }
+        .item img { width: 85px; height: 85px; object-fit: contain; pointer-events: none; filter: contrast(1.1) drop-shadow(0 5px 8px rgba(0,0,0,0.8)); transition: filter 0.4s ease; }
         .label { font-family: sans-serif; font-weight: 900; font-size: 8px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; text-align:center;}
         .sold-out { opacity: 0.4; filter: grayscale(100%); pointer-events: none; cursor: default; }
 
@@ -100,17 +110,14 @@
         .btn-red { background: var(--red); color: #fff; border: 2px solid #000; }
         .btn-blue { background: #0044cc; color: #fff; border: 2px solid #000; }
         .btn-white { background: #fff; color: #000; border: 2px solid #000; }
-        .row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ccc; padding: 8px 0; font-size: 10px; }
         
+        .row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ccc; padding: 8px 0; font-size: 10px; }
         input, select, textarea { width: 100%; padding: 8px; border: 2px solid #000; background: #fff; color: #000; font-family: monospace; font-size: 10px; }
         textarea { height: 80px; resize: none; margin-top: 10px; font-family: inherit; }
 
-        /* Immagine magica per cancellare bordini bianchi, sovrascrivibile via JS/CSS */
-        .magic-img { width: 70%; max-height: 180px; object-fit: contain; mix-blend-mode: multiply; filter: contrast(1.05); transition: 0.2s; }
-
         /* --- 8. FOOTER --- */
         footer { position: fixed; bottom: 0; left: 0; width: 100%; height: 80px; display: flex; justify-content: center; align-items: center; z-index: 12000; pointer-events: none; }
-        .brand { width: 160px; pointer-events: auto; cursor: pointer; padding: 20px; }
+        .brand { width: 160px; pointer-events: auto; cursor: pointer; padding: 20px; transition: filter 0.4s ease; }
     </style>
 </head>
 <body>
@@ -120,8 +127,11 @@
         <img src="loadernob.gif" class="loader-gif" onerror="this.src='https://placehold.co/200?text=LOADING'">
         <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
         <button id="start-btn" onclick="startApp()" ontouchstart="startApp()">START WORLD</button>
-        <img src="mark_c.png" class="clod-mark" onerror="this.style.display='none'">
-        <div class="powered-by">Powered by Clod™</div>
+        
+        <div class="clod-wrapper">
+            <img src="mark_c.png" class="clod-mark" onerror="this.style.display='none'">
+            <div class="powered-by">Powered by Clod™</div>
+        </div>
     </div>
 
     <audio id="sfx-eat" src="suono_gnam.mp3" preload="auto"></audio>
@@ -156,11 +166,12 @@
     </div>
 
     <div id="win-admin" class="window" style="max-width:450px;">
-        <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN (V28000)</span><div class="win-x" onclick="hideAll()"></div></div>
+        <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN (V29000)</span><div class="win-x" onclick="hideAll()"></div></div>
         <div class="win-b" style="padding:10px;">
             <div style="font-size:8px;">SFONDO URL:</div>
             <div style="display:flex;gap:5px;margin-bottom:5px;"><input id="bg-in"><button class="btn-white" style="width:30px;padding:5px;" onclick="setBg(false)">OK</button></div>
             <hr>
+            
             <div style="display:flex; justify-content:space-between; font-size:8px; font-weight:bold; margin-bottom:5px; background:#eee; padding:5px; color:#000;">
                 <span style="width:30%">IMG / GALLERIA</span>
                 <span style="width:20%">NOME</span>
@@ -170,10 +181,10 @@
                 <span style="width:10%">DEL</span>
             </div>
             
-            <div id="adm-list" style="display:flex; flex-direction:column; gap:5px;"></div>
+            <div id="adm-list" style="display:flex; flex-direction:column; gap:5px; margin-bottom:15px;"></div>
             
-            <button class="btn btn-white" style="font-weight:bold; font-size:12px; border:3px solid #000;" onclick="addItm()">+ CREA NUOVO PRODOTTO</button>
-            <button class="btn" style="background:var(--green); color:#000; font-weight:bold; font-size:12px;" onclick="saveAdm()">SALVA SUL DATABASE</button>
+            <button class="btn" style="background:var(--green); color:#000; font-weight:bold; font-size:12px; border:3px solid #000;" onclick="saveAdm()">💾 SALVA SUL DATABASE</button>
+            <button class="btn btn-white" style="font-weight:bold; font-size:10px; border:3px solid #000; margin-top:15px;" onclick="addItm()">➕ CREA UNA NUOVA CARD PRODOTTO</button>
         </div>
     </div>
 
@@ -184,7 +195,7 @@
             <div style="position:relative; width:100%; display:flex; align-items:center; justify-content:center; margin-bottom:5px; height:180px;">
                 <button id="btn-prev-img" class="btn-white" style="position:absolute; left:0; width:30px; height:30px; padding:0; z-index:2; display:none;" onclick="changeGallery(-1)"><</button>
                 
-                <img id="det-img" class="magic-img" src="">
+                <img id="det-img" src="" style="width:70%; max-height:180px; object-fit:contain; mix-blend-mode: multiply; filter: contrast(1.05); transition: 0.3s ease;">
                 
                 <button id="btn-next-img" class="btn-white" style="position:absolute; right:0; width:30px; height:30px; padding:0; z-index:2; display:none;" onclick="changeGallery(1)">></button>
             </div>
@@ -420,14 +431,15 @@
 
         function adminTrigger(){ taps++; if(taps>=3){ if(prompt("PWD")==="FRIENDLYFIRE26") { adminActive=true; showAdm(); } taps=0; } setTimeout(()=>taps=0, 1000); }
         
+        // FIX: FUNZIONE CIECA, NON CREA NUOVI PRODOTTI, AGGIUNGE SOLO TESTO
         function addPic(idx) {
-            let url = prompt("Incolla l'URL della foto extra per QUESTO prodotto:");
+            let url = prompt("Incolla l'URL della foto extra per QUESTO specifico prodotto:");
             if (url && url.trim() !== '') {
                 let input = document.getElementById(`i${idx}`); 
                 if (input) {
                     let current = input.value.trim();
                     input.value = current ? current + ',' + url.trim() : url.trim();
-                    alert("Foto caricata nell'input! Ricorda di cliccare 'SALVA SUL DATABASE' alla fine.");
+                    alert("✅ Foto inserita nell'input testuale!\nOra scorri giù e clicca il tasto verde SALVA SUL DATABASE per confermare.");
                 }
             }
         }
@@ -454,6 +466,7 @@
         function addItm(){ 
             items.push({id: 'temp_' + Date.now(), name:'Nuovo Prodotto', p:0, q:1, i:'', d:'', sz:''}); 
             showAdm(); 
+            setTimeout(() => { document.getElementById('win-admin').querySelector('.win-b').scrollTo(0, document.body.scrollHeight); }, 100);
         }
         
         async function deleteItem(i) {
