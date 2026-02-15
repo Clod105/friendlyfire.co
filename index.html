@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V30000 MASTERPIECE</title>
+    <title>FRIENDLYFIRE | V31000 STEALTH LAB</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -34,20 +34,23 @@
         }
         
         body.hologram-mode .h-btn, body.hologram-mode .brand { filter: grayscale(100%) sepia(100%) hue-rotate(180deg) saturate(500%) brightness(1.5) drop-shadow(0 0 10px #00f3ff) !important; }
-        body.hologram-mode .item img { filter: drop-shadow(0 0 10px var(--holo-cyan)) !important; }
+        
+        /* RIMOSSO IL GLOW LUMINOSO DAI PRODOTTI NELLO SHOP */
+        body.hologram-mode .item img { filter: contrast(1.1) !important; }
+        
         body.hologram-mode .window { background: rgba(0, 15, 30, 0.9); border-color: var(--holo-cyan); color: var(--holo-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
         body.hologram-mode .win-h { background: rgba(0, 243, 255, 0.1); border-bottom: 1px solid var(--holo-cyan); color: var(--holo-cyan); }
         body.hologram-mode .btn { background: transparent !important; border: 1px solid var(--holo-cyan); color: var(--holo-cyan) !important; }
         body.hologram-mode input, body.hologram-mode select, body.hologram-mode textarea { background: transparent; color: var(--holo-cyan); border: 1px solid var(--holo-cyan); }
 
-        /* FIX DEFINITIVO: Scontorno perfetto nella mod Lab senza box bianco */
+        /* RIMOSSO IL GLOW LUMINOSO DAI DETTAGLI PRODOTTO */
         body.hologram-mode .magic-img {
             mix-blend-mode: normal !important;
             background: transparent !important;
-            filter: drop-shadow(0 0 8px var(--holo-cyan)) contrast(1.15) !important;
+            filter: contrast(1.15) !important;
         }
 
-        /* --- 3. LOADER (TORNATO ALLA V19000) --- */
+        /* --- 3. LOADER --- */
         #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.3s ease-out; }
         .loader-logo { width: 80%; max-width: 280px; margin-bottom: 30px; object-fit: contain; }
         .loader-gif { width: 65vw; max-width: 320px; height: auto; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 30px; }
@@ -58,7 +61,6 @@
         #start-btn.visible { visibility: visible; animation: flash 1s infinite alternate; }
         @keyframes flash { from{transform:scale(1)} to{transform:scale(1.05)} }
 
-        /* Clod Mark pulito ed elegante in fondo */
         .clod-mark { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 18px; height: auto; opacity: 0.5; }
         .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; }
 
@@ -103,7 +105,6 @@
         input, select, textarea { width: 100%; padding: 8px; border: 2px solid #000; background: #fff; color: #000; font-family: monospace; font-size: 10px; }
         textarea { height: 80px; resize: none; margin-top: 10px; font-family: inherit; }
 
-        /* Immagine base (fonde il bianco) */
         .magic-img { width: 70%; max-height: 180px; object-fit: contain; mix-blend-mode: multiply; filter: contrast(1.05); transition: 0.3s ease; }
 
         /* --- 8. FOOTER --- */
@@ -118,7 +119,6 @@
         <img src="loadernob.gif" class="loader-gif" onerror="this.src='https://placehold.co/200?text=LOADING'">
         <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
         <button id="start-btn" onclick="startApp()" ontouchstart="startApp()">START WORLD</button>
-        
         <img src="mark_c.png" class="clod-mark" onerror="this.style.display='none'">
         <div class="powered-by">Powered by Clod™</div>
     </div>
@@ -155,7 +155,7 @@
     </div>
 
     <div id="win-admin" class="window" style="max-width:450px;">
-        <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN (V30000)</span><div class="win-x" onclick="hideAll()"></div></div>
+        <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN (V31000)</span><div class="win-x" onclick="hideAll()"></div></div>
         <div class="win-b" style="padding:10px;">
             <div style="font-size:8px;">SFONDO URL:</div>
             <div style="display:flex;gap:5px;margin-bottom:5px;"><input id="bg-in"><button class="btn-white" style="width:30px;padding:5px;" onclick="setBg(false)">OK</button></div>
@@ -486,7 +486,6 @@
             });
             
             if(sb) {
-                // FORCE INTEGER PARSING TO PREVENT SUPABASE CRASHES
                 let nuoviInserimenti = items.filter(x => String(x.id).startsWith('temp_')).map(x => ({
                     name: x.name, price: parseInt(x.p)||0, qty: parseInt(x.q)||0, sizes: x.sz, img: x.i, desc: x.d
                 }));
