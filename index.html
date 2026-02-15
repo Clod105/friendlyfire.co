@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V27000 FORTRESS</title>
+    <title>FRIENDLYFIRE | V28000 LAB FIX</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -25,19 +25,32 @@
             overscroll-behavior: none; position: fixed; transition: all 0.4s ease;
         }
 
-        /* --- 2. MODALITÀ HOLOGRAM --- */
+        /* --- 2. MODALITÀ HOLOGRAM (LAB MODE) --- */
         body.hologram-mode { background-image: none !important; background-color: #050a14; }
         body.hologram-mode::after {
             content: " "; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 255, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
             background-size: 100% 4px, 6px 100%; pointer-events: none; z-index: 1;
         }
+        /* FIX: Le icone header e footer diventano ologrammi */
+        body.hologram-mode header img, body.hologram-mode footer img { 
+            filter: grayscale(100%) sepia(100%) hue-rotate(130deg) saturate(400%) brightness(1.5) drop-shadow(0 0 8px var(--holo-cyan)); 
+            transition: filter 0.4s ease; 
+        }
+        
         body.hologram-mode .window { background: rgba(0, 15, 30, 0.9); border-color: var(--holo-cyan); color: var(--holo-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
         body.hologram-mode .win-h { background: rgba(0, 243, 255, 0.1); border-bottom: 1px solid var(--holo-cyan); color: var(--holo-cyan); }
         body.hologram-mode .btn { background: transparent !important; border: 1px solid var(--holo-cyan); color: var(--holo-cyan) !important; }
+        body.hologram-mode input, body.hologram-mode select, body.hologram-mode textarea { background: transparent; color: var(--holo-cyan); border: 1px solid var(--holo-cyan); }
+
+        /* FIX: Spegne la moltiplicazione colore nel Lab Mode e aggiunge glow */
+        body.hologram-mode .magic-img {
+            mix-blend-mode: normal !important;
+            filter: drop-shadow(0 0 10px var(--holo-cyan)) contrast(1.1) !important;
+        }
 
         /* --- 3. LOADER --- */
-        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.3s ease-out; }
+        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; padding-bottom: 60px; transition: opacity 0.3s ease-out; }
         .loader-logo { width: 80%; max-width: 280px; margin-bottom: 30px; object-fit: contain; }
         .loader-gif { width: 65vw; max-width: 320px; height: auto; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 30px; }
         .bar-container { width: 80%; max-width: 280px; height: 20px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1); }
@@ -46,6 +59,12 @@
         #start-btn { visibility: hidden; background: #000; color: #fff; border: 3px solid #000; padding: 15px 40px; font-family: inherit; font-size: 12px; margin-top: 20px; cursor: pointer; text-transform: uppercase; box-shadow: 5px 5px 0 #999; pointer-events: auto !important; position: relative; z-index: 2147483647; }
         #start-btn.visible { visibility: visible; animation: flash 1s infinite alternate; }
         @keyframes flash { from{transform:scale(1)} to{transform:scale(1.05)} }
+        
+        /* FIX: Reinserito Powered by Clod */
+        .clod-mark { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 18px; height: auto; opacity: 0.5; }
+        .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; }
+
+        @media (min-width: 1024px) { .loader-gif { width: 220px; } }
 
         /* --- 4. HEADER --- */
         header { position: fixed; top: 0; left: 0; width: 100%; height: 100px; z-index: 20000; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; padding-top: env(safe-area-inset-top, 10px); pointer-events: none; }
@@ -86,6 +105,9 @@
         input, select, textarea { width: 100%; padding: 8px; border: 2px solid #000; background: #fff; color: #000; font-family: monospace; font-size: 10px; }
         textarea { height: 80px; resize: none; margin-top: 10px; font-family: inherit; }
 
+        /* Immagine magica per cancellare bordini bianchi, sovrascrivibile via JS/CSS */
+        .magic-img { width: 70%; max-height: 180px; object-fit: contain; mix-blend-mode: multiply; filter: contrast(1.05); transition: 0.2s; }
+
         /* --- 8. FOOTER --- */
         footer { position: fixed; bottom: 0; left: 0; width: 100%; height: 80px; display: flex; justify-content: center; align-items: center; z-index: 12000; pointer-events: none; }
         .brand { width: 160px; pointer-events: auto; cursor: pointer; padding: 20px; }
@@ -98,6 +120,8 @@
         <img src="loadernob.gif" class="loader-gif" onerror="this.src='https://placehold.co/200?text=LOADING'">
         <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
         <button id="start-btn" onclick="startApp()" ontouchstart="startApp()">START WORLD</button>
+        <img src="mark_c.png" class="clod-mark" onerror="this.style.display='none'">
+        <div class="powered-by">Powered by Clod™</div>
     </div>
 
     <audio id="sfx-eat" src="suono_gnam.mp3" preload="auto"></audio>
@@ -132,12 +156,12 @@
     </div>
 
     <div id="win-admin" class="window" style="max-width:450px;">
-        <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN (V27000)</span><div class="win-x" onclick="hideAll()"></div></div>
+        <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN (V28000)</span><div class="win-x" onclick="hideAll()"></div></div>
         <div class="win-b" style="padding:10px;">
             <div style="font-size:8px;">SFONDO URL:</div>
             <div style="display:flex;gap:5px;margin-bottom:5px;"><input id="bg-in"><button class="btn-white" style="width:30px;padding:5px;" onclick="setBg(false)">OK</button></div>
             <hr>
-            <div style="display:flex; justify-content:space-between; font-size:8px; font-weight:bold; margin-bottom:5px; background:#eee; padding:5px;">
+            <div style="display:flex; justify-content:space-between; font-size:8px; font-weight:bold; margin-bottom:5px; background:#eee; padding:5px; color:#000;">
                 <span style="width:30%">IMG / GALLERIA</span>
                 <span style="width:20%">NOME</span>
                 <span style="width:10%">€</span>
@@ -159,7 +183,9 @@
             
             <div style="position:relative; width:100%; display:flex; align-items:center; justify-content:center; margin-bottom:5px; height:180px;">
                 <button id="btn-prev-img" class="btn-white" style="position:absolute; left:0; width:30px; height:30px; padding:0; z-index:2; display:none;" onclick="changeGallery(-1)"><</button>
-                <img id="det-img" src="" style="width:70%; max-height:180px; object-fit:contain; mix-blend-mode: multiply; filter: contrast(1.05); transition: 0.2s;">
+                
+                <img id="det-img" class="magic-img" src="">
+                
                 <button id="btn-next-img" class="btn-white" style="position:absolute; right:0; width:30px; height:30px; padding:0; z-index:2; display:none;" onclick="changeGallery(1)">></button>
             </div>
             <div id="det-img-dots" style="font-size:8px; font-weight:bold; margin-bottom:10px; text-align:center; height:10px;"></div>
@@ -202,7 +228,6 @@
             }catch(e){ console.error("Errore inizializzazione:", e); }
         }
         
-        // FUNZIONE DI CARICAMENTO RESILIENTE AI CRASH
         async function loadDB(){ 
             if(!sb) return; 
             try {
@@ -215,7 +240,6 @@
             }
         }
 
-        // FUNZIONE FORMATTAZIONE SICURA (Evita che campi null facciano crashare il JS)
         function formatItem(x) { 
             return {
                 id: x.id, 
@@ -232,7 +256,6 @@
             if(!sb) return;
             sb.channel('public:products').on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
                 if(payload.eventType === 'INSERT') {
-                    // Controlla se esiste già per evitare duplicati in realtime
                     if(!items.find(x => x.id === payload.new.id)) items.push(formatItem(payload.new));
                 }
                 if(payload.eventType === 'UPDATE') { let idx = items.findIndex(x => x.id === payload.new.id); if(idx !== -1) items[idx] = formatItem(payload.new); }
@@ -254,7 +277,6 @@
                 if (pageIdx < pages.length) {
                     let realQty = getRealQty(item); let sold = realQty <= 0;
                     
-                    // CONTROLLO ANTICRASH IMMAGINE COPERTINA
                     let iStr = item.i.trim();
                     let firstImg = iStr !== '' ? iStr.split(',')[0].trim() : 'https://placehold.co/80?text=NO+IMG';
                     
@@ -317,7 +339,6 @@
         function showDetails(i) {
             curDetIdx = i; let item = items[i];
             
-            // CONTROLLO ANTICRASH GALLERIA
             let iStr = item.i.trim();
             curGallery = iStr !== '' ? iStr.split(',').map(s => s.trim()).filter(Boolean) : ['https://placehold.co/80?text=NO+IMG'];
             curGalleryIdx = 0; updateGalleryUI();
@@ -355,7 +376,6 @@
         async function saveDesc() {
             if(curDetIdx === -1) return; 
             items[curDetIdx].d = document.getElementById('det-desc').value;
-            // Solo aggiornamento, ignoro se l'id è un temp
             if(sb && !String(items[curDetIdx].id).startsWith('temp_')) { 
                 const { error } = await sb.from('products').update({ desc: items[curDetIdx].d }).eq('id', items[curDetIdx].id); 
                 if(error) alert("Errore DB: " + error.message); else alert("Descrizione Aggiornata!"); 
@@ -400,7 +420,6 @@
 
         function adminTrigger(){ taps++; if(taps>=3){ if(prompt("PWD")==="FRIENDLYFIRE26") { adminActive=true; showAdm(); } taps=0; } setTimeout(()=>taps=0, 1000); }
         
-        // FUNZIONE AGGIUNGI FOTO: SICURA AL 100% (non interagisce con l'array)
         function addPic(idx) {
             let url = prompt("Incolla l'URL della foto extra per QUESTO prodotto:");
             if (url && url.trim() !== '') {
@@ -418,21 +437,20 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ccc; padding:5px 0;">
                     
                     <div style="width:30%; display:flex; flex-direction:column; gap:2px;">
-                        <input id="i${i}" value="${x.i}" placeholder="URL Img" style="font-size:8px; padding:4px;">
+                        <input id="i${i}" value="${x.i}" placeholder="URL Img" style="font-size:8px; padding:4px; color:#000;">
                         <button class="btn-blue" style="padding:4px; font-size:8px; font-weight:bold; margin:0;" onclick="addPic(${i})">➕ FOTO EXTRA</button>
                     </div>
                     
-                    <input id="n${i}" value="${x.name}" style="width:20%; padding:4px; margin-left:2px; font-size:8px;">
-                    <input id="p${i}" value="${x.p}" type="number" style="width:10%; padding:4px; margin-left:2px; font-size:8px;">
-                    <input id="q${i}" value="${x.q}" type="number" placeholder="Qty" style="width:10%; padding:4px; margin-left:2px; font-size:8px;">
-                    <input id="s${i}" value="${x.sz || ''}" placeholder="S:5,M:0" style="width:20%; font-size:8px; padding:4px; margin-left:2px;">
+                    <input id="n${i}" value="${x.name}" style="width:20%; padding:4px; margin-left:2px; font-size:8px; color:#000;">
+                    <input id="p${i}" value="${x.p}" type="number" style="width:10%; padding:4px; margin-left:2px; font-size:8px; color:#000;">
+                    <input id="q${i}" value="${x.q}" type="number" placeholder="Qty" style="width:10%; padding:4px; margin-left:2px; font-size:8px; color:#000;">
+                    <input id="s${i}" value="${x.sz || ''}" placeholder="S:5,M:0" style="width:20%; font-size:8px; padding:4px; margin-left:2px; color:#000;">
                     
                     <button class="btn-red" style="width:10%; padding:4px; margin-left:2px;" onclick="deleteItem(${i})">X</button>
                 </div>`).join('');
             showWin('win-admin');
         }
         
-        // IDENTIFICATORE TEMPORANEO PER EVITARE CRASH NEL DATABASE
         function addItm(){ 
             items.push({id: 'temp_' + Date.now(), name:'Nuovo Prodotto', p:0, q:1, i:'', d:'', sz:''}); 
             showAdm(); 
@@ -448,9 +466,7 @@
             items.splice(i, 1); showAdm(); render();
         }
 
-        // SALVATAGGIO DIVISO (INSERT PER I NUOVI, UPDATE PER I VECCHI) = ZERO CRASH
         async function saveAdm(){ 
-            // 1. Legge gli input e aggiorna l'array
             items.forEach((x,i)=>{ 
                 let elName = document.getElementById(`n${i}`);
                 if(elName){ 
@@ -463,30 +479,24 @@
             });
             
             if(sb) {
-                // Filtra i nuovi (hanno temp_)
                 let nuoviInserimenti = items.filter(x => String(x.id).startsWith('temp_')).map(x => ({
                     name: x.name, price: parseInt(x.p), qty: parseInt(x.q), sizes: x.sz, img: x.i, desc: x.d
                 }));
-                // Filtra gli aggiornamenti
                 let aggiornamenti = items.filter(x => !String(x.id).startsWith('temp_')).map(x => ({
                     id: x.id, name: x.name, price: parseInt(x.p), qty: parseInt(x.q), sizes: x.sz, img: x.i, desc: x.d
                 }));
 
                 try {
-                    // Manda al DB (Se inserisce, il DB genera i veri ID numerici)
                     if(nuoviInserimenti.length > 0) await sb.from('products').insert(nuoviInserimenti);
                     if(aggiornamenti.length > 0) await sb.from('products').upsert(aggiornamenti);
-                    
                     alert("Database aggiornato perfettamente!");
-                    // RICARICA DAL DB COSÌ ABBIAMO I VERI ID AGGIORNATI
                     await loadDB(); 
                 } catch(e) {
                     alert("Errore Salvataggio: " + e.message);
                 }
             } else {
-                render(); // Se non c'è DB, fa solo un render finto
+                render(); 
             }
-            
             hideAll();
         }
 
