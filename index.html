@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V31000 STEALTH LAB</title>
+    <title>FRIENDLYFIRE | V32000 DYNAMIC BG</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -35,7 +35,6 @@
         
         body.hologram-mode .h-btn, body.hologram-mode .brand { filter: grayscale(100%) sepia(100%) hue-rotate(180deg) saturate(500%) brightness(1.5) drop-shadow(0 0 10px #00f3ff) !important; }
         
-        /* RIMOSSO IL GLOW LUMINOSO DAI PRODOTTI NELLO SHOP */
         body.hologram-mode .item img { filter: contrast(1.1) !important; }
         
         body.hologram-mode .window { background: rgba(0, 15, 30, 0.9); border-color: var(--holo-cyan); color: var(--holo-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
@@ -43,11 +42,10 @@
         body.hologram-mode .btn { background: transparent !important; border: 1px solid var(--holo-cyan); color: var(--holo-cyan) !important; }
         body.hologram-mode input, body.hologram-mode select, body.hologram-mode textarea { background: transparent; color: var(--holo-cyan); border: 1px solid var(--holo-cyan); }
 
-        /* RIMOSSO IL GLOW LUMINOSO DAI DETTAGLI PRODOTTO */
         body.hologram-mode .magic-img {
             mix-blend-mode: normal !important;
             background: transparent !important;
-            filter: contrast(1.15) !important;
+            filter: drop-shadow(0 0 8px var(--holo-cyan)) contrast(1.15) !important;
         }
 
         /* --- 3. LOADER --- */
@@ -155,10 +153,14 @@
     </div>
 
     <div id="win-admin" class="window" style="max-width:450px;">
-        <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN (V31000)</span><div class="win-x" onclick="hideAll()"></div></div>
+        <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN (V32000)</span><div class="win-x" onclick="hideAll()"></div></div>
         <div class="win-b" style="padding:10px;">
-            <div style="font-size:8px;">SFONDO URL:</div>
-            <div style="display:flex;gap:5px;margin-bottom:5px;"><input id="bg-in"><button class="btn-white" style="width:30px;padding:5px;" onclick="setBg(false)">OK</button></div>
+            
+            <div style="font-size:8px; font-weight:bold; margin-bottom:5px;">SFONDO GLOBALE SITO (URL):</div>
+            <div style="display:flex; gap:5px; margin-bottom:15px;">
+                <input id="bg-in" placeholder="Lascia vuoto per sfondo base">
+                <button class="btn-blue" style="width:auto; padding:5px 10px; font-size:8px; font-weight:bold; margin:0;" onclick="saveBg()">💾 SALVA SFONDO</button>
+            </div>
             <hr>
             
             <div style="display:flex; justify-content:space-between; font-size:8px; font-weight:bold; margin-bottom:5px; background:#eee; padding:5px; color:#000;">
@@ -231,10 +233,42 @@
             try {
                 const{data, error}=await sb.from('products').select('*').order('id'); 
                 if(error) throw error;
-                if(data){ items = data.map(x=>formatItem(x)); render(); } 
+                if(data){ 
+                    // RECUPERO SFONDO DAL DATABASE (ID FANTASMA 999999)
+                    let cfg = data.find(x => x.name === 'SYSTEM_CONFIG');
+                    if(cfg && cfg.img) {
+                        document.body.style.backgroundImage = `url('${cfg.img}')`;
+                        if(document.getElementById('bg-in')) document.getElementById('bg-in').value = cfg.img;
+                    }
+
+                    // Carica solo i prodotti veri (esclude il file di configurazione)
+                    items = data.filter(x => x.name !== 'SYSTEM_CONFIG').map(x=>formatItem(x)); 
+                    render(); 
+                } 
             } catch(e) {
                 console.error("Errore DB:", e);
                 alert("Connessione debole, non riesco a caricare i prodotti.");
+            }
+        }
+
+        // SALVATAGGIO SFONDO SUL DATABASE (PERSISTENTE PER TUTTI)
+        async function saveBg() {
+            let url = document.getElementById('bg-in').value.trim();
+            if(!sb) return alert("Database non connesso");
+            try {
+                const {error} = await sb.from('products').upsert([{
+                    id: 999999, // ID fisso di sistema
+                    name: 'SYSTEM_CONFIG',
+                    img: url,
+                    price: 0, qty: 0, sizes: '', desc: 'NON ELIMINARE - GESTISCE LO SFONDO GLOBALE'
+                }]);
+                if(error) throw error;
+                
+                // Aggiorna subito visivamente
+                document.body.style.backgroundImage = url ? `url('${url}')` : "url('sfondo2.jpg')";
+                alert("✅ Sfondo aggiornato e salvato per tutti i visitatori!");
+            } catch(e) {
+                alert("Errore salvataggio sfondo: " + e.message);
             }
         }
 
@@ -253,11 +287,22 @@
         function setupRealtime() {
             if(!sb) return;
             sb.channel('public:products').on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
+                
+                // Se cambia lo sfondo dal DB, aggiorna in tempo reale la pagina!
+                if(payload.new && payload.new.name === 'SYSTEM_CONFIG') {
+                    document.body.style.backgroundImage = payload.new.img ? `url('${payload.new.img}')` : "url('sfondo2.jpg')";
+                    if(document.getElementById('bg-in')) document.getElementById('bg-in').value = payload.new.img || '';
+                    return; // Ferma qui l'esecuzione per non aggiungerlo allo shop
+                }
+
                 if(payload.eventType === 'INSERT') {
                     if(!items.find(x => x.id === payload.new.id)) items.push(formatItem(payload.new));
                 }
                 if(payload.eventType === 'UPDATE') { let idx = items.findIndex(x => x.id === payload.new.id); if(idx !== -1) items[idx] = formatItem(payload.new); }
-                if(payload.eventType === 'DELETE') items = items.filter(x => x.id !== payload.old.id);
+                if(payload.eventType === 'DELETE') {
+                    if(payload.old.id === 999999) return; // Se si cancella lo sfondo non fare nulla
+                    items = items.filter(x => x.id !== payload.old.id);
+                }
                 render(); 
             }).subscribe();
         }
@@ -502,7 +547,7 @@
                         const {error: err2} = await sb.from('products').upsert(aggiornamenti);
                         if(err2) throw err2;
                     }
-                    alert("Database aggiornato perfettamente!");
+                    alert("✅ Database aggiornato perfettamente!");
                     await loadDB(); 
                 } catch(e) {
                     alert("Errore Salvataggio: " + e.message);
@@ -513,8 +558,7 @@
             hideAll();
         }
 
-        function toggleLabMode() { document.body.classList.toggle('hologram-mode'); if(document.body.classList.contains('hologram-mode') && labBgUrl) { document.body.style.backgroundImage = `url('${labBgUrl}')`; } else { document.body.style.backgroundImage = "url('sfondo2.jpg')"; } if(navigator.vibrate) navigator.vibrate([50,50,50]); }
-        function setBg(isLab){ let val = document.getElementById(isLab ? 'lab-bg-in' : 'bg-in').value; if(isLab) { labBgUrl = val; alert("Lab BG OK"); } else { document.body.style.backgroundImage=`url('${val}')`; } }
+        function toggleLabMode() { document.body.classList.toggle('hologram-mode'); if(navigator.vibrate) navigator.vibrate([50,50,50]); }
         function anim(el){ el.classList.remove('pongo-anim'); void el.offsetWidth; el.classList.add('pongo-anim'); try{document.getElementById('sfx-eat').play();}catch(e){} }
         function showWin(id){ hideAll(); document.getElementById(id).style.display='flex'; }
         function toggleWin(id){ let w=document.getElementById(id); if(w.style.display==='flex') hideAll(); else { showWin(id); upCart(); } }
