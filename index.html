@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V23000 SPEED</title>
+    <title>FRIENDLYFIRE | V24000 SEAMLESS</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -148,10 +148,10 @@
             <div style="display:flex;gap:5px;margin-bottom:5px;"><input id="bg-in"><button class="btn-white" style="width:30px;" onclick="setBg(false)">OK</button></div>
             <hr>
             <div style="display:flex; justify-content:space-between; font-size:8px; font-weight:bold; margin-bottom:5px;">
-                <span style="width:25%">IMG [+]</span><span style="width:20%">NOME</span><span style="width:10%">€</span><span style="width:10%">QTY</span><span style="width:25%">TAGLIE</span><span style="width:10%">X</span>
+                <span style="width:25%">IMG [+ FOTO]</span><span style="width:20%">NOME</span><span style="width:10%">€</span><span style="width:10%">QTY</span><span style="width:25%">TAGLIE</span><span style="width:10%">X</span>
             </div>
             <div id="adm-list"></div>
-            <button class="btn btn-white" onclick="addItm()">+ NUOVO ITEM</button>
+            <button class="btn btn-white" onclick="addItm()">+ NUOVO PRODOTTO (CARD)</button>
             <button class="btn" onclick="saveAdm()">SALVA (DB)</button>
         </div>
     </div>
@@ -162,7 +162,9 @@
             
             <div style="position:relative; width:100%; display:flex; align-items:center; justify-content:center; margin-bottom:5px; height:180px;">
                 <button id="btn-prev-img" class="btn-white" style="position:absolute; left:0; width:30px; height:30px; padding:0; z-index:2; display:none;" onclick="changeGallery(-1)"><</button>
-                <img id="det-img" src="" style="width:70%; max-height:180px; object-fit:contain; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3)); transition: 0.2s;">
+                
+                <img id="det-img" src="" style="width:70%; max-height:180px; object-fit:contain; mix-blend-mode: multiply; transition: 0.2s;">
+                
                 <button id="btn-next-img" class="btn-white" style="position:absolute; right:0; width:30px; height:30px; padding:0; z-index:2; display:none;" onclick="changeGallery(1)">></button>
             </div>
             <div id="det-img-dots" style="font-size:8px; font-weight:bold; margin-bottom:10px; text-align:center; height:10px;"></div>
@@ -217,7 +219,6 @@
             }).subscribe();
         }
 
-        // Calcolo reale della disponibilità: Se ci sono taglie, calcola da quelle, altrimenti usa qty generica.
         function getRealQty(item) {
             if (item.sz && item.sz.includes(':')) { return item.sz.split(',').reduce((tot, part) => { let val = parseInt(part.split(':')[1]); return tot + (isNaN(val) ? 0 : val); }, 0); }
             return parseInt(item.q) || 0;
@@ -230,6 +231,8 @@
                 let pageIdx = Math.floor(i / 9);
                 if (pageIdx < pages.length) {
                     let realQty = getRealQty(item); let sold = realQty <= 0;
+                    
+                    // PRENDE SEMPRE SOLO LA PRIMA FOTO PER LO SHOP HOME
                     let firstImg = item.i ? item.i.split(',')[0].trim() : 'image_cap.png';
                     
                     pages[pageIdx].innerHTML += `<div class="item ${sold?'sold-out':''}" id="i-${i}" 
@@ -338,37 +341,35 @@
 
         async function pay(){ if(!cart.length)return alert("Vuoto"); let m=prompt("Email per completare ordine:"); if(m){ if(sb) await sb.from('newsletter').insert([{email:m}]); if(window.emailjs) emailjs.send(CFG.es,CFG.et,{user_email:m,message:"NUOVO ORDINE RICEVUTO"}); alert("Grazie! Controlla la mail."); cart=[]; upCart(); hideAll(); } }
 
-        // --- SISTEMA NEWSLETTER FIRE-AND-FORGET ---
         function sub(){ 
             let m=document.getElementById('nm').value; 
             if(m) { 
-                hideAll(); // Chiude il popup all'istante
-                setTimeout(() => alert("Iscritto al Drop!"), 100); // Messaggio ultra veloce
-                // Le chiamate al DB e alle mail partono silenziose in background
+                hideAll(); 
+                setTimeout(() => alert("Iscritto al Drop!"), 100); 
                 if(sb) sb.from('newsletter').insert([{email:m}]); 
                 if(window.emailjs) emailjs.send(CFG.es, CFG.et, { user_email: m, message: "BENVENUTO NEL MONDO FRIENDLYFIRE!" }).catch(e=>{}); 
-                document.getElementById('nm').value = ''; // Pulisce l'input
+                document.getElementById('nm').value = ''; 
             } 
         }
 
         function adminTrigger(){ taps++; if(taps>=3){ if(prompt("PWD")==="FRIENDLYFIRE26") { adminActive=true; showAdm(); } taps=0; } setTimeout(()=>taps=0, 1000); }
         
+        // --- FUNZIONE CORRETTA PER AGGIUNGERE FOTO ALLA GALLERIA ---
         function addPic(idx) {
-            let url = prompt("Incolla qui l'URL della nuova foto per la galleria:");
+            let url = prompt("Incolla qui l'URL della nuova foto per la galleria di questo prodotto:");
             if (url && url.trim() !== '') {
                 let input = document.getElementById(`i${idx}`); let current = input.value.trim();
                 input.value = current ? current + ',' + url.trim() : url.trim();
-                alert("Foto aggiunta in coda alla galleria! Ricordati di cliccare SALVA (DB).");
+                alert("Foto aggiunta alla galleria del prodotto! Ricordati di cliccare SALVA (DB).");
             }
         }
 
-        // --- ADMIN UI AGGIORNATA (QTY E TAGLIE SEPARATE) ---
         function showAdm(){
             document.getElementById('adm-list').innerHTML=items.map((x,i)=>`
                 <div class="row">
                     <div style="width:25%; display:flex; gap:2px;">
                         <input id="i${i}" value="${x.i}" style="width:75%;font-size:8px;color:#000;padding:2px;">
-                        <button class="btn-white" style="width:25%;padding:2px;font-size:10px;font-weight:bold;" onclick="addPic(${i})">+</button>
+                        <button class="btn-white" title="Aggiungi foto alla galleria" style="width:25%;padding:2px;font-size:8px;font-weight:bold;" onclick="addPic(${i})">+ FOTO</button>
                     </div>
                     <input id="n${i}" value="${x.name}" style="width:20%;color:#000;padding:2px;margin-left:2px;">
                     <input id="p${i}" value="${x.p}" type="number" style="width:10%;color:#000;padding:2px;margin-right:2px;">
