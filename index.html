@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V24000 SEAMLESS</title>
+    <title>FRIENDLYFIRE | V26000 FREE SHIPPING</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -20,8 +20,7 @@
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Press Start 2P', cursive; 
-            background-color: var(--bg-pongo);
-            background-image: url('sfondo2.jpg'); 
+            background-color: var(--bg-pongo); background-image: url('sfondo2.jpg'); 
             background-size: cover; background-position: center; background-repeat: no-repeat;
             overscroll-behavior: none; position: fixed; transition: all 0.4s ease;
         }
@@ -33,15 +32,12 @@
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 255, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
             background-size: 100% 4px, 6px 100%; pointer-events: none; z-index: 1;
         }
-        body.hologram-mode header img, body.hologram-mode footer img { filter: grayscale(100%) sepia(100%) hue-rotate(130deg) saturate(400%) brightness(1.5) drop-shadow(0 0 8px var(--holo-cyan)); transition: filter 0.4s ease; }
         body.hologram-mode .window { background: rgba(0, 15, 30, 0.9); border-color: var(--holo-cyan); color: var(--holo-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
         body.hologram-mode .win-h { background: rgba(0, 243, 255, 0.1); border-bottom: 1px solid var(--holo-cyan); color: var(--holo-cyan); }
         body.hologram-mode .btn { background: transparent !important; border: 1px solid var(--holo-cyan); color: var(--holo-cyan) !important; }
-        body.hologram-mode input, body.hologram-mode textarea, body.hologram-mode select { background: transparent; color: var(--holo-cyan); border: 1px solid var(--holo-cyan); }
-        body.hologram-mode .label { color: var(--holo-cyan); text-shadow: 0 0 5px var(--holo-cyan); }
 
         /* --- 3. LOADER --- */
-        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; padding-bottom: 60px; transition: opacity 0.3s ease-out; }
+        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.3s ease-out; }
         .loader-logo { width: 80%; max-width: 280px; margin-bottom: 30px; object-fit: contain; }
         .loader-gif { width: 65vw; max-width: 320px; height: auto; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 30px; }
         .bar-container { width: 80%; max-width: 280px; height: 20px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1); }
@@ -50,9 +46,6 @@
         #start-btn { visibility: hidden; background: #000; color: #fff; border: 3px solid #000; padding: 15px 40px; font-family: inherit; font-size: 12px; margin-top: 20px; cursor: pointer; text-transform: uppercase; box-shadow: 5px 5px 0 #999; pointer-events: auto !important; position: relative; z-index: 2147483647; }
         #start-btn.visible { visibility: visible; animation: flash 1s infinite alternate; }
         @keyframes flash { from{transform:scale(1)} to{transform:scale(1.05)} }
-        .clod-mark { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 18px; height: auto; opacity: 0.5; }
-        .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; }
-        @media (min-width: 1024px) { .loader-gif { width: 220px; } }
 
         /* --- 4. HEADER --- */
         header { position: fixed; top: 0; left: 0; width: 100%; height: 100px; z-index: 20000; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; padding-top: env(safe-area-inset-top, 10px); pointer-events: none; }
@@ -69,10 +62,11 @@
 
         .item { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; touch-action: pan-x pan-y; width: 100%; height: 100%; min-height: 100px; cursor: grab; }
         .item:active { cursor: grabbing; }
-        .item img { width: 85px; height: 85px; object-fit: contain; pointer-events: none; filter: drop-shadow(0 5px 6px rgba(0,0,0,0.5)); }
+        
+        .item img { width: 85px; height: 85px; object-fit: contain; pointer-events: none; filter: contrast(1.1) drop-shadow(0 5px 8px rgba(0,0,0,0.8)); }
+        
         .label { font-family: sans-serif; font-weight: 900; font-size: 8px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; text-align:center;}
         .sold-out { opacity: 0.4; filter: grayscale(100%); pointer-events: none; cursor: default; }
-        .sold-out::after { content: "SOLD OUT"; position: absolute; background: var(--red); color: white; font-size: 8px; padding: 4px 6px; transform: rotate(-15deg); border: 2px solid #fff; z-index: 5; font-family: 'Press Start 2P', cursive; }
 
         /* --- 6. GHOST --- */
         .ghost { position: fixed; z-index: 99999; pointer-events: none; width: 85px !important; height: 85px !important; display: flex; justify-content: center; align-items: center; opacity: 0.9; transform: scale(1.1); filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6)); }
@@ -87,7 +81,6 @@
         .btn { width: 100%; padding: 12px; margin-top: 10px; background: #000; color: #fff; border: 2px solid #000; font-size: 10px; cursor: pointer; font-family: inherit; transition: 0.1s; }
         .btn:active { transform: scale(0.98); background: #333; }
         .btn-red { background: var(--red); color: #fff; border: 2px solid #000; }
-        .btn-red:active { background: #cc0000; }
         .btn-white { background: #fff; color: #000; border: 2px solid #000; }
         .row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ccc; padding: 8px 0; font-size: 10px; }
         
@@ -106,8 +99,6 @@
         <img src="loadernob.gif" class="loader-gif" onerror="this.src='https://placehold.co/200?text=LOADING'">
         <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
         <button id="start-btn" onclick="startApp()" ontouchstart="startApp()">START WORLD</button>
-        <img src="mark_c.png" class="clod-mark" onerror="this.style.display='none'">
-        <div class="powered-by">Powered by Clod™</div>
     </div>
 
     <audio id="sfx-eat" src="suono_gnam.mp3" preload="auto"></audio>
@@ -135,8 +126,8 @@
         <div class="win-h" onmousedown="dragWin(event,'win-cart')" ontouchstart="dragWin(event,'win-cart')"><span>IL TUO TANK</span><div class="win-x" onclick="hideAll()"></div></div>
         <div class="win-b">
             <div id="cart-list">VUOTO</div>
-            <div id="cart-tot" style="margin-top:10px;border-top:2px solid #000;padding-top:10px;font-weight:bold;">TOT: 0€</div>
-            <button class="btn" onclick="pay()">ORDINA / PRENOTA</button>
+            <div id="cart-tot" style="margin-top:10px; border-top:2px solid #000; padding-top:10px; font-family:monospace; font-size:10px; line-height:1.5;">TOT: 0€</div>
+            <button class="btn" onclick="pay()">COMPLETA ORDINE</button>
             <button class="btn btn-red" onclick="cart=[];upCart();">SVUOTA</button>
         </div>
     </div>
@@ -163,7 +154,7 @@
             <div style="position:relative; width:100%; display:flex; align-items:center; justify-content:center; margin-bottom:5px; height:180px;">
                 <button id="btn-prev-img" class="btn-white" style="position:absolute; left:0; width:30px; height:30px; padding:0; z-index:2; display:none;" onclick="changeGallery(-1)"><</button>
                 
-                <img id="det-img" src="" style="width:70%; max-height:180px; object-fit:contain; mix-blend-mode: multiply; transition: 0.2s;">
+                <img id="det-img" src="" style="width:70%; max-height:180px; object-fit:contain; mix-blend-mode: multiply; filter: contrast(1.05); transition: 0.2s;">
                 
                 <button id="btn-next-img" class="btn-white" style="position:absolute; right:0; width:30px; height:30px; padding:0; z-index:2; display:none;" onclick="changeGallery(1)">></button>
             </div>
@@ -231,8 +222,6 @@
                 let pageIdx = Math.floor(i / 9);
                 if (pageIdx < pages.length) {
                     let realQty = getRealQty(item); let sold = realQty <= 0;
-                    
-                    // PRENDE SEMPRE SOLO LA PRIMA FOTO PER LO SHOP HOME
                     let firstImg = item.i ? item.i.split(',')[0].trim() : 'image_cap.png';
                     
                     pages[pageIdx].innerHTML += `<div class="item ${sold?'sold-out':''}" id="i-${i}" 
@@ -331,22 +320,59 @@
             if(sb) { const { error } = await sb.from('products').update({ desc: items[curDetIdx].d }).eq('id', items[curDetIdx].id); if(error) alert("Errore DB: " + error.message); else alert("Descrizione Aggiornata!"); } hideAll();
         }
 
-        function toggleLabMode() { document.body.classList.toggle('hologram-mode'); if(document.body.classList.contains('hologram-mode') && labBgUrl) { document.body.style.backgroundImage = `url('${labBgUrl}')`; } else { document.body.style.backgroundImage = "url('sfondo2.jpg')"; } if(navigator.vibrate) navigator.vibrate([50,50,50]); }
-
+        // --- SISTEMA CALCOLO SPEDIZIONI (SEMPRE GRATIS) ---
         function upCart(){ 
             document.getElementById('tank-badge').innerText=cart.length; document.getElementById('tank-badge').style.display=cart.length?'block':'none'; 
             document.getElementById('cart-list').innerHTML=cart.length?cart.map((x,n)=>`<div class="row"><span>${x.name} ${x.selSize?'- '+x.selSize:''}</span><span>${x.p}€</span><span onclick="cart.splice(${n},1);upCart()" style="color:red;cursor:pointer;font-weight:bold;">X</span></div>`).join(''):"VUOTO"; 
-            document.getElementById('cart-tot').innerText="TOT: "+cart.reduce((a,b)=>a+parseInt(b.p),0)+"€"; 
+            
+            let subtot = cart.reduce((a,b)=>a+parseInt(b.p),0);
+            let totale = subtot;
+            
+            let htmlTot = `SUBTOTALE: ${subtot}€<br>`;
+            htmlTot += subtot > 0 ? `SPEDIZIONE: <span style="color:var(--green)">GRATIS</span><br>` : `SPEDIZIONE: 0€<br>`;
+            htmlTot += `<span style="font-size:12px; color:var(--red);">TOTALE: ${totale}€</span>`;
+            
+            document.getElementById('cart-tot').innerHTML = htmlTot; 
         }
 
-        async function pay(){ if(!cart.length)return alert("Vuoto"); let m=prompt("Email per completare ordine:"); if(m){ if(sb) await sb.from('newsletter').insert([{email:m}]); if(window.emailjs) emailjs.send(CFG.es,CFG.et,{user_email:m,message:"NUOVO ORDINE RICEVUTO"}); alert("Grazie! Controlla la mail."); cart=[]; upCart(); hideAll(); } }
+        // --- INVIO ORDINE (SPEDIZIONE GRATIS) ---
+        function pay(){ 
+            if(!cart.length) return alert("Il Tank è vuoto"); 
+            let customerInfo = prompt("Inserisci EMAIL e INDIRIZZO completo per la spedizione:\n(es: mario@mail.com - Via Milano 1, Roma)"); 
+            
+            if(customerInfo && customerInfo.trim() !== ""){ 
+                hideAll(); 
+                setTimeout(() => alert("Ordine inoltrato! Controlla la mail."), 150); 
+                
+                let total = cart.reduce((a,b)=>a+parseInt(b.p),0);
+                let orderItemsStr = cart.map(c => `${c.name} (${c.selSize || 'N/A'})`).join(', ');
+
+                if(sb) { 
+                    sb.from('newsletter').insert([{email: customerInfo}]).then(); 
+                    sb.from('orders').insert([{ 
+                        customer_info: customerInfo, 
+                        items: orderItemsStr, 
+                        total_price: total 
+                    }]).then(); 
+                } 
+                
+                if(window.emailjs) { 
+                    emailjs.send(CFG.es, CFG.et, {
+                        user_email: customerInfo,
+                        message: `NUOVO ORDINE!\nArticoli: ${orderItemsStr}\nTotale (Spedizione Gratuita): ${total}€\nDati Cliente: ${customerInfo}`
+                    }).catch(e=>{}); 
+                } 
+                
+                cart=[]; upCart(); 
+            } 
+        }
 
         function sub(){ 
             let m=document.getElementById('nm').value; 
             if(m) { 
                 hideAll(); 
-                setTimeout(() => alert("Iscritto al Drop!"), 100); 
-                if(sb) sb.from('newsletter').insert([{email:m}]); 
+                setTimeout(() => alert("Iscritto al Drop!"), 150); 
+                if(sb) sb.from('newsletter').insert([{email:m}]).then(); 
                 if(window.emailjs) emailjs.send(CFG.es, CFG.et, { user_email: m, message: "BENVENUTO NEL MONDO FRIENDLYFIRE!" }).catch(e=>{}); 
                 document.getElementById('nm').value = ''; 
             } 
@@ -354,7 +380,6 @@
 
         function adminTrigger(){ taps++; if(taps>=3){ if(prompt("PWD")==="FRIENDLYFIRE26") { adminActive=true; showAdm(); } taps=0; } setTimeout(()=>taps=0, 1000); }
         
-        // --- FUNZIONE CORRETTA PER AGGIUNGERE FOTO ALLA GALLERIA ---
         function addPic(idx) {
             let url = prompt("Incolla qui l'URL della nuova foto per la galleria di questo prodotto:");
             if (url && url.trim() !== '') {
@@ -410,6 +435,7 @@
             hideAll();
         }
 
+        function toggleLabMode() { document.body.classList.toggle('hologram-mode'); if(document.body.classList.contains('hologram-mode') && labBgUrl) { document.body.style.backgroundImage = `url('${labBgUrl}')`; } else { document.body.style.backgroundImage = "url('sfondo2.jpg')"; } if(navigator.vibrate) navigator.vibrate([50,50,50]); }
         function setBg(isLab){ let val = document.getElementById(isLab ? 'lab-bg-in' : 'bg-in').value; if(isLab) { labBgUrl = val; alert("Lab BG OK"); } else { document.body.style.backgroundImage=`url('${val}')`; } }
         function anim(el){ el.classList.remove('pongo-anim'); void el.offsetWidth; el.classList.add('pongo-anim'); try{document.getElementById('sfx-eat').play();}catch(e){} }
         function showWin(id){ hideAll(); document.getElementById(id).style.display='flex'; }
