@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V22000 STABLE GALLERY</title>
+    <title>FRIENDLYFIRE | V23000 SPEED</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -33,9 +33,7 @@
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 255, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
             background-size: 100% 4px, 6px 100%; pointer-events: none; z-index: 1;
         }
-        body.hologram-mode header img, body.hologram-mode footer img {
-            filter: grayscale(100%) sepia(100%) hue-rotate(130deg) saturate(400%) brightness(1.5) drop-shadow(0 0 8px var(--holo-cyan)); transition: filter 0.4s ease;
-        }
+        body.hologram-mode header img, body.hologram-mode footer img { filter: grayscale(100%) sepia(100%) hue-rotate(130deg) saturate(400%) brightness(1.5) drop-shadow(0 0 8px var(--holo-cyan)); transition: filter 0.4s ease; }
         body.hologram-mode .window { background: rgba(0, 15, 30, 0.9); border-color: var(--holo-cyan); color: var(--holo-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
         body.hologram-mode .win-h { background: rgba(0, 243, 255, 0.1); border-bottom: 1px solid var(--holo-cyan); color: var(--holo-cyan); }
         body.hologram-mode .btn { background: transparent !important; border: 1px solid var(--holo-cyan); color: var(--holo-cyan) !important; }
@@ -52,10 +50,8 @@
         #start-btn { visibility: hidden; background: #000; color: #fff; border: 3px solid #000; padding: 15px 40px; font-family: inherit; font-size: 12px; margin-top: 20px; cursor: pointer; text-transform: uppercase; box-shadow: 5px 5px 0 #999; pointer-events: auto !important; position: relative; z-index: 2147483647; }
         #start-btn.visible { visibility: visible; animation: flash 1s infinite alternate; }
         @keyframes flash { from{transform:scale(1)} to{transform:scale(1.05)} }
-        
         .clod-mark { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 18px; height: auto; opacity: 0.5; }
         .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; }
-
         @media (min-width: 1024px) { .loader-gif { width: 220px; } }
 
         /* --- 4. HEADER --- */
@@ -71,12 +67,7 @@
         #shop-view::-webkit-scrollbar { display: none; }
         .shop-page { min-width: 100vw; height: 100%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); gap: 10px; padding: 0 15px 120px 15px; scroll-snap-align: start; align-content: start; }
 
-        .item { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            position: relative; touch-action: pan-x pan-y; 
-            width: 100%; height: 100%; min-height: 100px; 
-            cursor: grab; 
-        }
+        .item { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; touch-action: pan-x pan-y; width: 100%; height: 100%; min-height: 100px; cursor: grab; }
         .item:active { cursor: grabbing; }
         .item img { width: 85px; height: 85px; object-fit: contain; pointer-events: none; filter: drop-shadow(0 5px 6px rgba(0,0,0,0.5)); }
         .label { font-family: sans-serif; font-weight: 900; font-size: 8px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; text-align:center;}
@@ -86,46 +77,26 @@
         /* --- 6. GHOST --- */
         .ghost { position: fixed; z-index: 99999; pointer-events: none; width: 85px !important; height: 85px !important; display: flex; justify-content: center; align-items: center; opacity: 0.9; transform: scale(1.1); filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6)); }
         .ghost img { width: 100% !important; height: 100% !important; object-fit: contain !important; }
-        .sucked { transition: 0.4s; transform: scale(0) rotate(720deg) !important; opacity: 0; }
 
-        /* --- 7. WINDOWS (PALETTE SYSTEM) --- */
-        .window { 
-            display: none; position: fixed; top: 12%; left: 5%; width: 90%; max-width: 380px; 
-            background: #fff; border: 3px solid #000; box-shadow: 10px 10px 0 rgba(0,0,0,0.6); 
-            z-index: 50000; flex-direction: column; max-height: 80vh; 
-        }
-        .win-h { 
-            background: #000; color: #fff; border-bottom: 2px solid #000; 
-            padding: 12px; cursor: move; display: flex; justify-content: space-between; align-items: center; 
-            font-weight: bold; font-size: 10px; 
-        }
+        /* --- 7. WINDOWS --- */
+        .window { display: none; position: fixed; top: 12%; left: 5%; width: 90%; max-width: 380px; background: #fff; border: 3px solid #000; box-shadow: 10px 10px 0 rgba(0,0,0,0.6); z-index: 50000; flex-direction: column; max-height: 80vh; }
+        .win-h { background: #000; color: #fff; border-bottom: 2px solid #000; padding: 12px; cursor: move; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 10px; }
         .win-x { background: var(--red); width: 20px; height: 20px; border: 1px solid #fff; cursor: pointer; }
         .win-b { padding: 15px; overflow-y: auto; }
         
-        .btn { 
-            width: 100%; padding: 12px; margin-top: 10px; 
-            background: #000; color: #fff; border: 2px solid #000; 
-            font-size: 10px; cursor: pointer; font-family: inherit; transition: 0.1s; 
-        }
+        .btn { width: 100%; padding: 12px; margin-top: 10px; background: #000; color: #fff; border: 2px solid #000; font-size: 10px; cursor: pointer; font-family: inherit; transition: 0.1s; }
         .btn:active { transform: scale(0.98); background: #333; }
-        
         .btn-red { background: var(--red); color: #fff; border: 2px solid #000; }
         .btn-red:active { background: #cc0000; }
         .btn-white { background: #fff; color: #000; border: 2px solid #000; }
-        
         .row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ccc; padding: 8px 0; font-size: 10px; }
         
-        input, select, textarea { 
-            width: 100%; padding: 8px; 
-            border: 2px solid #000; background: #fff; color: #000;
-            font-family: monospace; font-size: 10px; 
-        }
+        input, select, textarea { width: 100%; padding: 8px; border: 2px solid #000; background: #fff; color: #000; font-family: monospace; font-size: 10px; }
         textarea { height: 80px; resize: none; margin-top: 10px; font-family: inherit; }
 
         /* --- 8. FOOTER --- */
         footer { position: fixed; bottom: 0; left: 0; width: 100%; height: 80px; display: flex; justify-content: center; align-items: center; z-index: 12000; pointer-events: none; }
         .brand { width: 160px; pointer-events: auto; cursor: pointer; padding: 20px; }
-
     </style>
 </head>
 <body>
@@ -175,11 +146,9 @@
         <div class="win-b">
             <div style="font-size:8px;">SFONDO URL:</div>
             <div style="display:flex;gap:5px;margin-bottom:5px;"><input id="bg-in"><button class="btn-white" style="width:30px;" onclick="setBg(false)">OK</button></div>
-            <div style="font-size:8px;">LAB BG URL:</div>
-            <div style="display:flex;gap:5px;"><input id="lab-bg-in"><button class="btn-white" style="width:30px;" onclick="setBg(true)">OK</button></div>
             <hr>
             <div style="display:flex; justify-content:space-between; font-size:8px; font-weight:bold; margin-bottom:5px;">
-                <span style="width:25%">IMG [+]</span><span style="width:20%">NOME</span><span style="width:15%">€</span><span style="width:30%">TAGLIE</span><span style="width:10%">X</span>
+                <span style="width:25%">IMG [+]</span><span style="width:20%">NOME</span><span style="width:10%">€</span><span style="width:10%">QTY</span><span style="width:25%">TAGLIE</span><span style="width:10%">X</span>
             </div>
             <div id="adm-list"></div>
             <button class="btn btn-white" onclick="addItm()">+ NUOVO ITEM</button>
@@ -213,7 +182,7 @@
         </div>
     </div>
 
-    <div id="win-news" class="window"><div class="win-h"><span>NEWSLETTER</span><div class="win-x" onclick="hideAll()"></div></div><div class="win-b"><input id="nm" type="email" placeholder="Email"><button class="btn" onclick="sub()">ISCRIVITI</button></div></div>
+    <div id="win-news" class="window"><div class="win-h"><span>NEWSLETTER</span><div class="win-x" onclick="hideAll()"></div></div><div class="win-b"><input id="nm" type="email" placeholder="Email"><button class="btn" onclick="sub()">ISCRIVITI AL DROP</button></div></div>
     <div id="win-prof" class="window"><div class="win-h"><span>PROFILO</span><div class="win-x" onclick="hideAll()"></div></div><div class="win-b"><p style="text-align:center; margin-top:20px; font-weight:bold;">COMING SOON</p></div></div>
 
     <script>
@@ -223,36 +192,19 @@
             ek:'BThMV2knP0VG0s4nr', es:'service_4scv4hn', et:'template_8opoo1v' 
         };
         
-        let items=[];
-        let cart=[], sb=null, taps=0, labBgUrl='';
-        let adminActive = false;
-        
-        // Variabili Galleria
-        let curDetIdx = -1;
-        let curGallery = [];
-        let curGalleryIdx = 0;
+        let items=[]; let cart=[], sb=null, taps=0, labBgUrl=''; let adminActive = false;
+        let curDetIdx = -1; let curGallery = []; let curGalleryIdx = 0;
 
-        setTimeout(()=>{ 
-            let b=document.getElementById('start-btn'); 
-            if(b) b.classList.add('visible'); 
-            document.getElementById('bar-fill').style.width='100%'; 
-        }, 1600);
+        setTimeout(()=>{ let b=document.getElementById('start-btn'); if(b) b.classList.add('visible'); document.getElementById('bar-fill').style.width='100%'; }, 1600);
 
         function startApp() {
-            let o = document.getElementById('loader-overlay');
-            o.style.opacity='0'; o.style.pointerEvents='none';
-            setTimeout(()=>{o.style.display='none'},300);
+            let o = document.getElementById('loader-overlay'); o.style.opacity='0'; o.style.pointerEvents='none'; setTimeout(()=>{o.style.display='none'},300);
             try{document.getElementById('sfx-eat').play();}catch(e){}
             try{ if(window.supabase){ sb=window.supabase.createClient(CFG.u,CFG.k); loadDB(); setupRealtime(); } if(window.emailjs)emailjs.init(CFG.ek); }catch(e){}
             render();
         }
         
-        async function loadDB(){ 
-            if(!sb)return; 
-            const{data}=await sb.from('products').select('*').order('id'); 
-            if(data&&data.length){ items=data.map(x=>formatItem(x)); render(); } 
-        }
-
+        async function loadDB(){ if(!sb)return; const{data}=await sb.from('products').select('*').order('id'); if(data&&data.length){ items=data.map(x=>formatItem(x)); render(); } }
         function formatItem(x) { return {id:x.id, name:x.name, p:x.price, q:x.qty, i:x.img || '', d:x.desc || '', sz:x.sizes || ''}; }
 
         function setupRealtime() {
@@ -265,24 +217,19 @@
             }).subscribe();
         }
 
+        // Calcolo reale della disponibilità: Se ci sono taglie, calcola da quelle, altrimenti usa qty generica.
         function getRealQty(item) {
-            if (item.sz && item.sz.includes(':')) {
-                return item.sz.split(',').reduce((tot, part) => { let val = parseInt(part.split(':')[1]); return tot + (isNaN(val) ? 0 : val); }, 0);
-            }
+            if (item.sz && item.sz.includes(':')) { return item.sz.split(',').reduce((tot, part) => { let val = parseInt(part.split(':')[1]); return tot + (isNaN(val) ? 0 : val); }, 0); }
             return parseInt(item.q) || 0;
         }
 
         function render(){
             const pages = [document.getElementById('page-1'), document.getElementById('page-2'), document.getElementById('page-3')];
             pages.forEach(p => p.innerHTML = ''); 
-            
             items.forEach((item, i) => {
                 let pageIdx = Math.floor(i / 9);
                 if (pageIdx < pages.length) {
-                    let realQty = getRealQty(item);
-                    let sold = realQty <= 0;
-                    
-                    // Nello shop prende solo la PRIMA foto separando le virgole
+                    let realQty = getRealQty(item); let sold = realQty <= 0;
                     let firstImg = item.i ? item.i.split(',')[0].trim() : 'image_cap.png';
                     
                     pages[pageIdx].innerHTML += `<div class="item ${sold?'sold-out':''}" id="i-${i}" 
@@ -295,17 +242,11 @@
         }
 
         let lastTap = 0, dragTimer = null, startX=0, startY=0, isDragging = false;
-
         function handleTouch(e, i) {
             let now = Date.now(); let touch = e.touches[0];
             if (now - lastTap < 350) { e.preventDefault(); clearTimeout(dragTimer); showDetails(i); lastTap = 0; return; }
             lastTap = now; startX = touch.clientX; startY = touch.clientY; isDragging = false;
-
-            dragTimer = setTimeout(() => {
-                isDragging = true; if(navigator.vibrate) navigator.vibrate(20);
-                let el = document.getElementById(`i-${i}`); startGhostDrag(i, el.getBoundingClientRect(), startX, startY);
-            }, 300); 
-
+            dragTimer = setTimeout(() => { isDragging = true; if(navigator.vibrate) navigator.vibrate(20); let el = document.getElementById(`i-${i}`); startGhostDrag(i, el.getBoundingClientRect(), startX, startY); }, 300); 
             let el = document.getElementById(`i-${i}`);
             function onMove(ev) { let t = ev.touches[0]; if (!isDragging && (Math.abs(t.clientX - startX) > 10 || Math.abs(t.clientY - startY) > 10)) { clearTimeout(dragTimer); el.removeEventListener('touchmove', onMove); } }
             function onEnd() { if (!isDragging) clearTimeout(dragTimer); el.removeEventListener('touchmove', onMove); el.removeEventListener('touchend', onEnd); }
@@ -332,77 +273,49 @@
 
             function end(ev) {
                 document.removeEventListener('touchmove', move); document.removeEventListener('touchend', end); document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', end);
-                let gx = parseInt(g.style.left) + 40, gy = parseInt(g.style.top) + 40;
-                let tk = document.getElementById('tank-target').getBoundingClientRect();
+                let gx = parseInt(g.style.left) + 40, gy = parseInt(g.style.top) + 40; let tk = document.getElementById('tank-target').getBoundingClientRect();
                 
                 if (Math.hypot(gx - (tk.left + tk.width/2), gy - (tk.top + tk.height/2)) < 60) {
                     g.remove();
-                    if (items[i].sz && items[i].sz.includes(':')) { showDetails(i); } 
-                    else { try{document.getElementById('sfx-eat').play();}catch(e){} cart.push({...items[i], selSize: ''}); upCart(); showWin('win-cart'); }
-                    return;
+                    if (items[i].sz && items[i].sz.includes(':')) { showDetails(i); } else { try{document.getElementById('sfx-eat').play();}catch(e){} cart.push({...items[i], selSize: ''}); upCart(); showWin('win-cart'); } return;
                 }
-
                 let ft = document.getElementById('brand-target').getBoundingClientRect();
                 if (Math.hypot(gx - (ft.left + ft.width/2), gy - (ft.top + ft.height/2)) < 60) { toggleLabMode(); g.remove(); return; }
-
                 g.style.display='none'; let bel=document.elementFromPoint(gx,gy); g.style.display='flex';
-                let trg=bel?bel.closest('.item'):null;
-                if(trg && trg.id!==`i-${i}` && !trg.classList.contains('sold-out')){ let ti=parseInt(trg.id.split('-')[1]); [items[i],items[ti]]=[items[ti],items[i]]; render(); }
+                let trg=bel?bel.closest('.item'):null; if(trg && trg.id!==`i-${i}` && !trg.classList.contains('sold-out')){ let ti=parseInt(trg.id.split('-')[1]); [items[i],items[ti]]=[items[ti],items[i]]; render(); }
                 g.remove();
             }
-
             document.addEventListener('touchmove', move, {passive:false}); document.addEventListener('touchend', end); document.addEventListener('mousemove', move); document.addEventListener('mouseup', end);
         }
 
-        // --- SISTEMA GALLERIA NEI DETTAGLI ---
         function showDetails(i) {
             curDetIdx = i; let item = items[i];
-            
-            // Popoliamo l'array delle immagini separate da virgola
             curGallery = item.i ? item.i.split(',').map(s => s.trim()).filter(Boolean) : ['image_cap.png'];
-            curGalleryIdx = 0;
-            updateGalleryUI();
+            curGalleryIdx = 0; updateGalleryUI();
             
-            document.getElementById('det-title').innerText = item.name;
-            document.getElementById('det-price').innerText = item.p + " €";
-            
-            let sizeCont = document.getElementById('det-size-container');
-            let sizeSelect = document.getElementById('det-size'); sizeSelect.innerHTML = '';
+            document.getElementById('det-title').innerText = item.name; document.getElementById('det-price').innerText = item.p + " €";
+            let sizeCont = document.getElementById('det-size-container'); let sizeSelect = document.getElementById('det-size'); sizeSelect.innerHTML = '';
             let btnAdd = document.getElementById('btn-add-tank');
 
             if (item.sz && item.sz.includes(':')) {
-                sizeCont.style.display = 'block';
-                let parts = item.sz.split(',').map(s => s.trim().split(':')); let hasAvailable = false;
+                sizeCont.style.display = 'block'; let parts = item.sz.split(',').map(s => s.trim().split(':')); let hasAvailable = false;
                 parts.forEach(p => { let name = p[0].trim(); let q = parseInt(p[1]); if (q > 0) { sizeSelect.innerHTML += `<option value="${name}">${name} (Disp: ${q})</option>`; hasAvailable = true; } });
-                if(!hasAvailable) { sizeSelect.innerHTML = `<option value="">TUTTE LE TAGLIE ESAURITE</option>`; sizeSelect.disabled = true; btnAdd.style.display = 'none'; } 
-                else { sizeSelect.disabled = false; btnAdd.style.display = 'block'; }
+                if(!hasAvailable) { sizeSelect.innerHTML = `<option value="">TUTTE LE TAGLIE ESAURITE</option>`; sizeSelect.disabled = true; btnAdd.style.display = 'none'; } else { sizeSelect.disabled = false; btnAdd.style.display = 'block'; }
             } else { sizeCont.style.display = 'none'; btnAdd.style.display = getRealQty(item) > 0 ? 'block' : 'none'; }
             
             let descArea = document.getElementById('det-desc'); descArea.value = item.d || ""; let saveBtn = document.getElementById('btn-save-desc');
-            
-            if(adminActive) { descArea.readOnly = false; descArea.style.border = "2px solid blue"; saveBtn.style.display = "block"; } 
-            else { descArea.readOnly = true; descArea.style.border = "2px solid #000"; saveBtn.style.display = "none"; }
-            
+            if(adminActive) { descArea.readOnly = false; descArea.style.border = "2px solid blue"; saveBtn.style.display = "block"; } else { descArea.readOnly = true; descArea.style.border = "2px solid #000"; saveBtn.style.display = "none"; }
             showWin('win-details');
         }
 
         function updateGalleryUI() {
             document.getElementById('det-img').src = curGallery[curGalleryIdx];
             let btnP = document.getElementById('btn-prev-img'); let btnN = document.getElementById('btn-next-img'); let dots = document.getElementById('det-img-dots');
-            
-            if (curGallery.length > 1) {
-                btnP.style.display = 'block'; btnN.style.display = 'block'; dots.innerText = (curGalleryIdx + 1) + " / " + curGallery.length;
-            } else {
-                btnP.style.display = 'none'; btnN.style.display = 'none'; dots.innerText = "";
-            }
+            if (curGallery.length > 1) { btnP.style.display = 'block'; btnN.style.display = 'block'; dots.innerText = (curGalleryIdx + 1) + " / " + curGallery.length; } 
+            else { btnP.style.display = 'none'; btnN.style.display = 'none'; dots.innerText = ""; }
         }
 
-        function changeGallery(dir) {
-            curGalleryIdx += dir;
-            if (curGalleryIdx < 0) curGalleryIdx = curGallery.length - 1;
-            if (curGalleryIdx >= curGallery.length) curGalleryIdx = 0;
-            updateGalleryUI();
-        }
+        function changeGallery(dir) { curGalleryIdx += dir; if (curGalleryIdx < 0) curGalleryIdx = curGallery.length - 1; if (curGalleryIdx >= curGallery.length) curGalleryIdx = 0; updateGalleryUI(); }
 
         function addFromDetails() {
             let item = items[curDetIdx]; let sSize = '';
@@ -425,21 +338,31 @@
 
         async function pay(){ if(!cart.length)return alert("Vuoto"); let m=prompt("Email per completare ordine:"); if(m){ if(sb) await sb.from('newsletter').insert([{email:m}]); if(window.emailjs) emailjs.send(CFG.es,CFG.et,{user_email:m,message:"NUOVO ORDINE RICEVUTO"}); alert("Grazie! Controlla la mail."); cart=[]; upCart(); hideAll(); } }
 
-        async function sub(){ let m=document.getElementById('nm').value; if(m) { if(sb) await sb.from('newsletter').insert([{email:m}]); if(window.emailjs) { try { await emailjs.send(CFG.es, CFG.et, { user_email: m, message: "BENVENUTO NEL MONDO FRIENDLYFIRE!" }); } catch(e) {} } alert("Iscritto e Mail Inviata!"); hideAll(); } }
+        // --- SISTEMA NEWSLETTER FIRE-AND-FORGET ---
+        function sub(){ 
+            let m=document.getElementById('nm').value; 
+            if(m) { 
+                hideAll(); // Chiude il popup all'istante
+                setTimeout(() => alert("Iscritto al Drop!"), 100); // Messaggio ultra veloce
+                // Le chiamate al DB e alle mail partono silenziose in background
+                if(sb) sb.from('newsletter').insert([{email:m}]); 
+                if(window.emailjs) emailjs.send(CFG.es, CFG.et, { user_email: m, message: "BENVENUTO NEL MONDO FRIENDLYFIRE!" }).catch(e=>{}); 
+                document.getElementById('nm').value = ''; // Pulisce l'input
+            } 
+        }
 
         function adminTrigger(){ taps++; if(taps>=3){ if(prompt("PWD")==="FRIENDLYFIRE26") { adminActive=true; showAdm(); } taps=0; } setTimeout(()=>taps=0, 1000); }
         
-        // AGGIUNGI FOTO ALLA GALLERIA IN MODO PULITO TRAMITE BOTTONE [+]
         function addPic(idx) {
             let url = prompt("Incolla qui l'URL della nuova foto per la galleria:");
             if (url && url.trim() !== '') {
-                let input = document.getElementById(`i${idx}`);
-                let current = input.value.trim();
+                let input = document.getElementById(`i${idx}`); let current = input.value.trim();
                 input.value = current ? current + ',' + url.trim() : url.trim();
-                alert("Foto aggiunta in coda alla galleria! Ricordati di cliccare SALVA (DB) in basso.");
+                alert("Foto aggiunta in coda alla galleria! Ricordati di cliccare SALVA (DB).");
             }
         }
 
+        // --- ADMIN UI AGGIORNATA (QTY E TAGLIE SEPARATE) ---
         function showAdm(){
             document.getElementById('adm-list').innerHTML=items.map((x,i)=>`
                 <div class="row">
@@ -448,8 +371,9 @@
                         <button class="btn-white" style="width:25%;padding:2px;font-size:10px;font-weight:bold;" onclick="addPic(${i})">+</button>
                     </div>
                     <input id="n${i}" value="${x.name}" style="width:20%;color:#000;padding:2px;margin-left:2px;">
-                    <input id="p${i}" value="${x.p}" type="number" style="width:15%;color:#000;padding:2px;">
-                    <input id="s${i}" value="${x.sz || x.q}" placeholder="S:5,M:0" style="width:30%; font-size:8px;color:#000;padding:2px;">
+                    <input id="p${i}" value="${x.p}" type="number" style="width:10%;color:#000;padding:2px;margin-right:2px;">
+                    <input id="q${i}" value="${x.q}" type="number" placeholder="Qty" style="width:10%;color:#000;padding:2px;margin-right:2px;">
+                    <input id="s${i}" value="${x.sz || ''}" placeholder="S:5,M:0" style="width:25%; font-size:8px;color:#000;padding:2px;">
                     <button class="btn-red" style="width:10%;padding:2px;" onclick="deleteItem(${i})">X</button>
                 </div>`).join('');
             showWin('win-admin');
@@ -470,8 +394,8 @@
                     x.name=document.getElementById(`n${i}`).value; 
                     x.p=document.getElementById(`p${i}`).value; 
                     x.i=document.getElementById(`i${i}`).value;
-                    let sVal = document.getElementById(`s${i}`).value;
-                    if(sVal.includes(':')) { x.sz = sVal; x.q = 0; } else { x.q = sVal; x.sz = ''; }
+                    x.q=document.getElementById(`q${i}`).value || 0;
+                    x.sz=document.getElementById(`s${i}`).value || '';
                 } 
             });
             render(); 
