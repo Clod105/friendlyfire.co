@@ -21,7 +21,6 @@
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Press Start 2P', cursive; 
             background-color: var(--bg-pongo); 
-            /* Rimosso sfondo2.jpg fisso, ora è gestito 100% dal Database */
             background-size: cover; background-position: center; background-repeat: no-repeat;
             overscroll-behavior: none; position: fixed; transition: all 0.4s ease;
         }
@@ -35,22 +34,15 @@
         }
         
         body.hologram-mode .h-btn, body.hologram-mode .brand { filter: grayscale(100%) sepia(100%) hue-rotate(180deg) saturate(500%) brightness(1.5) drop-shadow(0 0 10px #00f3ff) !important; }
-        
         body.hologram-mode .item img { filter: contrast(1.1) !important; }
-        
         body.hologram-mode .window { background: rgba(0, 15, 30, 0.9); border-color: var(--holo-cyan); color: var(--holo-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
         body.hologram-mode .win-h { background: rgba(0, 243, 255, 0.1); border-bottom: 1px solid var(--holo-cyan); color: var(--holo-cyan); }
         body.hologram-mode .btn { background: transparent !important; border: 1px solid var(--holo-cyan); color: var(--holo-cyan) !important; }
         body.hologram-mode input, body.hologram-mode select, body.hologram-mode textarea { background: transparent; color: var(--holo-cyan); border: 1px solid var(--holo-cyan); }
-
-        body.hologram-mode .magic-img {
-            mix-blend-mode: normal !important;
-            background: transparent !important;
-            filter: drop-shadow(0 0 8px var(--holo-cyan)) contrast(1.15) !important;
-        }
+        body.hologram-mode .magic-img { mix-blend-mode: normal !important; background: transparent !important; filter: drop-shadow(0 0 8px var(--holo-cyan)) contrast(1.15) !important; }
 
         /* --- 3. LOADER --- */
-        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.3s ease-out; }
+        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.4s ease-out; }
         .loader-logo { width: 80%; max-width: 280px; margin-bottom: 30px; object-fit: contain; }
         .loader-gif { width: 65vw; max-width: 320px; height: auto; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 30px; }
         .bar-container { width: 80%; max-width: 280px; height: 20px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1); }
@@ -62,7 +54,6 @@
 
         .clod-mark { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 18px; height: auto; opacity: 0.5; }
         .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; }
-
         @media (min-width: 1024px) { .loader-gif { width: 220px; } }
 
         /* --- 4. HEADER --- */
@@ -80,7 +71,6 @@
 
         .item { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; touch-action: pan-x pan-y; width: 100%; height: 100%; min-height: 100px; cursor: grab; }
         .item:active { cursor: grabbing; }
-        /* MODIFICATO: Ombra molto più leggera (da 0.8 a 0.3) */
         .item img { width: 85px; height: 85px; object-fit: contain; pointer-events: none; filter: contrast(1.1) drop-shadow(0 5px 8px rgba(0,0,0,0.3)); transition: filter 0.4s ease; }
         .label { font-family: sans-serif; font-weight: 900; font-size: 8px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; text-align:center;}
         .sold-out { opacity: 0.4; filter: grayscale(100%); pointer-events: none; cursor: default; }
@@ -104,7 +94,6 @@
         .row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ccc; padding: 8px 0; font-size: 10px; }
         input, select, textarea { width: 100%; padding: 8px; border: 2px solid #000; background: #fff; color: #000; font-family: monospace; font-size: 10px; }
         textarea { height: 80px; resize: none; margin-top: 10px; font-family: inherit; }
-
         .magic-img { width: 70%; max-height: 180px; object-fit: contain; mix-blend-mode: multiply; filter: contrast(1.05); transition: 0.3s ease; }
 
         /* --- 8. FOOTER --- */
@@ -157,14 +146,12 @@
     <div id="win-admin" class="window" style="max-width:450px;">
         <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN (V33000)</span><div class="win-x" onclick="hideAll()"></div></div>
         <div class="win-b" style="padding:10px;">
-            
             <div style="font-size:8px; font-weight:bold; margin-bottom:5px;">SFONDO GLOBALE SITO (URL):</div>
             <div style="display:flex; gap:5px; margin-bottom:15px;">
                 <input id="bg-in" placeholder="Lascia vuoto per sfondo in tinta unita">
                 <button class="btn-blue" style="width:auto; padding:5px 10px; font-size:8px; font-weight:bold; margin:0;" onclick="saveBg()">💾 SALVA SFONDO</button>
             </div>
             <hr>
-            
             <div style="display:flex; justify-content:space-between; font-size:8px; font-weight:bold; margin-bottom:5px; background:#eee; padding:5px; color:#000;">
                 <span style="width:30%">IMG / GALLERIA</span>
                 <span style="width:20%">NOME</span>
@@ -173,9 +160,7 @@
                 <span style="width:20%">TAGLIE</span>
                 <span style="width:10%">DEL</span>
             </div>
-            
             <div id="adm-list" style="display:flex; flex-direction:column; gap:5px; margin-bottom:15px;"></div>
-            
             <button class="btn" style="background:var(--green); color:#000; font-weight:bold; font-size:12px; border:3px solid #000;" onclick="saveAdm()">💾 SALVA SUL DATABASE</button>
             <button class="btn btn-white" style="font-weight:bold; font-size:10px; border:3px solid #000; margin-top:15px;" onclick="addItm()">➕ CREA UNA NUOVA CARD PRODOTTO</button>
         </div>
@@ -184,22 +169,18 @@
     <div id="win-details" class="window">
         <div class="win-h" onmousedown="dragWin(event,'win-details')" ontouchstart="dragWin(event,'win-details')"><span>DETTAGLI</span><div class="win-x" onclick="hideAll()"></div></div>
         <div class="win-b" style="display:flex; flex-direction:column; align-items:center;">
-            
             <div style="position:relative; width:100%; display:flex; align-items:center; justify-content:center; margin-bottom:5px; height:180px;">
                 <button id="btn-prev-img" class="btn-white" style="position:absolute; left:0; width:30px; height:30px; padding:0; z-index:2; display:none;" onclick="changeGallery(-1)"><</button>
                 <img id="det-img" class="magic-img" src="">
                 <button id="btn-next-img" class="btn-white" style="position:absolute; right:0; width:30px; height:30px; padding:0; z-index:2; display:none;" onclick="changeGallery(1)">></button>
             </div>
             <div id="det-img-dots" style="font-size:8px; font-weight:bold; margin-bottom:10px; text-align:center; height:10px;"></div>
-
             <h3 id="det-title" style="margin:0; font-size:14px; text-align:center;"></h3>
             <p id="det-price" style="margin:5px 0 10px 0; font-size:12px; color:var(--red); font-weight:bold;"></p>
-            
             <div id="det-size-container" style="width:100%; display:none; margin-bottom:10px;">
                 <span style="font-size:8px; margin-bottom:5px; display:block;">SELEZIONA TAGLIA:</span>
                 <select id="det-size"></select>
             </div>
-
             <textarea id="det-desc" placeholder="Descrizione prodotto..." readonly></textarea>
             <button id="btn-add-tank" class="btn" onclick="addFromDetails()">AGGIUNGI AL TANK</button>
             <button id="btn-save-desc" class="btn btn-blue" style="display:none; font-weight:bold;" onclick="saveDesc()">SALVA DESCRIZIONE (DB)</button>
@@ -219,93 +200,85 @@
         let items=[]; let cart=[], sb=null, taps=0, labBgUrl=''; let adminActive = false;
         let curDetIdx = -1; let curGallery = []; let curGalleryIdx = 0;
 
-        setTimeout(()=>{ let b=document.getElementById('start-btn'); if(b) b.classList.add('visible'); document.getElementById('bar-fill').style.width='100%'; }, 1600);
-
-        async function startApp() {
-            let o = document.getElementById('loader-overlay'); o.style.opacity='0'; o.style.pointerEvents='none'; setTimeout(()=>{o.style.display='none'},300);
-            try{document.getElementById('sfx-eat').play();}catch(e){}
-            try{ 
-                if(window.supabase){ sb=window.supabase.createClient(CFG.u,CFG.k); await loadDB(); setupRealtime(); } 
+        // INIZIALIZZAZIONE IMMEDIATA (Pre-carica il database mentre c'è il loader)
+        window.addEventListener('DOMContentLoaded', async () => {
+            try { 
+                if(window.supabase){ sb = window.supabase.createClient(CFG.u, CFG.k); await loadDB(); setupRealtime(); } 
                 if(window.emailjs) emailjs.init(CFG.ek); 
-            }catch(e){ console.error("Errore inizializzazione:", e); }
+            } catch(e) { console.error("Errore inizializzazione:", e); }
+
+            // Mostra il tasto start alla fine dell'animazione della barra
+            setTimeout(()=>{ 
+                let b = document.getElementById('start-btn'); 
+                if(b) b.classList.add('visible'); 
+                document.getElementById('bar-fill').style.width='100%'; 
+            }, 1600);
+        });
+
+        // QUANDO CLICCHI START: nasconde solo il loader, perché i dati sono già pronti!
+        async function startApp() {
+            let o = document.getElementById('loader-overlay'); 
+            o.style.opacity = '0'; 
+            o.style.pointerEvents = 'none'; 
+            setTimeout(() => { o.style.display = 'none'; }, 400); // Transizione fluida
+            try { document.getElementById('sfx-eat').play(); } catch(e) {}
         }
         
         async function loadDB(){ 
             if(!sb) return; 
             try {
-                const{data, error}=await sb.from('products').select('*').order('id'); 
+                const{data, error} = await sb.from('products').select('*').order('id'); 
                 if(error) throw error;
                 if(data){ 
-                    // RECUPERO SFONDO DAL DATABASE (ID FANTASMA 999999)
                     let cfg = data.find(x => x.name === 'SYSTEM_CONFIG');
                     if(cfg && cfg.img) {
-                        document.body.style.backgroundImage = `url('${cfg.img}')`;
+                        // PRELOAD DELL'IMMAGINE: Evita il flash verde scaricando l'immagine prima di mostrarla
+                        let imgPreload = new Image();
+                        imgPreload.src = cfg.img;
+                        imgPreload.onload = () => {
+                            document.body.style.backgroundImage = `url('${cfg.img}')`;
+                        };
                         if(document.getElementById('bg-in')) document.getElementById('bg-in').value = cfg.img;
                     } else {
-                        // Se non c'è, resta tinta unita
                         document.body.style.backgroundImage = "none";
                     }
 
-                    // Carica solo i prodotti veri (esclude il file di configurazione)
                     items = data.filter(x => x.name !== 'SYSTEM_CONFIG').map(x=>formatItem(x)); 
                     render(); 
                 } 
-            } catch(e) {
-                console.error("Errore DB:", e);
-                alert("Connessione debole, non riesco a caricare i prodotti.");
-            }
+            } catch(e) { console.error("Errore DB:", e); }
         }
 
-        // SALVATAGGIO SFONDO SUL DATABASE (NESSUN FALLBACK A SFONDO2)
         async function saveBg() {
             let url = document.getElementById('bg-in').value.trim();
             if(!sb) return alert("Database non connesso");
             try {
                 const {error} = await sb.from('products').upsert([{
-                    id: 999999, // ID fisso di sistema
-                    name: 'SYSTEM_CONFIG',
-                    img: url,
+                    id: 999999, name: 'SYSTEM_CONFIG', img: url,
                     price: 0, qty: 0, sizes: '', desc: 'NON ELIMINARE - GESTISCE LO SFONDO GLOBALE'
                 }]);
                 if(error) throw error;
-                
-                // Aggiorna subito visivamente per tutti senza ricaricare
                 document.body.style.backgroundImage = url ? `url('${url}')` : "none";
                 alert("✅ Sfondo aggiornato e salvato per tutti i visitatori!");
-            } catch(e) {
-                alert("Errore salvataggio sfondo: " + e.message);
-            }
+            } catch(e) { alert("Errore salvataggio sfondo: " + e.message); }
         }
 
         function formatItem(x) { 
-            return {
-                id: x.id, 
-                name: x.name || 'Senza Nome', 
-                p: x.price || 0, 
-                q: x.qty || 0, 
-                i: (x.img && typeof x.img === 'string') ? x.img : '', 
-                d: x.desc || '', 
-                sz: x.sizes || ''
-            }; 
+            return { id: x.id, name: x.name || 'Senza Nome', p: x.price || 0, q: x.qty || 0, i: (x.img && typeof x.img === 'string') ? x.img : '', d: x.desc || '', sz: x.sizes || '' }; 
         }
 
         function setupRealtime() {
             if(!sb) return;
             sb.channel('public:products').on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
-                
-                // Se cambia lo sfondo dal DB, aggiorna in tempo reale la pagina (NESSUN FALLBACK)
                 if(payload.new && payload.new.name === 'SYSTEM_CONFIG') {
                     document.body.style.backgroundImage = payload.new.img ? `url('${payload.new.img}')` : "none";
                     if(document.getElementById('bg-in')) document.getElementById('bg-in').value = payload.new.img || '';
-                    return; // Ferma qui l'esecuzione per non aggiungerlo allo shop
+                    return; 
                 }
-
-                if(payload.eventType === 'INSERT') {
-                    if(!items.find(x => x.id === payload.new.id)) items.push(formatItem(payload.new));
-                }
+                if(payload.eventType === 'INSERT') { if(!items.find(x => x.id === payload.new.id)) items.push(formatItem(payload.new)); }
                 if(payload.eventType === 'UPDATE') { let idx = items.findIndex(x => x.id === payload.new.id); if(idx !== -1) items[idx] = formatItem(payload.new); }
                 if(payload.eventType === 'DELETE') {
-                    if(payload.old.id === 999999) return; // Se si cancella lo sfondo non fare nulla
+                    if(payload.old.id === 999999) return; 
                     items = items.filter(x => x.id !== payload.old.id);
                 }
                 render(); 
@@ -324,7 +297,6 @@
                 let pageIdx = Math.floor(i / 9);
                 if (pageIdx < pages.length) {
                     let realQty = getRealQty(item); let sold = realQty <= 0;
-                    
                     let iStr = item.i.trim();
                     let firstImg = iStr !== '' ? iStr.split(',')[0].trim() : 'https://placehold.co/80?text=NO+IMG';
                     
@@ -386,7 +358,6 @@
 
         function showDetails(i) {
             curDetIdx = i; let item = items[i];
-            
             let iStr = item.i.trim();
             curGallery = iStr !== '' ? iStr.split(',').map(s => s.trim()).filter(Boolean) : ['https://placehold.co/80?text=NO+IMG'];
             curGalleryIdx = 0; updateGalleryUI();
@@ -436,12 +407,9 @@
             document.getElementById('cart-list').innerHTML=cart.length?cart.map((x,n)=>`<div class="row"><span>${x.name} ${x.selSize?'- '+x.selSize:''}</span><span>${x.p}€</span><span onclick="cart.splice(${n},1);upCart()" style="color:red;cursor:pointer;font-weight:bold;">X</span></div>`).join(''):"VUOTO"; 
             
             let subtot = cart.reduce((a,b)=>a+parseInt(b.p),0);
-            let totale = subtot;
-            
             let htmlTot = `SUBTOTALE: ${subtot}€<br>`;
             htmlTot += subtot > 0 ? `SPEDIZIONE: <span style="color:var(--green)">GRATIS</span><br>` : `SPEDIZIONE: 0€<br>`;
-            htmlTot += `<span style="font-size:12px; color:var(--red);">TOTALE: ${totale}€</span>`;
-            
+            htmlTot += `<span style="font-size:12px; color:var(--red);">TOTALE: ${subtot}€</span>`;
             document.getElementById('cart-tot').innerHTML = htmlTot; 
         }
 
@@ -491,17 +459,14 @@
         function showAdm(){
             document.getElementById('adm-list').innerHTML=items.map((x,i)=>`
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ccc; padding:5px 0;">
-                    
                     <div style="width:30%; display:flex; flex-direction:column; gap:2px;">
                         <input id="i${i}" value="${x.i}" placeholder="URL Img" style="font-size:8px; padding:4px; color:#000;">
                         <button class="btn-blue" style="padding:4px; font-size:8px; font-weight:bold; margin:0;" onclick="addPic(${i})">➕ FOTO EXTRA</button>
                     </div>
-                    
                     <input id="n${i}" value="${x.name}" style="width:20%; padding:4px; margin-left:2px; font-size:8px; color:#000;">
                     <input id="p${i}" value="${x.p}" type="number" style="width:10%; padding:4px; margin-left:2px; font-size:8px; color:#000;">
                     <input id="q${i}" value="${x.q}" type="number" placeholder="Qty" style="width:10%; padding:4px; margin-left:2px; font-size:8px; color:#000;">
                     <input id="s${i}" value="${x.sz || ''}" placeholder="S:5,M:0" style="width:20%; font-size:8px; padding:4px; margin-left:2px; color:#000;">
-                    
                     <button class="btn-red" style="width:10%; padding:4px; margin-left:2px;" onclick="deleteItem(${i})">X</button>
                 </div>`).join('');
             showWin('win-admin');
@@ -554,12 +519,8 @@
                     }
                     alert("✅ Database aggiornato perfettamente!");
                     await loadDB(); 
-                } catch(e) {
-                    alert("Errore Salvataggio: " + e.message);
-                }
-            } else {
-                render(); 
-            }
+                } catch(e) { alert("Errore Salvataggio: " + e.message); }
+            } else { render(); }
             hideAll();
         }
 
