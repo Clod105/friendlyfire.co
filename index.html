@@ -12,15 +12,18 @@
     <style>
         /* --- 1. SETTAGGI UNIVERSALI --- */
         :root { 
-            --red: #ff3a3a; --green: #4AF626; --bg-pongo: #2e4a1e; --holo-cyan: #00f3ff; 
-            --black: #000; --white: #fff;
+            --red: #d12525; /* Rosso FriendlyFire */
+            --holo-cyan: #00f3ff; 
+            --black: #000; 
+            --white: #fff;
+            --bg-default: #ffffff; /* Sfondo di default diventato bianco, addio verde */
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
         
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Press Start 2P', cursive; 
-            background-color: var(--bg-pongo); 
+            background-color: var(--bg-default); 
             background-size: cover; background-position: center; background-repeat: no-repeat;
             overscroll-behavior: none; position: fixed; transition: all 0.4s ease;
         }
@@ -41,20 +44,23 @@
         body.hologram-mode input, body.hologram-mode select, body.hologram-mode textarea { background: transparent; color: var(--holo-cyan); border: 1px solid var(--holo-cyan); }
         body.hologram-mode .magic-img { mix-blend-mode: normal !important; background: transparent !important; filter: drop-shadow(0 0 8px var(--holo-cyan)) contrast(1.15) !important; }
 
-        /* --- 3. LOADER --- */
-        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.4s ease-out; }
-        .loader-logo { width: 80%; max-width: 280px; margin-bottom: 30px; object-fit: contain; }
-        .loader-gif { width: 65vw; max-width: 320px; height: auto; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 30px; }
-        .bar-container { width: 80%; max-width: 280px; height: 20px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1); }
-        .bar-fill { height: 100%; width: 0%; background-color: var(--green); animation: fillLoad 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-        @keyframes fillLoad { 0%{width:0%} 100%{width:100%} }
-        #start-btn { visibility: hidden; background: #000; color: #fff; border: 3px solid #000; padding: 15px 40px; font-family: inherit; font-size: 12px; margin-top: 20px; cursor: pointer; text-transform: uppercase; box-shadow: 5px 5px 0 #999; pointer-events: auto !important; position: relative; z-index: 2147483647; }
+        /* --- 3. LOADER AGGIORNATO --- */
+        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.3s ease-out; font-family: 'Arial', sans-serif; }
+        
+        .loader-logo { width: 80%; max-width: 350px; margin-bottom: 10px; object-fit: contain; }
+        .loader-mascots { width: 65vw; max-width: 250px; object-fit: contain; margin-bottom: 30px; }
+        
+        .loading-text { color: var(--red); font-weight: bold; font-size: 14px; margin-bottom: 8px; }
+        .loading-percentage { color: var(--red); font-weight: bold; font-size: 14px; margin-top: 8px; }
+        
+        .bar-container { width: 70%; max-width: 280px; height: 18px; background: #fff; border: 2px solid #000; border-radius: 20px; padding: 2px; display: flex; align-items: center; }
+        .bar-fill { height: 100%; width: 0%; background-color: var(--red); border-radius: 20px; transition: width 0.05s linear; }
+        
+        #start-btn { visibility: hidden; background: var(--red); color: #fff; border: 2px solid #000; border-radius: 10px; padding: 15px 40px; font-family: 'Arial', sans-serif; font-weight: bold; font-size: 14px; margin-top: 30px; cursor: pointer; text-transform: uppercase; pointer-events: auto !important; position: relative; z-index: 2147483647; }
         #start-btn.visible { visibility: visible; animation: flash 1s infinite alternate; }
         @keyframes flash { from{transform:scale(1)} to{transform:scale(1.05)} }
 
-        .clod-mark { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 18px; height: auto; opacity: 0.5; }
-        .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; }
-        @media (min-width: 1024px) { .loader-gif { width: 220px; } }
+        .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; font-family: 'Press Start 2P', cursive; }
 
         /* --- 4. HEADER --- */
         header { position: fixed; top: 0; left: 0; width: 100%; height: 100px; z-index: 20000; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; padding-top: env(safe-area-inset-top, 10px); pointer-events: none; }
@@ -72,7 +78,7 @@
         .item { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; touch-action: pan-x pan-y; width: 100%; height: 100%; min-height: 100px; cursor: grab; }
         .item:active { cursor: grabbing; }
         .item img { width: 85px; height: 85px; object-fit: contain; pointer-events: none; filter: contrast(1.1) drop-shadow(0 5px 8px rgba(0,0,0,0.3)); transition: filter 0.4s ease; }
-        .label { font-family: sans-serif; font-weight: 900; font-size: 8px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; text-align:center;}
+        .label { font-family: sans-serif; font-weight: 900; font-size: 8px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; text-align:center; }
         .sold-out { opacity: 0.4; filter: grayscale(100%); pointer-events: none; cursor: default; }
 
         /* --- 6. GHOST --- */
@@ -94,6 +100,7 @@
         .row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ccc; padding: 8px 0; font-size: 10px; }
         input, select, textarea { width: 100%; padding: 8px; border: 2px solid #000; background: #fff; color: #000; font-family: monospace; font-size: 10px; }
         textarea { height: 80px; resize: none; margin-top: 10px; font-family: inherit; }
+
         .magic-img { width: 70%; max-height: 180px; object-fit: contain; mix-blend-mode: multiply; filter: contrast(1.05); transition: 0.3s ease; }
 
         /* --- 8. FOOTER --- */
@@ -104,11 +111,12 @@
 <body>
 
     <div id="loader-overlay">
-        <img src="logo_ff_loader.png" class="loader-logo" onerror="this.src='https://placehold.co/300x80?text=FRIENDLYFIRE'">
-        <img src="loadernob.gif" class="loader-gif" onerror="this.src='https://placehold.co/200?text=LOADING'">
+        <img src="logo_ff.png" class="loader-logo" alt="Friendlyfire Logo" onerror="this.src='https://placehold.co/400x150?text=FRIENDLYFIRE'">
+        <img src="mascotte_ff.png" class="loader-mascots" alt="Mascots" onerror="this.src='https://placehold.co/250x250?text=MASCOTTE'">
+        <div class="loading-text">Loading</div>
         <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
+        <div class="loading-percentage" id="loading-percentage">0 %</div>
         <button id="start-btn" onclick="startApp()" ontouchstart="startApp()">START WORLD</button>
-        <img src="mark_c.png" class="clod-mark" onerror="this.style.display='none'">
         <div class="powered-by">Powered by Clod™</div>
     </div>
 
@@ -146,12 +154,14 @@
     <div id="win-admin" class="window" style="max-width:450px;">
         <div class="win-h" onmousedown="dragWin(event,'win-admin')" ontouchstart="dragWin(event,'win-admin')"><span>ADMIN (V33000)</span><div class="win-x" onclick="hideAll()"></div></div>
         <div class="win-b" style="padding:10px;">
+            
             <div style="font-size:8px; font-weight:bold; margin-bottom:5px;">SFONDO GLOBALE SITO (URL):</div>
             <div style="display:flex; gap:5px; margin-bottom:15px;">
-                <input id="bg-in" placeholder="Lascia vuoto per sfondo in tinta unita">
-                <button class="btn-blue" style="width:auto; padding:5px 10px; font-size:8px; font-weight:bold; margin:0;" onclick="saveBg()">💾 SALVA SFONDO</button>
+                <input id="bg-in" placeholder="Lascia vuoto per tinta unita">
+                <button class="btn-blue" style="width:auto; padding:5px 10px; font-size:8px; font-weight:bold; margin:0;" onclick="saveBg()">💾 SALVA</button>
             </div>
             <hr>
+            
             <div style="display:flex; justify-content:space-between; font-size:8px; font-weight:bold; margin-bottom:5px; background:#eee; padding:5px; color:#000;">
                 <span style="width:30%">IMG / GALLERIA</span>
                 <span style="width:20%">NOME</span>
@@ -160,27 +170,33 @@
                 <span style="width:20%">TAGLIE</span>
                 <span style="width:10%">DEL</span>
             </div>
+            
             <div id="adm-list" style="display:flex; flex-direction:column; gap:5px; margin-bottom:15px;"></div>
-            <button class="btn" style="background:var(--green); color:#000; font-weight:bold; font-size:12px; border:3px solid #000;" onclick="saveAdm()">💾 SALVA SUL DATABASE</button>
-            <button class="btn btn-white" style="font-weight:bold; font-size:10px; border:3px solid #000; margin-top:15px;" onclick="addItm()">➕ CREA UNA NUOVA CARD PRODOTTO</button>
+            
+            <button class="btn btn-red" style="font-weight:bold; font-size:12px; border:3px solid #000;" onclick="saveAdm()">💾 SALVA SUL DATABASE</button>
+            <button class="btn btn-white" style="font-weight:bold; font-size:10px; border:3px solid #000; margin-top:15px;" onclick="addItm()">➕ CREA NUOVA CARD</button>
         </div>
     </div>
 
     <div id="win-details" class="window">
         <div class="win-h" onmousedown="dragWin(event,'win-details')" ontouchstart="dragWin(event,'win-details')"><span>DETTAGLI</span><div class="win-x" onclick="hideAll()"></div></div>
         <div class="win-b" style="display:flex; flex-direction:column; align-items:center;">
+            
             <div style="position:relative; width:100%; display:flex; align-items:center; justify-content:center; margin-bottom:5px; height:180px;">
                 <button id="btn-prev-img" class="btn-white" style="position:absolute; left:0; width:30px; height:30px; padding:0; z-index:2; display:none;" onclick="changeGallery(-1)"><</button>
                 <img id="det-img" class="magic-img" src="">
                 <button id="btn-next-img" class="btn-white" style="position:absolute; right:0; width:30px; height:30px; padding:0; z-index:2; display:none;" onclick="changeGallery(1)">></button>
             </div>
             <div id="det-img-dots" style="font-size:8px; font-weight:bold; margin-bottom:10px; text-align:center; height:10px;"></div>
+
             <h3 id="det-title" style="margin:0; font-size:14px; text-align:center;"></h3>
             <p id="det-price" style="margin:5px 0 10px 0; font-size:12px; color:var(--red); font-weight:bold;"></p>
+            
             <div id="det-size-container" style="width:100%; display:none; margin-bottom:10px;">
                 <span style="font-size:8px; margin-bottom:5px; display:block;">SELEZIONA TAGLIA:</span>
                 <select id="det-size"></select>
             </div>
+
             <textarea id="det-desc" placeholder="Descrizione prodotto..." readonly></textarea>
             <button id="btn-add-tank" class="btn" onclick="addFromDetails()">AGGIUNGI AL TANK</button>
             <button id="btn-save-desc" class="btn btn-blue" style="display:none; font-weight:bold;" onclick="saveDesc()">SALVA DESCRIZIONE (DB)</button>
@@ -200,44 +216,47 @@
         let items=[]; let cart=[], sb=null, taps=0, labBgUrl=''; let adminActive = false;
         let curDetIdx = -1; let curGallery = []; let curGalleryIdx = 0;
 
-        // INIZIALIZZAZIONE IMMEDIATA (Pre-carica il database mentre c'è il loader)
-        window.addEventListener('DOMContentLoaded', async () => {
-            try { 
-                if(window.supabase){ sb = window.supabase.createClient(CFG.u, CFG.k); await loadDB(); setupRealtime(); } 
-                if(window.emailjs) emailjs.init(CFG.ek); 
-            } catch(e) { console.error("Errore inizializzazione:", e); }
+        // ANIMAZIONE LOADER DINAMICA
+        let perc = 0;
+        let loadingInterval = setInterval(() => {
+            perc += Math.floor(Math.random() * 3) + 1; // Incremento fluido randomico
+            if (perc > 100) perc = 100;
+            
+            let pEl = document.getElementById('loading-percentage');
+            let bEl = document.getElementById('bar-fill');
+            
+            if(pEl) pEl.innerText = perc + " %";
+            if(bEl) bEl.style.width = perc + "%";
+            
+            if (perc === 100) {
+                clearInterval(loadingInterval);
+                let btn = document.getElementById('start-btn');
+                if(btn) btn.classList.add('visible');
+            }
+        }, 40);
 
-            // Mostra il tasto start alla fine dell'animazione della barra
-            setTimeout(()=>{ 
-                let b = document.getElementById('start-btn'); 
-                if(b) b.classList.add('visible'); 
-                document.getElementById('bar-fill').style.width='100%'; 
-            }, 1600);
-        });
-
-        // QUANDO CLICCHI START: nasconde solo il loader, perché i dati sono già pronti!
         async function startApp() {
             let o = document.getElementById('loader-overlay'); 
-            o.style.opacity = '0'; 
-            o.style.pointerEvents = 'none'; 
-            setTimeout(() => { o.style.display = 'none'; }, 400); // Transizione fluida
-            try { document.getElementById('sfx-eat').play(); } catch(e) {}
+            o.style.opacity='0'; 
+            o.style.pointerEvents='none'; 
+            setTimeout(()=>{o.style.display='none'},300);
+            
+            try{document.getElementById('sfx-eat').play();}catch(e){}
+            try{ 
+                if(window.supabase){ sb=window.supabase.createClient(CFG.u,CFG.k); await loadDB(); setupRealtime(); } 
+                if(window.emailjs) emailjs.init(CFG.ek); 
+            }catch(e){ console.error("Errore inizializzazione:", e); }
         }
         
         async function loadDB(){ 
             if(!sb) return; 
             try {
-                const{data, error} = await sb.from('products').select('*').order('id'); 
+                const{data, error}=await sb.from('products').select('*').order('id'); 
                 if(error) throw error;
                 if(data){ 
                     let cfg = data.find(x => x.name === 'SYSTEM_CONFIG');
                     if(cfg && cfg.img) {
-                        // PRELOAD DELL'IMMAGINE: Evita il flash verde scaricando l'immagine prima di mostrarla
-                        let imgPreload = new Image();
-                        imgPreload.src = cfg.img;
-                        imgPreload.onload = () => {
-                            document.body.style.backgroundImage = `url('${cfg.img}')`;
-                        };
+                        document.body.style.backgroundImage = `url('${cfg.img}')`;
                         if(document.getElementById('bg-in')) document.getElementById('bg-in').value = cfg.img;
                     } else {
                         document.body.style.backgroundImage = "none";
@@ -246,7 +265,10 @@
                     items = data.filter(x => x.name !== 'SYSTEM_CONFIG').map(x=>formatItem(x)); 
                     render(); 
                 } 
-            } catch(e) { console.error("Errore DB:", e); }
+            } catch(e) {
+                console.error("Errore DB:", e);
+                alert("Connessione debole, non riesco a caricare i prodotti.");
+            }
         }
 
         async function saveBg() {
@@ -254,17 +276,30 @@
             if(!sb) return alert("Database non connesso");
             try {
                 const {error} = await sb.from('products').upsert([{
-                    id: 999999, name: 'SYSTEM_CONFIG', img: url,
+                    id: 999999,
+                    name: 'SYSTEM_CONFIG',
+                    img: url,
                     price: 0, qty: 0, sizes: '', desc: 'NON ELIMINARE - GESTISCE LO SFONDO GLOBALE'
                 }]);
                 if(error) throw error;
+                
                 document.body.style.backgroundImage = url ? `url('${url}')` : "none";
                 alert("✅ Sfondo aggiornato e salvato per tutti i visitatori!");
-            } catch(e) { alert("Errore salvataggio sfondo: " + e.message); }
+            } catch(e) {
+                alert("Errore salvataggio sfondo: " + e.message);
+            }
         }
 
         function formatItem(x) { 
-            return { id: x.id, name: x.name || 'Senza Nome', p: x.price || 0, q: x.qty || 0, i: (x.img && typeof x.img === 'string') ? x.img : '', d: x.desc || '', sz: x.sizes || '' }; 
+            return {
+                id: x.id, 
+                name: x.name || 'Senza Nome', 
+                p: x.price || 0, 
+                q: x.qty || 0, 
+                i: (x.img && typeof x.img === 'string') ? x.img : '', 
+                d: x.desc || '', 
+                sz: x.sizes || ''
+            }; 
         }
 
         function setupRealtime() {
@@ -275,10 +310,13 @@
                     if(document.getElementById('bg-in')) document.getElementById('bg-in').value = payload.new.img || '';
                     return; 
                 }
-                if(payload.eventType === 'INSERT') { if(!items.find(x => x.id === payload.new.id)) items.push(formatItem(payload.new)); }
+
+                if(payload.eventType === 'INSERT') {
+                    if(!items.find(x => x.id === payload.new.id)) items.push(formatItem(payload.new));
+                }
                 if(payload.eventType === 'UPDATE') { let idx = items.findIndex(x => x.id === payload.new.id); if(idx !== -1) items[idx] = formatItem(payload.new); }
                 if(payload.eventType === 'DELETE') {
-                    if(payload.old.id === 999999) return; 
+                    if(payload.old.id === 999999) return;
                     items = items.filter(x => x.id !== payload.old.id);
                 }
                 render(); 
@@ -297,6 +335,7 @@
                 let pageIdx = Math.floor(i / 9);
                 if (pageIdx < pages.length) {
                     let realQty = getRealQty(item); let sold = realQty <= 0;
+                    
                     let iStr = item.i.trim();
                     let firstImg = iStr !== '' ? iStr.split(',')[0].trim() : 'https://placehold.co/80?text=NO+IMG';
                     
@@ -358,6 +397,7 @@
 
         function showDetails(i) {
             curDetIdx = i; let item = items[i];
+            
             let iStr = item.i.trim();
             curGallery = iStr !== '' ? iStr.split(',').map(s => s.trim()).filter(Boolean) : ['https://placehold.co/80?text=NO+IMG'];
             curGalleryIdx = 0; updateGalleryUI();
@@ -407,9 +447,12 @@
             document.getElementById('cart-list').innerHTML=cart.length?cart.map((x,n)=>`<div class="row"><span>${x.name} ${x.selSize?'- '+x.selSize:''}</span><span>${x.p}€</span><span onclick="cart.splice(${n},1);upCart()" style="color:red;cursor:pointer;font-weight:bold;">X</span></div>`).join(''):"VUOTO"; 
             
             let subtot = cart.reduce((a,b)=>a+parseInt(b.p),0);
+            let totale = subtot;
+            
             let htmlTot = `SUBTOTALE: ${subtot}€<br>`;
-            htmlTot += subtot > 0 ? `SPEDIZIONE: <span style="color:var(--green)">GRATIS</span><br>` : `SPEDIZIONE: 0€<br>`;
-            htmlTot += `<span style="font-size:12px; color:var(--red);">TOTALE: ${subtot}€</span>`;
+            htmlTot += subtot > 0 ? `SPEDIZIONE: <span style="color:var(--red)">GRATIS</span><br>` : `SPEDIZIONE: 0€<br>`;
+            htmlTot += `<span style="font-size:12px; color:var(--red);">TOTALE: ${totale}€</span>`;
+            
             document.getElementById('cart-tot').innerHTML = htmlTot; 
         }
 
@@ -451,7 +494,7 @@
                 if (input) {
                     let current = input.value.trim();
                     input.value = current ? current + ',' + url.trim() : url.trim();
-                    alert("✅ Foto inserita nell'input testuale!\nOra scorri giù e clicca il tasto verde SALVA SUL DATABASE per confermare.");
+                    alert("✅ Foto inserita nell'input testuale!\nOra scorri giù e clicca il tasto SALVA SUL DATABASE per confermare.");
                 }
             }
         }
@@ -459,14 +502,17 @@
         function showAdm(){
             document.getElementById('adm-list').innerHTML=items.map((x,i)=>`
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ccc; padding:5px 0;">
+                    
                     <div style="width:30%; display:flex; flex-direction:column; gap:2px;">
                         <input id="i${i}" value="${x.i}" placeholder="URL Img" style="font-size:8px; padding:4px; color:#000;">
                         <button class="btn-blue" style="padding:4px; font-size:8px; font-weight:bold; margin:0;" onclick="addPic(${i})">➕ FOTO EXTRA</button>
                     </div>
+                    
                     <input id="n${i}" value="${x.name}" style="width:20%; padding:4px; margin-left:2px; font-size:8px; color:#000;">
                     <input id="p${i}" value="${x.p}" type="number" style="width:10%; padding:4px; margin-left:2px; font-size:8px; color:#000;">
                     <input id="q${i}" value="${x.q}" type="number" placeholder="Qty" style="width:10%; padding:4px; margin-left:2px; font-size:8px; color:#000;">
                     <input id="s${i}" value="${x.sz || ''}" placeholder="S:5,M:0" style="width:20%; font-size:8px; padding:4px; margin-left:2px; color:#000;">
+                    
                     <button class="btn-red" style="width:10%; padding:4px; margin-left:2px;" onclick="deleteItem(${i})">X</button>
                 </div>`).join('');
             showWin('win-admin');
@@ -519,8 +565,12 @@
                     }
                     alert("✅ Database aggiornato perfettamente!");
                     await loadDB(); 
-                } catch(e) { alert("Errore Salvataggio: " + e.message); }
-            } else { render(); }
+                } catch(e) {
+                    alert("Errore Salvataggio: " + e.message);
+                }
+            } else {
+                render(); 
+            }
             hideAll();
         }
 
