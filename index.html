@@ -47,12 +47,11 @@
         /* --- 3. LOADER AGGIORNATO --- */
         #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s ease-out; font-family: 'Arial', sans-serif; }
         
-        /* Contenitore che tiene incollati gli elementi al centro */
-        #loader-center-group { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-height: 80vh; }
+        /* Forza tutti gli elementi al centro ignorando parte dello spazio trasparente */
+        #loader-content { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; position: relative; z-index: 2; transform: translateY(-5%); }
         
-        /* Max-height impedisce allo sfondo trasparente delle immagini di spingere gli elementi fuori schermo */
-        .loader-logo { width: 85%; max-width: 380px; max-height: 120px; margin-bottom: 10px; object-fit: contain; }
-        .loader-mascots { width: 70vw; max-width: 280px; max-height: 220px; object-fit: contain; margin-bottom: 40px; }
+        .loader-logo { width: 85%; max-width: 380px; object-fit: contain; margin-bottom: -10px; }
+        .loader-mascots { width: 70vw; max-width: 280px; object-fit: contain; margin-bottom: 20px; }
         
         #loading-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; min-height: 80px; }
         
@@ -65,8 +64,9 @@
         #start-btn { display: none; background: var(--red); color: #fff; border: 2px solid #000; border-radius: 10px; padding: 15px 40px; margin-top: 10px; font-family: 'Arial', sans-serif; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; pointer-events: auto !important; position: relative; z-index: 2147483647; }
         #start-btn.visible { display: block; }
         
-        .clod-mark { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 18px; height: auto; opacity: 0.5; }
-        .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; font-family: 'Press Start 2P', cursive; }
+        /* I crediti in basso, fissi alla fine dello schermo e non toccati */
+        .clod-mark { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 18px; height: auto; opacity: 0.5; z-index: 1; }
+        .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; font-family: 'Press Start 2P', cursive; z-index: 1; }
 
         /* --- 4. HEADER --- */
         header { position: fixed; top: 0; left: 0; width: 100%; height: 100px; z-index: 20000; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; padding-top: env(safe-area-inset-top, 10px); pointer-events: none; }
@@ -117,8 +117,9 @@
 <body>
 
     <div id="loader-overlay">
-        <div id="loader-center-group">
-            <img src="logo_ff.png" class="loader-logo" alt="Friendlyfire Logo" onerror="this.src='https://placehold.co/400x150?text=FRIENDLYFIRE'">
+        
+        <div id="loader-content">
+            <img src="logo_ff_loader.png" class="loader-logo" alt="Friendlyfire Logo" onerror="this.src='https://placehold.co/400x150?text=FRIENDLYFIRE'">
             <img src="mascotte_ff.png" class="loader-mascots" alt="Mascots" onerror="this.src='https://placehold.co/250x250?text=MASCOTTE'">
             
             <div id="loading-wrapper">
@@ -152,7 +153,7 @@
     </div>
 
     <footer>
-        <img src="brand_name.png" class="brand" id="brand-target" onclick="adminTrigger()" onerror="this.src='https://placehold.co/150x40?text=ADMIN'">
+        <img src="logo_ff.png" class="brand" id="brand-target" onclick="adminTrigger()" onerror="this.src='https://placehold.co/150x40?text=ADMIN'">
     </footer>
 
     <div id="win-cart" class="window">
