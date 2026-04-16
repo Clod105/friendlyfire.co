@@ -12,11 +12,11 @@
     <style>
         /* --- 1. SETTAGGI UNIVERSALI --- */
         :root { 
-            --red: #d12525; /* Rosso FriendlyFire */
+            --red: #d12525; 
             --holo-cyan: #00f3ff; 
             --black: #000; 
             --white: #fff;
-            --bg-default: #ffffff; /* Sfondo di default diventato bianco, addio verde */
+            --bg-default: #ffffff; 
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
         
@@ -57,9 +57,9 @@
         .bar-fill { height: 100%; width: 0%; background-color: var(--red); border-radius: 20px; transition: width 0.05s linear; }
         
         #start-btn { visibility: hidden; background: var(--red); color: #fff; border: 2px solid #000; border-radius: 10px; padding: 15px 40px; font-family: 'Arial', sans-serif; font-weight: bold; font-size: 14px; margin-top: 30px; cursor: pointer; text-transform: uppercase; pointer-events: auto !important; position: relative; z-index: 2147483647; }
-        #start-btn.visible { visibility: visible; animation: flash 1s infinite alternate; }
-        @keyframes flash { from{transform:scale(1)} to{transform:scale(1.05)} }
-
+        #start-btn.visible { visibility: visible; }
+        
+        .clod-mark { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 18px; height: auto; opacity: 0.5; }
         .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; font-family: 'Press Start 2P', cursive; }
 
         /* --- 4. HEADER --- */
@@ -117,6 +117,7 @@
         <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
         <div class="loading-percentage" id="loading-percentage">0 %</div>
         <button id="start-btn" onclick="startApp()" ontouchstart="startApp()">START WORLD</button>
+        <img src="mark_c.png" class="clod-mark" onerror="this.style.display='none'">
         <div class="powered-by">Powered by Clod™</div>
     </div>
 
@@ -219,7 +220,7 @@
         // ANIMAZIONE LOADER DINAMICA
         let perc = 0;
         let loadingInterval = setInterval(() => {
-            perc += Math.floor(Math.random() * 3) + 1; // Incremento fluido randomico
+            perc += Math.floor(Math.random() * 3) + 1; 
             if (perc > 100) perc = 100;
             
             let pEl = document.getElementById('loading-percentage');
@@ -230,8 +231,19 @@
             
             if (perc === 100) {
                 clearInterval(loadingInterval);
+                
+                // Mostra il bottone START WORLD statico
                 let btn = document.getElementById('start-btn');
                 if(btn) btn.classList.add('visible');
+                
+                // Nascondi testo, barra e percentuale
+                let txt = document.querySelector('.loading-text');
+                let bar = document.querySelector('.bar-container');
+                let percText = document.getElementById('loading-percentage');
+                
+                if(txt) txt.style.display = 'none';
+                if(bar) bar.style.display = 'none';
+                if(percText) percText.style.display = 'none';
             }
         }, 40);
 
