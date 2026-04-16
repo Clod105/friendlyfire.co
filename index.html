@@ -12,7 +12,7 @@
     <style>
         /* --- 1. SETTAGGI UNIVERSALI --- */
         :root { 
-            --red: #ff3a3a; --green: #4AF626; --bg-pongo: #2e4a1e; --holo-cyan: #00f3ff; 
+            --red: #ff3a3a; --green: #4AF626; --bg-pongo: #ffffff; /* Sfondo modificato in bianco */ --holo-cyan: #00f3ff; 
             --black: #000; --white: #fff;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
@@ -21,7 +21,6 @@
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Press Start 2P', cursive; 
             background-color: var(--bg-pongo); 
-            /* Rimosso sfondo2.jpg fisso, ora è gestito 100% dal Database */
             background-size: cover; background-position: center; background-repeat: no-repeat;
             overscroll-behavior: none; position: fixed; transition: all 0.4s ease;
         }
@@ -54,7 +53,8 @@
         .loader-logo { width: 80%; max-width: 280px; margin-bottom: 30px; object-fit: contain; }
         .loader-gif { width: 65vw; max-width: 320px; height: auto; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 30px; }
         .bar-container { width: 80%; max-width: 280px; height: 20px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1); }
-        .bar-fill { height: 100%; width: 0%; background-color: var(--green); animation: fillLoad 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        /* Barra resa rossa e animazione rallentata a 2.5s */
+        .bar-fill { height: 100%; width: 0%; background-color: var(--red); animation: fillLoad 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
         @keyframes fillLoad { 0%{width:0%} 100%{width:100%} }
         #start-btn { visibility: hidden; background: #000; color: #fff; border: 3px solid #000; padding: 15px 40px; font-family: inherit; font-size: 12px; margin-top: 20px; cursor: pointer; text-transform: uppercase; box-shadow: 5px 5px 0 #999; pointer-events: auto !important; position: relative; z-index: 2147483647; }
         #start-btn.visible { visibility: visible; animation: flash 1s infinite alternate; }
@@ -80,7 +80,6 @@
 
         .item { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; touch-action: pan-x pan-y; width: 100%; height: 100%; min-height: 100px; cursor: grab; }
         .item:active { cursor: grabbing; }
-        /* MODIFICATO: Ombra molto più leggera (da 0.8 a 0.3) */
         .item img { width: 85px; height: 85px; object-fit: contain; pointer-events: none; filter: contrast(1.1) drop-shadow(0 5px 8px rgba(0,0,0,0.3)); transition: filter 0.4s ease; }
         .label { font-family: sans-serif; font-weight: 900; font-size: 8px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; text-align:center;}
         .sold-out { opacity: 0.4; filter: grayscale(100%); pointer-events: none; cursor: default; }
@@ -141,7 +140,7 @@
     </div>
 
     <footer>
-        <img src="brand_name.png" class="brand" id="brand-target" onclick="adminTrigger()" onerror="this.src='https://placehold.co/150x40?text=ADMIN'">
+        <img src="logo_ff_loader.png" class="brand" id="brand-target" onclick="adminTrigger()" onerror="this.src='https://placehold.co/150x40?text=ADMIN'">
     </footer>
 
     <div id="win-cart" class="window">
@@ -219,7 +218,8 @@
         let items=[]; let cart=[], sb=null, taps=0, labBgUrl=''; let adminActive = false;
         let curDetIdx = -1; let curGallery = []; let curGalleryIdx = 0;
 
-        setTimeout(()=>{ let b=document.getElementById('start-btn'); if(b) b.classList.add('visible'); document.getElementById('bar-fill').style.width='100%'; }, 1600);
+        // Modificato: il bottone di start appare molto più velocemente (800ms) permettendo un ingresso rapido
+        setTimeout(()=>{ let b=document.getElementById('start-btn'); if(b) b.classList.add('visible'); document.getElementById('bar-fill').style.width='100%'; }, 800);
 
         async function startApp() {
             let o = document.getElementById('loader-overlay'); o.style.opacity='0'; o.style.pointerEvents='none'; setTimeout(()=>{o.style.display='none'},300);
@@ -236,17 +236,14 @@
                 const{data, error}=await sb.from('products').select('*').order('id'); 
                 if(error) throw error;
                 if(data){ 
-                    // RECUPERO SFONDO DAL DATABASE (ID FANTASMA 999999)
                     let cfg = data.find(x => x.name === 'SYSTEM_CONFIG');
                     if(cfg && cfg.img) {
                         document.body.style.backgroundImage = `url('${cfg.img}')`;
                         if(document.getElementById('bg-in')) document.getElementById('bg-in').value = cfg.img;
                     } else {
-                        // Se non c'è, resta tinta unita
                         document.body.style.backgroundImage = "none";
                     }
 
-                    // Carica solo i prodotti veri (esclude il file di configurazione)
                     items = data.filter(x => x.name !== 'SYSTEM_CONFIG').map(x=>formatItem(x)); 
                     render(); 
                 } 
@@ -256,20 +253,18 @@
             }
         }
 
-        // SALVATAGGIO SFONDO SUL DATABASE (NESSUN FALLBACK A SFONDO2)
         async function saveBg() {
             let url = document.getElementById('bg-in').value.trim();
             if(!sb) return alert("Database non connesso");
             try {
                 const {error} = await sb.from('products').upsert([{
-                    id: 999999, // ID fisso di sistema
+                    id: 999999,
                     name: 'SYSTEM_CONFIG',
                     img: url,
                     price: 0, qty: 0, sizes: '', desc: 'NON ELIMINARE - GESTISCE LO SFONDO GLOBALE'
                 }]);
                 if(error) throw error;
                 
-                // Aggiorna subito visivamente per tutti senza ricaricare
                 document.body.style.backgroundImage = url ? `url('${url}')` : "none";
                 alert("✅ Sfondo aggiornato e salvato per tutti i visitatori!");
             } catch(e) {
@@ -293,11 +288,10 @@
             if(!sb) return;
             sb.channel('public:products').on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
                 
-                // Se cambia lo sfondo dal DB, aggiorna in tempo reale la pagina (NESSUN FALLBACK)
                 if(payload.new && payload.new.name === 'SYSTEM_CONFIG') {
                     document.body.style.backgroundImage = payload.new.img ? `url('${payload.new.img}')` : "none";
                     if(document.getElementById('bg-in')) document.getElementById('bg-in').value = payload.new.img || '';
-                    return; // Ferma qui l'esecuzione per non aggiungerlo allo shop
+                    return; 
                 }
 
                 if(payload.eventType === 'INSERT') {
@@ -305,7 +299,7 @@
                 }
                 if(payload.eventType === 'UPDATE') { let idx = items.findIndex(x => x.id === payload.new.id); if(idx !== -1) items[idx] = formatItem(payload.new); }
                 if(payload.eventType === 'DELETE') {
-                    if(payload.old.id === 999999) return; // Se si cancella lo sfondo non fare nulla
+                    if(payload.old.id === 999999) return; 
                     items = items.filter(x => x.id !== payload.old.id);
                 }
                 render(); 
