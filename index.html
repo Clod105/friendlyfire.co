@@ -45,19 +45,21 @@
         body.hologram-mode .magic-img { mix-blend-mode: normal !important; background: transparent !important; filter: drop-shadow(0 0 8px var(--holo-cyan)) contrast(1.15) !important; }
 
         /* --- 3. LOADER AGGIORNATO --- */
-        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.3s ease-out; font-family: 'Arial', sans-serif; }
+        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s ease-out; font-family: 'Arial', sans-serif; }
         
-        .loader-logo { width: 80%; max-width: 350px; margin-bottom: 10px; object-fit: contain; }
-        .loader-mascots { width: 65vw; max-width: 250px; object-fit: contain; margin-bottom: 30px; }
+        .loader-logo { width: 85%; max-width: 380px; margin-bottom: 15px; object-fit: contain; }
+        .loader-mascots { width: 70vw; max-width: 280px; object-fit: contain; margin-bottom: 50px; }
         
-        .loading-text { color: var(--red); font-weight: bold; font-size: 14px; margin-bottom: 8px; }
-        .loading-percentage { color: var(--red); font-weight: bold; font-size: 14px; margin-top: 8px; }
+        #loading-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
         
-        .bar-container { width: 70%; max-width: 280px; height: 18px; background: #fff; border: 2px solid #000; border-radius: 20px; padding: 2px; display: flex; align-items: center; }
-        .bar-fill { height: 100%; width: 0%; background-color: var(--red); border-radius: 20px; transition: width 0.05s linear; }
+        .loading-text { color: var(--red); font-weight: bold; font-size: 15px; margin-bottom: 12px; }
+        .loading-percentage { color: var(--red); font-weight: bold; font-size: 15px; margin-top: 12px; }
         
-        #start-btn { visibility: hidden; background: var(--red); color: #fff; border: 2px solid #000; border-radius: 10px; padding: 15px 40px; font-family: 'Arial', sans-serif; font-weight: bold; font-size: 14px; margin-top: 30px; cursor: pointer; text-transform: uppercase; pointer-events: auto !important; position: relative; z-index: 2147483647; }
-        #start-btn.visible { visibility: visible; }
+        .bar-container { width: 70%; max-width: 300px; height: 22px; background: #fff; border: 2px solid #000; border-radius: 20px; padding: 2px; }
+        .bar-fill { height: 100%; width: 0%; background-color: var(--red); border-radius: 10px; transition: width 0.1s linear; }
+        
+        #start-btn { display: none; background: var(--red); color: #fff; border: 2px solid #000; border-radius: 10px; padding: 15px 40px; font-family: 'Arial', sans-serif; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; pointer-events: auto !important; position: relative; z-index: 2147483647; }
+        #start-btn.visible { display: block; }
         
         .clod-mark { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 18px; height: auto; opacity: 0.5; }
         .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; font-family: 'Press Start 2P', cursive; }
@@ -113,10 +115,15 @@
     <div id="loader-overlay">
         <img src="logo_ff.png" class="loader-logo" alt="Friendlyfire Logo" onerror="this.src='https://placehold.co/400x150?text=FRIENDLYFIRE'">
         <img src="mascotte_ff.png" class="loader-mascots" alt="Mascots" onerror="this.src='https://placehold.co/250x250?text=MASCOTTE'">
-        <div class="loading-text">Loading</div>
-        <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
-        <div class="loading-percentage" id="loading-percentage">0 %</div>
+        
+        <div id="loading-wrapper">
+            <div class="loading-text">Loading</div>
+            <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
+            <div class="loading-percentage" id="loading-percentage">0 %</div>
+        </div>
+
         <button id="start-btn" onclick="startApp()" ontouchstart="startApp()">START WORLD</button>
+        
         <img src="mark_c.png" class="clod-mark" onerror="this.style.display='none'">
         <div class="powered-by">Powered by Clod™</div>
     </div>
@@ -232,18 +239,13 @@
             if (perc === 100) {
                 clearInterval(loadingInterval);
                 
+                // Nascondi il blocco con testi e barra
+                let wrap = document.getElementById('loading-wrapper');
+                if(wrap) wrap.style.display = 'none';
+                
                 // Mostra il bottone START WORLD statico
                 let btn = document.getElementById('start-btn');
                 if(btn) btn.classList.add('visible');
-                
-                // Nascondi testo, barra e percentuale
-                let txt = document.querySelector('.loading-text');
-                let bar = document.querySelector('.bar-container');
-                let percText = document.getElementById('loading-percentage');
-                
-                if(txt) txt.style.display = 'none';
-                if(bar) bar.style.display = 'none';
-                if(percText) percText.style.display = 'none';
             }
         }, 40);
 
