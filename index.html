@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FRIENDLYFIRE | V33000 FULL DYNAMIC BG</title>
+    <title>Friendlyfire™ | Skateboard Stuff</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -12,18 +12,16 @@
     <style>
         /* --- 1. SETTAGGI UNIVERSALI --- */
         :root { 
-            --red: #d12525; 
-            --holo-cyan: #00f3ff; 
-            --black: #000; 
-            --white: #fff;
-            --bg-default: #ffffff; 
+            --red: #ff3a3a; --green: #4AF626; --bg-pongo: #2e4a1e; --holo-cyan: #00f3ff; 
+            --black: #000; --white: #fff;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
         
         body, html { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             font-family: 'Press Start 2P', cursive; 
-            background-color: var(--bg-default); 
+            background-color: var(--bg-pongo); 
+            /* Rimosso sfondo2.jpg fisso, ora è gestito 100% dal Database */
             background-size: cover; background-position: center; background-repeat: no-repeat;
             overscroll-behavior: none; position: fixed; transition: all 0.4s ease;
         }
@@ -37,36 +35,35 @@
         }
         
         body.hologram-mode .h-btn, body.hologram-mode .brand { filter: grayscale(100%) sepia(100%) hue-rotate(180deg) saturate(500%) brightness(1.5) drop-shadow(0 0 10px #00f3ff) !important; }
+        
         body.hologram-mode .item img { filter: contrast(1.1) !important; }
+        
         body.hologram-mode .window { background: rgba(0, 15, 30, 0.9); border-color: var(--holo-cyan); color: var(--holo-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
         body.hologram-mode .win-h { background: rgba(0, 243, 255, 0.1); border-bottom: 1px solid var(--holo-cyan); color: var(--holo-cyan); }
         body.hologram-mode .btn { background: transparent !important; border: 1px solid var(--holo-cyan); color: var(--holo-cyan) !important; }
         body.hologram-mode input, body.hologram-mode select, body.hologram-mode textarea { background: transparent; color: var(--holo-cyan); border: 1px solid var(--holo-cyan); }
-        body.hologram-mode .magic-img { mix-blend-mode: normal !important; background: transparent !important; filter: drop-shadow(0 0 8px var(--holo-cyan)) contrast(1.15) !important; }
 
-        /* --- 3. LOADER AGGIORNATO --- */
-        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.3s ease-out; font-family: 'Arial', sans-serif; }
-        
-        /* Forza tutti gli elementi al centro ignorando parte dello spazio trasparente */
-        #loader-content { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; position: relative; z-index: 2; transform: translateY(-5%); }
-        
-        .loader-logo { width: 85%; max-width: 380px; object-fit: contain; margin-bottom: -10px; }
-        .loader-mascots { width: 70vw; max-width: 280px; object-fit: contain; margin-bottom: 20px; }
-        
-        #loading-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; min-height: 80px; }
-        
-        .loading-text { color: var(--red); font-weight: bold; font-size: 15px; margin-bottom: 12px; }
-        .loading-percentage { color: var(--red); font-weight: bold; font-size: 15px; margin-top: 12px; }
-        
-        .bar-container { width: 70%; max-width: 300px; height: 22px; background: #fff; border: 2px solid #000; border-radius: 20px; padding: 2px; }
-        .bar-fill { height: 100%; width: 0%; background-color: var(--red); border-radius: 10px; transition: width 0.1s linear; }
-        
-        #start-btn { display: none; background: var(--red); color: #fff; border: 2px solid #000; border-radius: 10px; padding: 15px 40px; margin-top: 10px; font-family: 'Arial', sans-serif; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; pointer-events: auto !important; position: relative; z-index: 2147483647; }
-        #start-btn.visible { display: block; }
-        
-        /* I crediti in basso, fissi alla fine dello schermo e non toccati */
-        .clod-mark { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 18px; height: auto; opacity: 0.5; z-index: 1; }
-        .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; font-family: 'Press Start 2P', cursive; z-index: 1; }
+        body.hologram-mode .magic-img {
+            mix-blend-mode: normal !important;
+            background: transparent !important;
+            filter: drop-shadow(0 0 8px var(--holo-cyan)) contrast(1.15) !important;
+        }
+
+        /* --- 3. LOADER --- */
+        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; z-index: 2147483647; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.3s ease-out; }
+        .loader-logo { width: 80%; max-width: 280px; margin-bottom: 30px; object-fit: contain; }
+        .loader-gif { width: 65vw; max-width: 320px; height: auto; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 30px; }
+        .bar-container { width: 80%; max-width: 280px; height: 20px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1); }
+        .bar-fill { height: 100%; width: 0%; background-color: var(--green); animation: fillLoad 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        @keyframes fillLoad { 0%{width:0%} 100%{width:100%} }
+        #start-btn { visibility: hidden; background: #000; color: #fff; border: 3px solid #000; padding: 15px 40px; font-family: inherit; font-size: 12px; margin-top: 20px; cursor: pointer; text-transform: uppercase; box-shadow: 5px 5px 0 #999; pointer-events: auto !important; position: relative; z-index: 2147483647; }
+        #start-btn.visible { visibility: visible; animation: flash 1s infinite alternate; }
+        @keyframes flash { from{transform:scale(1)} to{transform:scale(1.05)} }
+
+        .clod-mark { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 18px; height: auto; opacity: 0.5; }
+        .powered-by { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-size: 6px; color: #666; letter-spacing: 1px; text-transform: uppercase; }
+
+        @media (min-width: 1024px) { .loader-gif { width: 220px; } }
 
         /* --- 4. HEADER --- */
         header { position: fixed; top: 0; left: 0; width: 100%; height: 100px; z-index: 20000; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; padding-top: env(safe-area-inset-top, 10px); pointer-events: none; }
@@ -83,8 +80,9 @@
 
         .item { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; touch-action: pan-x pan-y; width: 100%; height: 100%; min-height: 100px; cursor: grab; }
         .item:active { cursor: grabbing; }
+        /* MODIFICATO: Ombra molto più leggera (da 0.8 a 0.3) */
         .item img { width: 85px; height: 85px; object-fit: contain; pointer-events: none; filter: contrast(1.1) drop-shadow(0 5px 8px rgba(0,0,0,0.3)); transition: filter 0.4s ease; }
-        .label { font-family: sans-serif; font-weight: 900; font-size: 8px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; text-align:center; }
+        .label { font-family: sans-serif; font-weight: 900; font-size: 8px; color: #fff; text-shadow: 0 1px 2px #000; margin-top: 5px; text-align:center;}
         .sold-out { opacity: 0.4; filter: grayscale(100%); pointer-events: none; cursor: default; }
 
         /* --- 6. GHOST --- */
@@ -117,20 +115,10 @@
 <body>
 
     <div id="loader-overlay">
-        
-        <div id="loader-content">
-            <img src="logo_ff.png" class="loader-logo" alt="Friendlyfire Logo" onerror="this.src='https://placehold.co/400x150?text=FRIENDLYFIRE'">
-            <img src="mascotte_ff.png" class="loader-mascots" alt="Mascots" onerror="this.src='https://placehold.co/250x250?text=MASCOTTE'">
-            
-            <div id="loading-wrapper">
-                <div class="loading-text">Loading</div>
-                <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
-                <div class="loading-percentage" id="loading-percentage">0 %</div>
-            </div>
-
-            <button id="start-btn" onclick="startApp()" ontouchstart="startApp()">START WORLD</button>
-        </div>
-        
+        <img src="logo_ff_loader.png" class="loader-logo" onerror="this.src='https://placehold.co/300x80?text=FRIENDLYFIRE'">
+        <img src="loadernob.gif" class="loader-gif" onerror="this.src='https://placehold.co/200?text=LOADING'">
+        <div class="bar-container"><div id="bar-fill" class="bar-fill"></div></div>
+        <button id="start-btn" onclick="startApp()" ontouchstart="startApp()">START WORLD</button>
         <img src="mark_c.png" class="clod-mark" onerror="this.style.display='none'">
         <div class="powered-by">Powered by Clod™</div>
     </div>
@@ -153,7 +141,7 @@
     </div>
 
     <footer>
-        <img src="logo_ff.png" class="brand" id="brand-target" onclick="adminTrigger()" onerror="this.src='https://placehold.co/150x40?text=ADMIN'">
+        <img src="brand_name.png" class="brand" id="brand-target" onclick="adminTrigger()" onerror="this.src='https://placehold.co/150x40?text=ADMIN'">
     </footer>
 
     <div id="win-cart" class="window">
@@ -172,8 +160,8 @@
             
             <div style="font-size:8px; font-weight:bold; margin-bottom:5px;">SFONDO GLOBALE SITO (URL):</div>
             <div style="display:flex; gap:5px; margin-bottom:15px;">
-                <input id="bg-in" placeholder="Lascia vuoto per tinta unita">
-                <button class="btn-blue" style="width:auto; padding:5px 10px; font-size:8px; font-weight:bold; margin:0;" onclick="saveBg()">💾 SALVA</button>
+                <input id="bg-in" placeholder="Lascia vuoto per sfondo in tinta unita">
+                <button class="btn-blue" style="width:auto; padding:5px 10px; font-size:8px; font-weight:bold; margin:0;" onclick="saveBg()">💾 SALVA SFONDO</button>
             </div>
             <hr>
             
@@ -188,8 +176,8 @@
             
             <div id="adm-list" style="display:flex; flex-direction:column; gap:5px; margin-bottom:15px;"></div>
             
-            <button class="btn btn-red" style="font-weight:bold; font-size:12px; border:3px solid #000;" onclick="saveAdm()">💾 SALVA SUL DATABASE</button>
-            <button class="btn btn-white" style="font-weight:bold; font-size:10px; border:3px solid #000; margin-top:15px;" onclick="addItm()">➕ CREA NUOVA CARD</button>
+            <button class="btn" style="background:var(--green); color:#000; font-weight:bold; font-size:12px; border:3px solid #000;" onclick="saveAdm()">💾 SALVA SUL DATABASE</button>
+            <button class="btn btn-white" style="font-weight:bold; font-size:10px; border:3px solid #000; margin-top:15px;" onclick="addItm()">➕ CREA UNA NUOVA CARD PRODOTTO</button>
         </div>
     </div>
 
@@ -231,37 +219,10 @@
         let items=[]; let cart=[], sb=null, taps=0, labBgUrl=''; let adminActive = false;
         let curDetIdx = -1; let curGallery = []; let curGalleryIdx = 0;
 
-        // ANIMAZIONE LOADER DINAMICA
-        let perc = 0;
-        let loadingInterval = setInterval(() => {
-            perc += Math.floor(Math.random() * 3) + 1; 
-            if (perc > 100) perc = 100;
-            
-            let pEl = document.getElementById('loading-percentage');
-            let bEl = document.getElementById('bar-fill');
-            
-            if(pEl) pEl.innerText = perc + " %";
-            if(bEl) bEl.style.width = perc + "%";
-            
-            if (perc === 100) {
-                clearInterval(loadingInterval);
-                
-                // Nascondi il blocco con testi e barra
-                let wrap = document.getElementById('loading-wrapper');
-                if(wrap) wrap.style.display = 'none';
-                
-                // Mostra il bottone START WORLD statico
-                let btn = document.getElementById('start-btn');
-                if(btn) btn.classList.add('visible');
-            }
-        }, 40);
+        setTimeout(()=>{ let b=document.getElementById('start-btn'); if(b) b.classList.add('visible'); document.getElementById('bar-fill').style.width='100%'; }, 1600);
 
         async function startApp() {
-            let o = document.getElementById('loader-overlay'); 
-            o.style.opacity='0'; 
-            o.style.pointerEvents='none'; 
-            setTimeout(()=>{o.style.display='none'},300);
-            
+            let o = document.getElementById('loader-overlay'); o.style.opacity='0'; o.style.pointerEvents='none'; setTimeout(()=>{o.style.display='none'},300);
             try{document.getElementById('sfx-eat').play();}catch(e){}
             try{ 
                 if(window.supabase){ sb=window.supabase.createClient(CFG.u,CFG.k); await loadDB(); setupRealtime(); } 
@@ -275,14 +236,17 @@
                 const{data, error}=await sb.from('products').select('*').order('id'); 
                 if(error) throw error;
                 if(data){ 
+                    // RECUPERO SFONDO DAL DATABASE (ID FANTASMA 999999)
                     let cfg = data.find(x => x.name === 'SYSTEM_CONFIG');
                     if(cfg && cfg.img) {
                         document.body.style.backgroundImage = `url('${cfg.img}')`;
                         if(document.getElementById('bg-in')) document.getElementById('bg-in').value = cfg.img;
                     } else {
+                        // Se non c'è, resta tinta unita
                         document.body.style.backgroundImage = "none";
                     }
 
+                    // Carica solo i prodotti veri (esclude il file di configurazione)
                     items = data.filter(x => x.name !== 'SYSTEM_CONFIG').map(x=>formatItem(x)); 
                     render(); 
                 } 
@@ -292,18 +256,20 @@
             }
         }
 
+        // SALVATAGGIO SFONDO SUL DATABASE (NESSUN FALLBACK A SFONDO2)
         async function saveBg() {
             let url = document.getElementById('bg-in').value.trim();
             if(!sb) return alert("Database non connesso");
             try {
                 const {error} = await sb.from('products').upsert([{
-                    id: 999999,
+                    id: 999999, // ID fisso di sistema
                     name: 'SYSTEM_CONFIG',
                     img: url,
                     price: 0, qty: 0, sizes: '', desc: 'NON ELIMINARE - GESTISCE LO SFONDO GLOBALE'
                 }]);
                 if(error) throw error;
                 
+                // Aggiorna subito visivamente per tutti senza ricaricare
                 document.body.style.backgroundImage = url ? `url('${url}')` : "none";
                 alert("✅ Sfondo aggiornato e salvato per tutti i visitatori!");
             } catch(e) {
@@ -326,10 +292,12 @@
         function setupRealtime() {
             if(!sb) return;
             sb.channel('public:products').on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
+                
+                // Se cambia lo sfondo dal DB, aggiorna in tempo reale la pagina (NESSUN FALLBACK)
                 if(payload.new && payload.new.name === 'SYSTEM_CONFIG') {
                     document.body.style.backgroundImage = payload.new.img ? `url('${payload.new.img}')` : "none";
                     if(document.getElementById('bg-in')) document.getElementById('bg-in').value = payload.new.img || '';
-                    return; 
+                    return; // Ferma qui l'esecuzione per non aggiungerlo allo shop
                 }
 
                 if(payload.eventType === 'INSERT') {
@@ -337,7 +305,7 @@
                 }
                 if(payload.eventType === 'UPDATE') { let idx = items.findIndex(x => x.id === payload.new.id); if(idx !== -1) items[idx] = formatItem(payload.new); }
                 if(payload.eventType === 'DELETE') {
-                    if(payload.old.id === 999999) return;
+                    if(payload.old.id === 999999) return; // Se si cancella lo sfondo non fare nulla
                     items = items.filter(x => x.id !== payload.old.id);
                 }
                 render(); 
@@ -471,7 +439,7 @@
             let totale = subtot;
             
             let htmlTot = `SUBTOTALE: ${subtot}€<br>`;
-            htmlTot += subtot > 0 ? `SPEDIZIONE: <span style="color:var(--red)">GRATIS</span><br>` : `SPEDIZIONE: 0€<br>`;
+            htmlTot += subtot > 0 ? `SPEDIZIONE: <span style="color:var(--green)">GRATIS</span><br>` : `SPEDIZIONE: 0€<br>`;
             htmlTot += `<span style="font-size:12px; color:var(--red);">TOTALE: ${totale}€</span>`;
             
             document.getElementById('cart-tot').innerHTML = htmlTot; 
@@ -515,7 +483,7 @@
                 if (input) {
                     let current = input.value.trim();
                     input.value = current ? current + ',' + url.trim() : url.trim();
-                    alert("✅ Foto inserita nell'input testuale!\nOra scorri giù e clicca il tasto SALVA SUL DATABASE per confermare.");
+                    alert("✅ Foto inserita nell'input testuale!\nOra scorri giù e clicca il tasto verde SALVA SUL DATABASE per confermare.");
                 }
             }
         }
