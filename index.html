@@ -12,7 +12,7 @@
     <style>
         /* --- 1. SETTAGGI UNIVERSALI --- */
         :root { 
-            --red: #ff3a3a; --green: #4AF626; --bg-pongo: #ffffff; /* Sfondo modificato in bianco */ --holo-cyan: #00f3ff; 
+            --red: #ff3a3a; --green: #4AF626; --bg-pongo: #ffffff; --holo-cyan: #00f3ff; 
             --black: #000; --white: #fff;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
@@ -53,8 +53,10 @@
         .loader-logo { width: 80%; max-width: 280px; margin-bottom: 30px; object-fit: contain; }
         .loader-gif { width: 65vw; max-width: 320px; height: auto; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 30px; }
         .bar-container { width: 80%; max-width: 280px; height: 20px; background: #fff; border: 3px solid #000; padding: 2px; box-shadow: 5px 5px 0 rgba(0,0,0,0.1); }
-        /* Barra resa rossa e animazione rallentata a 2.5s */
-        .bar-fill { height: 100%; width: 0%; background-color: var(--red); animation: fillLoad 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        
+        /* Barra di caricamento: impostata con il rosso scuro richiesto */
+        .bar-fill { height: 100%; width: 0%; background-color: #982828; animation: fillLoad 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        
         @keyframes fillLoad { 0%{width:0%} 100%{width:100%} }
         #start-btn { visibility: hidden; background: #000; color: #fff; border: 3px solid #000; padding: 15px 40px; font-family: inherit; font-size: 12px; margin-top: 20px; cursor: pointer; text-transform: uppercase; box-shadow: 5px 5px 0 #999; pointer-events: auto !important; position: relative; z-index: 2147483647; }
         #start-btn.visible { visibility: visible; animation: flash 1s infinite alternate; }
@@ -67,7 +69,9 @@
 
         /* --- 4. HEADER --- */
         header { position: fixed; top: 0; left: 0; width: 100%; height: 100px; z-index: 20000; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; padding-top: env(safe-area-inset-top, 10px); pointer-events: none; }
-        .h-btn { width: 65px; height: 65px; object-fit: contain; pointer-events: auto; cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0,0,0,0.5)); transition: filter 0.4s ease, transform 0.1s; }
+        
+        .h-btn { width: 65px; height: 65px; object-fit: contain; pointer-events: auto; cursor: pointer; transition: filter 0.4s ease, transform 0.1s; }
+        
         .h-btn:active { transform: scale(0.9); }
         .pongo-anim { animation: sq 0.3s; } @keyframes sq { 0%,100%{transform:scale(1);} 50%{transform:scale(0.8);} }
         #tank-wrapper { position: relative; pointer-events: auto; }
@@ -218,7 +222,6 @@
         let items=[]; let cart=[], sb=null, taps=0, labBgUrl=''; let adminActive = false;
         let curDetIdx = -1; let curGallery = []; let curGalleryIdx = 0;
 
-        // Modificato: il bottone di start appare molto più velocemente (800ms) permettendo un ingresso rapido
         setTimeout(()=>{ let b=document.getElementById('start-btn'); if(b) b.classList.add('visible'); document.getElementById('bar-fill').style.width='100%'; }, 800);
 
         async function startApp() {
