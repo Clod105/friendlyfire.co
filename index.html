@@ -15,7 +15,7 @@
             font-family: 'Courier New', Courier, monospace; 
         }
 
-        /* SCHERMATA DI CARICAMENTO */
+        /* CONTENITORE PRINCIPALE CON L'IMMAGINE */
         #game-container {
             position: relative;
             width: 100%;
@@ -23,15 +23,14 @@
             background-image: url('momifire.png'); 
             background-size: cover;
             background-position: center;
-            display: block;
         }
 
-        /* EFFETTO CRT / MAGNETICO */
+        /* EFFETTO CRT / MAGNETICO (Sopra a tutto) */
         #crt-overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 50; /* AUMENTATO: ora sta fisicamente sopra a tutto, inclusa la barra */
-            pointer-events: none; /* Permette di cliccare gli elementi sottostanti */
+            z-index: 50; 
+            pointer-events: none; 
             box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
                         linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
@@ -45,13 +44,13 @@
             100% { opacity: 0.95; }
         }
 
-        /* BARRA DI CARICAMENTO RIGIDA E TESTURIZZATA */
+        /* BARRA DI CARICAMENTO */
         #loading-wrapper {
             position: absolute;
             bottom: 12%;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 20; /* INFERIORE al crt-overlay: ora sta sotto lo schermo */
+            z-index: 20; 
         }
 
         .loading-bar-container {
@@ -91,7 +90,7 @@
             bottom: 12%;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 20; /* INFERIORE al crt-overlay */
+            z-index: 20; 
             background: transparent;
             color: #ffffff;
             font-family: 'Courier New', Courier, monospace;
@@ -107,21 +106,44 @@
             to { visibility: hidden; }
         }
 
-        /* SCHERMATA HOME DEL SITO */
-        #home-screen {
-            display: none; 
-            width: 100%;
-            height: 100%;
-            background-color: #121212;
-            color: #4ade80; 
+        /* MENU PRINCIPALE */
+        #main-menu {
+            display: none; /* Nascosto fino al click di Start */
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Allinea a sinistra per fare spazio alla freccia */
+            gap: 15px;
         }
 
-        #home-screen h1 {
-            font-size: 3rem;
-            text-shadow: 4px 4px 0px #000;
+        .menu-item {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 26px;
+            font-weight: bold;
+            text-shadow: 3px 3px 0px #000;
+            text-transform: uppercase;
+            position: relative;
+            transition: color 0.1s;
+            cursor: pointer;
+        }
+
+        /* Effetto hover in stile videogioco retro */
+        .menu-item:hover, .menu-item:focus {
+            color: #ffcc00; /* Giallo acceso */
+            outline: none;
+        }
+
+        .menu-item:hover::before, .menu-item:focus::before {
+            content: "▶";
+            position: absolute;
+            left: -30px;
+            top: 2px;
+            color: #ffcc00;
+            text-shadow: 3px 3px 0px #000;
         }
 
     </style>
@@ -147,11 +169,13 @@
         </div>
 
         <button id="start-btn">PRESS START</button>
-    </div>
 
-    <div id="home-screen">
-        <h1>FRIENDLY FIRE</h1>
-        <p>Menu Principale del Sito</p>
+        <nav id="main-menu">
+            <a href="#store" class="menu-item">STORE</a>
+            <a href="#picture" class="menu-item">PICTURE</a>
+            <a href="#music" class="menu-item">MUSIC</a>
+            <a href="#contacts" class="menu-item">CONTACTS</a>
+        </nav>
     </div>
 
     <script>
@@ -159,21 +183,24 @@
             let currentSegment = 1;
             const totalSegments = 10;
             
+            // Simula il caricamento
             const loadingInterval = setInterval(() => {
                 if (currentSegment <= totalSegments) {
                     const segmentElement = document.getElementById(`seg-${currentSegment}`);
                     segmentElement.classList.add(`lit-${currentSegment}`);
                     currentSegment++;
                 } else {
+                    // Fine del caricamento
                     clearInterval(loadingInterval);
                     document.getElementById('loading-wrapper').style.display = 'none';
                     document.getElementById('start-btn').style.display = 'block';
                 }
             }, 300); 
 
+            // Cliccando su Start si apre il menu
             document.getElementById('start-btn').addEventListener('click', () => {
-                document.getElementById('game-container').style.display = 'none';
-                document.getElementById('home-screen').style.display = 'flex';
+                document.getElementById('start-btn').style.display = 'none';
+                document.getElementById('main-menu').style.display = 'flex';
             });
         });
     </script>
