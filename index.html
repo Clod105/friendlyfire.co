@@ -15,21 +15,11 @@
             font-family: 'Courier New', Courier, monospace; 
         }
 
-        /* CONTENITORE PRINCIPALE CON L'IMMAGINE */
-        #game-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background-image: url('momifire.png'); 
-            background-size: cover;
-            background-position: center;
-        }
-
-        /* EFFETTO CRT / MAGNETICO (Sopra a tutto) */
+        /* TEXTURE CRT GLOBALE (Sempre sopra a tutto) */
         #crt-overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 50; 
+            z-index: 100; 
             pointer-events: none; 
             box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
@@ -42,6 +32,17 @@
             0% { opacity: 0.95; }
             50% { opacity: 0.85; }
             100% { opacity: 0.95; }
+        }
+
+        /* SCHERMATA DI CARICAMENTO E MENU */
+        #game-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-image: url('momifire.png'); /* IMMAGINE DI CARICAMENTO ORIGINALE CON PERSONAGGI */
+            background-size: cover;
+            background-position: center;
+            display: block;
         }
 
         /* BARRA DI CARICAMENTO */
@@ -93,7 +94,6 @@
             z-index: 20; 
             background: transparent;
             color: #ffffff;
-            font-family: 'Courier New', Courier, monospace;
             font-size: 28px;
             font-weight: bold;
             border: none;
@@ -108,14 +108,14 @@
 
         /* MENU PRINCIPALE */
         #main-menu {
-            display: none; /* Nascosto fino al click di Start */
+            display: none; 
             position: absolute;
             bottom: 10%;
             left: 50%;
             transform: translateX(-50%);
             z-index: 20;
             flex-direction: column;
-            align-items: flex-start; /* Allinea a sinistra per fare spazio alla freccia */
+            align-items: flex-start; 
             gap: 15px;
         }
 
@@ -127,32 +127,66 @@
             text-shadow: 3px 3px 0px #000;
             text-transform: uppercase;
             position: relative;
-            transition: color 0.1s;
             cursor: pointer;
         }
 
-        /* Effetto hover in stile videogioco retro */
-        .menu-item:hover, .menu-item:focus {
-            color: #ffcc00; /* Giallo acceso */
-            outline: none;
+        .menu-item:hover {
+            color: #ffcc00; 
         }
 
-        .menu-item:hover::before, .menu-item:focus::before {
+        .menu-item:hover::before {
             content: "▶";
             position: absolute;
             left: -30px;
             top: 2px;
             color: #ffcc00;
-            text-shadow: 3px 3px 0px #000;
+        }
+
+        /* =========================================
+           STRUTTURA PAGINE BIANCHE (Sub-Menu)
+           ========================================= */
+        .sub-page {
+            display: none; /* Nascoste di default */
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: #ffffff; /* Pagina bianca di base */
+            background-image: url('momifire_bg.png'); /* NUOVA IMMAGINE DI SFONDO SENZA PERSONAGGI */
+            background-size: cover;
+            background-position: center;
+            z-index: 10;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff; /* Testo chiaro per lo sfondo scuro */
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        .back-btn {
+            margin-top: 50px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px;
+            font-weight: bold;
+            background: #000;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .back-btn:hover {
+            background: #ffcc00;
+            color: #000;
         }
 
     </style>
 </head>
 <body>
 
+    <div id="crt-overlay"></div>
+
     <div id="game-container">
-        <div id="crt-overlay"></div>
-        
         <div id="loading-wrapper">
             <div class="loading-bar-container" id="loading-bar">
                 <div class="segment" id="seg-1"></div>
@@ -171,11 +205,31 @@
         <button id="start-btn">PRESS START</button>
 
         <nav id="main-menu">
-            <a href="#store" class="menu-item">STORE</a>
-            <a href="#picture" class="menu-item">PICTURE</a>
-            <a href="#music" class="menu-item">MUSIC</a>
-            <a href="#contacts" class="menu-item">CONTACTS</a>
+            <div class="menu-item" onclick="openPage('PAGINA-STORE')">STORE</div>
+            <div class="menu-item" onclick="openPage('PAGINA-PICTURES')">PICTURES</div>
+            <div class="menu-item" onclick="openPage('PAGINA-MUSIC')">MUSIC</div>
+            <div class="menu-item" onclick="openPage('PAGINA-CONTACTS')">CONTACTS</div>
         </nav>
+    </div>
+
+    <div id="PAGINA-STORE" class="sub-page">
+        <h1>PAGINA STORE</h1>
+        <button class="back-btn" onclick="closePage()">BACK</button>
+    </div>
+
+    <div id="PAGINA-PICTURES" class="sub-page">
+        <h1>PAGINA PICTURES</h1>
+        <button class="back-btn" onclick="closePage()">BACK</button>
+    </div>
+
+    <div id="PAGINA-MUSIC" class="sub-page">
+        <h1>PAGINA MUSIC</h1>
+        <button class="back-btn" onclick="closePage()">BACK</button>
+    </div>
+
+    <div id="PAGINA-CONTACTS" class="sub-page">
+        <h1>PAGINA CONTACTS</h1>
+        <button class="back-btn" onclick="closePage()">BACK</button>
     </div>
 
     <script>
@@ -183,26 +237,38 @@
             let currentSegment = 1;
             const totalSegments = 10;
             
-            // Simula il caricamento
             const loadingInterval = setInterval(() => {
                 if (currentSegment <= totalSegments) {
-                    const segmentElement = document.getElementById(`seg-${currentSegment}`);
-                    segmentElement.classList.add(`lit-${currentSegment}`);
+                    document.getElementById(`seg-${currentSegment}`).classList.add(`lit-${currentSegment}`);
                     currentSegment++;
                 } else {
-                    // Fine del caricamento
                     clearInterval(loadingInterval);
                     document.getElementById('loading-wrapper').style.display = 'none';
                     document.getElementById('start-btn').style.display = 'block';
                 }
             }, 300); 
 
-            // Cliccando su Start si apre il menu
             document.getElementById('start-btn').addEventListener('click', () => {
                 document.getElementById('start-btn').style.display = 'none';
                 document.getElementById('main-menu').style.display = 'flex';
             });
         });
+
+        // Funzione per aprire le pagine
+        function openPage(pageId) {
+            document.getElementById('game-container').style.display = 'none';
+            document.getElementById(pageId).style.display = 'flex';
+        }
+
+        // Funzione per tornare al menu
+        function closePage() {
+            // Nasconde tutte le sub-page
+            const pages = document.querySelectorAll('.sub-page');
+            pages.forEach(p => p.style.display = 'none');
+            
+            // Mostra di nuovo il menu principale
+            document.getElementById('game-container').style.display = 'block';
+        }
     </script>
 </body>
 </html>
