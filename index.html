@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Friendly Fire - Loading</title>
+    <title>Friendly Fire - PS1 Store</title>
     <style>
         body, html {
             margin: 0;
@@ -39,7 +39,7 @@
             position: relative;
             width: 100%;
             height: 100%;
-            background-image: url('momifire.png'); /* IMMAGINE DI CARICAMENTO ORIGINALE CON PERSONAGGI */
+            background-image: url('momifire.png'); 
             background-size: cover;
             background-position: center;
             display: block;
@@ -130,10 +130,7 @@
             cursor: pointer;
         }
 
-        .menu-item:hover {
-            color: #ffcc00; 
-        }
-
+        .menu-item:hover { color: #ffcc00; }
         .menu-item:hover::before {
             content: "▶";
             position: absolute;
@@ -146,38 +143,243 @@
            STRUTTURA PAGINE BIANCHE (Sub-Menu)
            ========================================= */
         .sub-page {
-            display: none; /* Nascoste di default */
+            display: none; 
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background-color: #ffffff; /* Pagina bianca di base */
-            background-image: url('momifire_bg.png'); /* NUOVA IMMAGINE DI SFONDO SENZA PERSONAGGI */
+            background-color: #000; 
+            background-image: url('momifire_bg.png'); 
             background-size: cover;
             background-position: center;
             z-index: 10;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            color: #fff; /* Testo chiaro per lo sfondo scuro */
+            color: #fff; 
             text-shadow: 2px 2px 0px #000;
         }
 
+        /* Filtro scuro per rendere leggibile l'interfaccia sullo sfondo */
+        .bg-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .page-header {
+            margin-top: 30px;
+            font-size: 32px;
+            color: #4ade80; /* Verde terminale retro */
+            border-bottom: 2px solid #4ade80;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 80%;
+        }
+
         .back-btn {
-            margin-top: 50px;
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
             font-family: 'Courier New', Courier, monospace;
             font-size: 20px;
             font-weight: bold;
-            background: #000;
+            background: #111;
             color: #fff;
             padding: 10px 20px;
-            border: none;
+            border: 2px solid #666;
             cursor: pointer;
             text-transform: uppercase;
+            box-shadow: 4px 4px 0px #000;
         }
 
         .back-btn:hover {
             background: #ffcc00;
             color: #000;
+            border-color: #fff;
+        }
+
+        /* =========================================
+           LAYOUT DELLO STORE (VIEWER 3D + UI)
+           ========================================= */
+        .store-layout {
+            display: flex;
+            width: 80%;
+            max-width: 900px;
+            margin-top: 40px;
+            gap: 40px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* -- VISORE 3D PS1 STYLE -- */
+        .viewer-container {
+            width: 300px;
+            height: 400px;
+            background: #1a1a1a;
+            border: 4px solid #444;
+            border-top-color: #888;
+            border-left-color: #888;
+            box-shadow: inset 0 0 20px #000, 10px 10px 0 rgba(0,0,0,0.8);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .viewer-ui-text {
+            position: absolute;
+            top: 10px; left: 10px;
+            color: #ffcc00;
+            font-size: 14px;
+        }
+
+        /* CSS 3D Scene */
+        .scene {
+            width: 140px;
+            height: 200px;
+            perspective: 800px;
+        }
+
+        .torso-3d {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: translateZ(-35px);
+            animation: rotate3D 6s infinite linear;
+        }
+
+        @keyframes rotate3D {
+            from { transform: translateZ(-35px) rotateY(0deg); }
+            to { transform: translateZ(-35px) rotateY(360deg); }
+        }
+
+        .face {
+            position: absolute;
+            border: 1px solid #000;
+            /* Texture a pixel per fare effetto low-poly/ps1 */
+            background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 2px, transparent 2px, transparent 4px);
+            image-rendering: pixelated;
+        }
+
+        /* Dimensioni e posizioni delle facce del busto */
+        .front, .back { width: 140px; height: 200px; }
+        .right, .left { width: 70px; height: 200px; left: 35px; }
+        .top, .bottom { width: 140px; height: 70px; top: 65px; }
+
+        .front  { transform: rotateY(  0deg) translateZ(35px); }
+        .right  { transform: rotateY( 90deg) translateZ(70px); }
+        .back   { transform: rotateY(180deg) translateZ(35px); }
+        .left   { transform: rotateY(-90deg) translateZ(70px); }
+        .top    { transform: rotateX( 90deg) translateZ(100px); }
+        .bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+        /* Colori dinamici in base all'oggetto selezionato */
+        .item-theme-1 .face { background-color: #d82b00; } /* Felpa Fuoco */
+        .item-theme-2 .face { background-color: #222222; } /* T-Shirt Nera */
+        .item-theme-3 .face { background-color: #4ade80; } /* Giacca Camo */
+
+        /* Aggiunta di finte "pieghe" o loghi in CSS puro sui fronti */
+        .front::after {
+            content: "FF";
+            position: absolute;
+            top: 40%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            font-weight: bold;
+            color: rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 0 rgba(255,255,255,0.2);
+        }
+
+        /* -- PANNELLO CONTROLLI -- */
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            width: 350px;
+        }
+
+        .item-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #222;
+            border: 2px solid #555;
+            padding: 10px;
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        .item-selector button {
+            background: transparent;
+            border: none;
+            color: #ffcc00;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .item-selector button:hover { color: #fff; }
+
+        #item-name-display {
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .size-section {
+            background: #111;
+            padding: 15px;
+            border: 2px solid #333;
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        .size-section p { margin: 0 0 10px 0; color: #aaa; }
+
+        .size-grid {
+            display: flex;
+            gap: 10px;
+        }
+
+        .size-btn {
+            background: #2b2b2b;
+            color: #fff;
+            border: 2px solid #000;
+            border-top-color: #555;
+            border-left-color: #555;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 18px;
+            width: 40px; height: 40px;
+            cursor: pointer;
+        }
+
+        .size-btn.active {
+            background: #ffcc00;
+            color: #000;
+            border-color: #fff;
+            box-shadow: inset 0 0 10px #cc8800;
+        }
+
+        #buy-btn {
+            background: #4ade80;
+            color: #000;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 15px;
+            border: 3px solid #fff;
+            border-bottom-color: #1a5e20;
+            border-right-color: #1a5e20;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 5px 5px 0 #000;
+            transition: transform 0.1s;
+        }
+
+        #buy-btn:active {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0 #000;
         }
 
     </style>
@@ -201,9 +403,7 @@
                 <div class="segment" id="seg-10"></div>
             </div>
         </div>
-
         <button id="start-btn">PRESS START</button>
-
         <nav id="main-menu">
             <div class="menu-item" onclick="openPage('PAGINA-STORE')">STORE</div>
             <div class="menu-item" onclick="openPage('PAGINA-PICTURES')">PICTURES</div>
@@ -213,30 +413,72 @@
     </div>
 
     <div id="PAGINA-STORE" class="sub-page">
-        <h1>PAGINA STORE</h1>
+        <div class="bg-overlay"></div>
+        <h1 class="page-header">ITEM INVENTORY</h1>
+        
+        <div class="store-layout">
+            
+            <div class="viewer-container">
+                <div class="viewer-ui-text">OBJ_VIEWER_v1.0</div>
+                <div class="scene">
+                    <div class="torso-3d item-theme-1" id="3d-model">
+                        <div class="face front"></div>
+                        <div class="face back"></div>
+                        <div class="face right"></div>
+                        <div class="face left"></div>
+                        <div class="face top"></div>
+                        <div class="face bottom"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-container">
+                <div class="item-selector">
+                    <button onclick="changeItem(-1)">◀</button>
+                    <div id="item-name-display">FELPA FLAME</div>
+                    <button onclick="changeItem(1)">▶</button>
+                </div>
+
+                <div class="size-section">
+                    <p>SELECT SIZE:</p>
+                    <div class="size-grid">
+                        <button class="size-btn active" onclick="selectSize(this)">S</button>
+                        <button class="size-btn" onclick="selectSize(this)">M</button>
+                        <button class="size-btn" onclick="selectSize(this)">L</button>
+                        <button class="size-btn" onclick="selectSize(this)">XL</button>
+                    </div>
+                </div>
+
+                <button id="buy-btn" onclick="buyItem()">ACQUISTA</button>
+            </div>
+        </div>
+
         <button class="back-btn" onclick="closePage()">BACK</button>
     </div>
 
     <div id="PAGINA-PICTURES" class="sub-page">
-        <h1>PAGINA PICTURES</h1>
+        <div class="bg-overlay"></div>
+        <h1 class="page-header">PAGINA PICTURES</h1>
         <button class="back-btn" onclick="closePage()">BACK</button>
     </div>
 
     <div id="PAGINA-MUSIC" class="sub-page">
-        <h1>PAGINA MUSIC</h1>
+        <div class="bg-overlay"></div>
+        <h1 class="page-header">PAGINA MUSIC</h1>
         <button class="back-btn" onclick="closePage()">BACK</button>
     </div>
 
     <div id="PAGINA-CONTACTS" class="sub-page">
-        <h1>PAGINA CONTACTS</h1>
+        <div class="bg-overlay"></div>
+        <h1 class="page-header">PAGINA CONTACTS</h1>
         <button class="back-btn" onclick="closePage()">BACK</button>
     </div>
 
     <script>
+        // Logica di caricamento base
         document.addEventListener("DOMContentLoaded", () => {
             let currentSegment = 1;
             const totalSegments = 10;
-            
             const loadingInterval = setInterval(() => {
                 if (currentSegment <= totalSegments) {
                     document.getElementById(`seg-${currentSegment}`).classList.add(`lit-${currentSegment}`);
@@ -254,21 +496,68 @@
             });
         });
 
-        // Funzione per aprire le pagine
+        // Navigazione pagine
         function openPage(pageId) {
             document.getElementById('game-container').style.display = 'none';
             document.getElementById(pageId).style.display = 'flex';
         }
 
-        // Funzione per tornare al menu
         function closePage() {
-            // Nasconde tutte le sub-page
             const pages = document.querySelectorAll('.sub-page');
             pages.forEach(p => p.style.display = 'none');
-            
-            // Mostra di nuovo il menu principale
             document.getElementById('game-container').style.display = 'block';
         }
+
+        // ==========================================
+        // LOGICA DELLO STORE
+        // ==========================================
+        
+        // Array dei prodotti simulati
+        const storeItems = [
+            { name: "FELPA FLAME", themeClass: "item-theme-1" },
+            { name: "T-SHIRT NERA", themeClass: "item-theme-2" },
+            { name: "GIACCA CAMO", themeClass: "item-theme-3" }
+        ];
+        
+        let currentItemIndex = 0;
+
+        // Cambia articolo (freccette destra/sinistra)
+        function changeItem(direction) {
+            currentItemIndex += direction;
+            
+            // Gestione del loop dell'array
+            if (currentItemIndex < 0) currentItemIndex = storeItems.length - 1;
+            if (currentItemIndex >= storeItems.length) currentItemIndex = 0;
+
+            const newItem = storeItems[currentItemIndex];
+            
+            // Aggiorna il nome
+            document.getElementById("item-name-display").innerText = newItem.name;
+            
+            // Aggiorna il modello 3D cambiandogli la classe del tema (cambia colore/texture in CSS)
+            const model3D = document.getElementById("3d-model");
+            model3D.className = `torso-3d ${newItem.themeClass}`;
+        }
+
+        // Selezione Taglia
+        function selectSize(btnElement) {
+            // Rimuove la classe 'active' da tutti i bottoni
+            const allSizeBtns = document.querySelectorAll('.size-btn');
+            allSizeBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Aggiunge 'active' solo a quello cliccato
+            btnElement.classList.add('active');
+        }
+
+        // Tasto Acquista
+        function buyItem() {
+            const activeSize = document.querySelector('.size-btn.active').innerText;
+            const currentItemName = storeItems[currentItemIndex].name;
+            
+            // Al posto di un alert standard, potresti inserire l'aggiunta al carrello Shopify o simile.
+            alert(`Hai aggiunto: ${currentItemName} (Taglia: ${activeSize}) al tuo equipaggiamento.`);
+        }
+
     </script>
 </body>
 </html>
