@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Friendly Fire - Loading</title>
     <style>
-        /* Reset base */
         body, html {
             margin: 0;
             padding: 0;
@@ -16,29 +15,26 @@
             font-family: sans-serif;
         }
 
-        /* Contenitore principale con lo sfondo */
         #game-container {
             position: relative;
             width: 100%;
             height: 100%;
-            /* INSERISCI QUI L'URL DELL'IMMAGINE GENERATA */
-            background-image: url('URL_DELLA_TUA_IMMAGINE.jpg'); 
+            /* L'immagine di sfondo rinominata come richiesto */
+            background-image: url('momifire.png'); 
             background-size: cover;
             background-position: center;
         }
 
-        /* =========================================
-           EFFETTO CRT / MAGNETICO (Solo in caricamento)
-           ========================================= */
+        /* EFFETTO CRT / MAGNETICO */
         #crt-overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             z-index: 10;
             pointer-events: none;
             transition: opacity 1.5s ease-out;
-            /* Leggera vignettatura e aberrazione per simulare lo schermo curvo */
             box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 3px, 3px 100%;
             animation: flicker 0.15s infinite;
         }
@@ -49,12 +45,10 @@
             100% { opacity: 0.95; }
         }
 
-        /* =========================================
-           BARRA DI CARICAMENTO 3D PS1 STYLE
-           ========================================= */
+        /* BARRA DI CARICAMENTO */
         #loading-wrapper {
             position: absolute;
-            bottom: 12%; /* Posizionata in basso come da screenshot */
+            bottom: 12%;
             left: 50%;
             transform: translateX(-50%);
             z-index: 20;
@@ -67,7 +61,6 @@
             background: #1a1a1a;
             padding: 6px 8px;
             border-radius: 12px;
-            /* Effetto 3D del contenitore esterno */
             box-shadow: 
                 inset 0px 3px 5px rgba(0, 0, 0, 0.8), 
                 inset 0px -2px 2px rgba(255, 255, 255, 0.2),
@@ -78,32 +71,29 @@
         .segment {
             width: 22px;
             height: 35px;
-            background-color: #0f0f0f; /* Colore spento */
+            background-color: #0f0f0f;
             border-radius: 4px;
-            /* Effetto 3D del singolo blocco spento */
             box-shadow: 
                 inset 0px 2px 4px rgba(0, 0, 0, 0.9),
                 inset 0px -1px 1px rgba(255, 255, 255, 0.1);
             transition: background-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        /* Classi per l'accensione con i colori specifici del gradiente */
-        .segment.lit-1 { background-color: #630000; box-shadow: inset 0 0 10px #300000; border: 1px solid #8b0000; }
-        .segment.lit-2 { background-color: #990000; box-shadow: inset 0 0 10px #4d0000; border: 1px solid #b30000; }
-        .segment.lit-3 { background-color: #cc0000; box-shadow: inset 0 0 10px #660000; border: 1px solid #ff0000; }
-        .segment.lit-4 { background-color: #d82b00; box-shadow: inset 0 0 10px #801a00; border: 1px solid #ff3300; }
-        .segment.lit-5 { background-color: #e65c00; box-shadow: inset 0 0 10px #993d00; border: 1px solid #ff6600; }
-        .segment.lit-6 { background-color: #f28c00; box-shadow: inset 0 0 10px #b36b00; border: 1px solid #ff9900; }
-        .segment.lit-7 { background-color: #ffb300; box-shadow: inset 0 0 10px #cc8800; border: 1px solid #ffcc00; }
-        .segment.lit-8 { background-color: #ffcc00; box-shadow: inset 0 0 10px #cca300; border: 1px solid #ffe600; }
-        .segment.lit-9 { background-color: #ffe666; box-shadow: inset 0 0 10px #ccb800; border: 1px solid #ffff66; }
-        .segment.lit-10{ background-color: #fff9b3; box-shadow: inset 0 0 10px #cccc66; border: 1px solid #ffffcc; }
+        .segment.lit-1 { background-color: #630000; color: #ff0000; }
+        .segment.lit-2 { background-color: #990000; color: #ff0000; }
+        .segment.lit-3 { background-color: #cc0000; color: #ff0000; }
+        .segment.lit-4 { background-color: #d82b00; color: #ff3300; }
+        .segment.lit-5 { background-color: #e65c00; color: #ff6600; }
+        .segment.lit-6 { background-color: #f28c00; color: #ff9900; }
+        .segment.lit-7 { background-color: #ffb300; color: #ffcc00; }
+        .segment.lit-8 { background-color: #ffcc00; color: #ffe600; }
+        .segment.lit-9 { background-color: #ffe666; color: #ffff66; }
+        .segment.lit-10{ background-color: #fff9b3; color: #ffffcc; }
 
-        /* Effetto bagliore quando il blocco è acceso */
         .segment[class*="lit-"] {
             box-shadow: 
                 inset 0px 2px 5px rgba(255,255,255,0.4),
-                0px 0px 8px currentColor; /* Usa il colore del background per il glow */
+                0px 0px 8px currentColor;
         }
     </style>
 </head>
@@ -133,39 +123,19 @@
             let currentSegment = 1;
             const totalSegments = 10;
             
-            // Simula il caricamento (un blocco ogni 400ms)
             const loadingInterval = setInterval(() => {
                 if (currentSegment <= totalSegments) {
-                    // Accende il blocco corrente assegnandogli la classe del colore specifico
                     const segmentElement = document.getElementById(`seg-${currentSegment}`);
                     segmentElement.classList.add(`lit-${currentSegment}`);
                     currentSegment++;
                 } else {
-                    // Caricamento completato
                     clearInterval(loadingInterval);
-                    finishLoading();
-                }
-            }, 400); // Modifica questo valore per accelerare/rallentare il caricamento
-
-            function finishLoading() {
-                // Aspetta mezzo secondo dopo che l'ultimo blocco si è acceso
-                setTimeout(() => {
-                    const crtOverlay = document.getElementById('crt-overlay');
-                    const loadingWrapper = document.getElementById('loading-wrapper');
-                    
-                    // Fai svanire l'effetto CRT e la barra
-                    crtOverlay.style.opacity = '0';
-                    loadingWrapper.style.opacity = '0';
-                    
-                    // Rimuovi gli elementi dal DOM dopo la transizione per ripulire
                     setTimeout(() => {
-                        crtOverlay.remove();
-                        loadingWrapper.remove();
-                        // Qui puoi inserire il codice per avviare l'esperienza/gioco
-                        console.log("Gioco avviato!");
-                    }, 1500); // 1.5 secondi per completare il fade out
-                }, 500);
-            }
+                        document.getElementById('crt-overlay').style.opacity = '0';
+                        document.getElementById('loading-wrapper').style.opacity = '0';
+                    }, 500);
+                }
+            }, 400);
         });
     </script>
 </body>
