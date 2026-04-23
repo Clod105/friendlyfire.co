@@ -12,17 +12,19 @@
             height: 100%;
             background-color: #000;
             overflow: hidden;
-            font-family: sans-serif;
+            /* Un font che richiami lo stile retro per il tasto start e la home */
+            font-family: 'Courier New', Courier, monospace; 
         }
 
+        /* SCHERMATA DI CARICAMENTO */
         #game-container {
             position: relative;
             width: 100%;
             height: 100%;
-            /* L'immagine di sfondo rinominata come richiesto */
             background-image: url('momifire.png'); 
             background-size: cover;
             background-position: center;
+            display: block; /* Verrà nascosto al click di Start */
         }
 
         /* EFFETTO CRT / MAGNETICO */
@@ -31,7 +33,6 @@
             top: 0; left: 0; right: 0; bottom: 0;
             z-index: 10;
             pointer-events: none;
-            transition: opacity 1.5s ease-out;
             box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
                         linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
@@ -45,56 +46,90 @@
             100% { opacity: 0.95; }
         }
 
-        /* BARRA DI CARICAMENTO */
+        /* BARRA DI CARICAMENTO RIGIDA E TESTURIZZATA */
         #loading-wrapper {
             position: absolute;
             bottom: 12%;
             left: 50%;
             transform: translateX(-50%);
             z-index: 20;
-            transition: opacity 1s ease-out;
         }
 
         .loading-bar-container {
             display: flex;
-            gap: 4px;
-            background: #1a1a1a;
-            padding: 6px 8px;
-            border-radius: 12px;
-            box-shadow: 
-                inset 0px 3px 5px rgba(0, 0, 0, 0.8), 
-                inset 0px -2px 2px rgba(255, 255, 255, 0.2),
-                0px 10px 15px rgba(0, 0, 0, 0.6);
-            border: 2px solid #0a0a0a;
+            gap: 2px; /* Spazio ridotto per renderli più uniti */
+            padding: 4px;
+            /* Texture a retinatura/dithering finta in CSS */
+            background-color: #2b2b2b;
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, #1a1a1a 2px, #1a1a1a 4px);
+            /* Bordi netti e "chunky" per l'effetto tridimensionale ps1 */
+            border-top: 3px solid #666;
+            border-left: 3px solid #666;
+            border-bottom: 3px solid #111;
+            border-right: 3px solid #111;
         }
 
         .segment {
-            width: 22px;
-            height: 35px;
-            background-color: #0f0f0f;
-            border-radius: 4px;
-            box-shadow: 
-                inset 0px 2px 4px rgba(0, 0, 0, 0.9),
-                inset 0px -1px 1px rgba(255, 255, 255, 0.1);
-            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            width: 24px;
+            height: 32px;
+            background-color: #050505; /* Spento, molto scuro */
+            border: 1px solid #000; /* Bordo netto interno */
         }
 
-        .segment.lit-1 { background-color: #630000; color: #ff0000; }
-        .segment.lit-2 { background-color: #990000; color: #ff0000; }
-        .segment.lit-3 { background-color: #cc0000; color: #ff0000; }
-        .segment.lit-4 { background-color: #d82b00; color: #ff3300; }
-        .segment.lit-5 { background-color: #e65c00; color: #ff6600; }
-        .segment.lit-6 { background-color: #f28c00; color: #ff9900; }
-        .segment.lit-7 { background-color: #ffb300; color: #ffcc00; }
-        .segment.lit-8 { background-color: #ffcc00; color: #ffe600; }
-        .segment.lit-9 { background-color: #ffe666; color: #ffff66; }
-        .segment.lit-10{ background-color: #fff9b3; color: #ffffcc; }
+        /* Colori piatti e solidi, niente ombre o luci morbide */
+        .segment.lit-1 { background-color: #630000; }
+        .segment.lit-2 { background-color: #990000; }
+        .segment.lit-3 { background-color: #cc0000; }
+        .segment.lit-4 { background-color: #d82b00; }
+        .segment.lit-5 { background-color: #e65c00; }
+        .segment.lit-6 { background-color: #f28c00; }
+        .segment.lit-7 { background-color: #ffb300; }
+        .segment.lit-8 { background-color: #ffcc00; }
+        .segment.lit-9 { background-color: #ffe666; }
+        .segment.lit-10{ background-color: #fff9b3; }
 
-        .segment[class*="lit-"] {
-            box-shadow: 
-                inset 0px 2px 5px rgba(255,255,255,0.4),
-                0px 0px 8px currentColor;
+        /* TASTO START */
+        #start-btn {
+            display: none; /* Nascosto finché non finisce il caricamento */
+            position: absolute;
+            bottom: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            background: transparent;
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 28px;
+            font-weight: bold;
+            border: none;
+            /* Ombra dura per richiamare i vecchi font bitmap */
+            text-shadow: 3px 3px 0px #000; 
+            cursor: pointer;
+            /* Animazione a scatti netti (steps) e non fluida */
+            animation: blink 1s steps(2, start) infinite;
         }
+
+        @keyframes blink {
+            to { visibility: hidden; }
+        }
+
+        /* SCHERMATA HOME DEL SITO */
+        #home-screen {
+            display: none; /* Nascosto inizialmente */
+            width: 100%;
+            height: 100%;
+            background-color: #121212;
+            color: #4ade80; /* Un verde retro */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #home-screen h1 {
+            font-size: 3rem;
+            text-shadow: 4px 4px 0px #000;
+        }
+
     </style>
 </head>
 <body>
@@ -116,26 +151,44 @@
                 <div class="segment" id="seg-10"></div>
             </div>
         </div>
+
+        <button id="start-btn">PRESS START</button>
     </div>
+
+    <div id="home-screen">
+        <h1>FRIENDLY FIRE</h1>
+        <p>Menu Principale del Sito</p>
+        </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             let currentSegment = 1;
             const totalSegments = 10;
             
+            // Caricamento dei tasselli
             const loadingInterval = setInterval(() => {
                 if (currentSegment <= totalSegments) {
                     const segmentElement = document.getElementById(`seg-${currentSegment}`);
                     segmentElement.classList.add(`lit-${currentSegment}`);
                     currentSegment++;
                 } else {
+                    // Fine caricamento
                     clearInterval(loadingInterval);
-                    setTimeout(() => {
-                        document.getElementById('crt-overlay').style.opacity = '0';
-                        document.getElementById('loading-wrapper').style.opacity = '0';
-                    }, 500);
+                    
+                    // Sparizione netta della barra e apparizione del tasto START
+                    document.getElementById('loading-wrapper').style.display = 'none';
+                    document.getElementById('start-btn').style.display = 'block';
                 }
-            }, 400);
+            }, 300); // 300ms a tassello per un riempimento meccanico e scattoso
+
+            // Logica per il tasto PRESS START
+            document.getElementById('start-btn').addEventListener('click', () => {
+                // Nasconde l'intera finta scena del videogioco
+                document.getElementById('game-container').style.display = 'none';
+                
+                // Mostra la Home del sito web
+                document.getElementById('home-screen').style.display = 'flex';
+            });
         });
     </script>
 </body>
