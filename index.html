@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Friendly Fire - PS1 Store</title>
+    <title>Friendly Fire - PS1 Big Store</title>
     <style>
         body, html {
             margin: 0;
@@ -153,27 +153,29 @@
             background-position: center;
             z-index: 10;
             flex-direction: column;
-            align-items: center;
+            align-items: center; /* Centralizza tutto */
+            justify-content: flex-start; /* Inizia dall'alto */
             color: #fff; 
             text-shadow: 2px 2px 0px #000;
+            padding-top: 20px;
         }
 
-        /* Filtro scuro per rendere leggibile l'interfaccia sullo sfondo */
         .bg-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7); /* Filtro più scuro */
             z-index: -1;
         }
 
         .page-header {
-            margin-top: 30px;
-            font-size: 32px;
-            color: #4ade80; /* Verde terminale retro */
-            border-bottom: 2px solid #4ade80;
-            padding-bottom: 5px;
+            margin-top: 10px;
+            margin-bottom: 0px;
+            font-size: 36px;
+            color: #fff;
             text-align: center;
-            width: 80%;
+            width: 100%;
+            text-shadow: 4px 4px 0 #000;
+            text-transform: uppercase;
         }
 
         .back-btn {
@@ -199,27 +201,27 @@
         }
 
         /* =========================================
-           LAYOUT DELLO STORE (VIEWER 3D + UI)
+           LAYOUT DELLO STORE CENTRALIZZATO
            ========================================= */
-        .store-layout {
+        .store-layout-centered {
             display: flex;
-            width: 80%;
-            max-width: 900px;
-            margin-top: 40px;
-            gap: 40px;
-            justify-content: center;
-            align-items: flex-start;
+            flex-direction: column; /* Incolonna gli elementi */
+            align-items: center; /* Centralizza gli elementi */
+            width: 90%;
+            max-width: 600px; /* Ridotto per compattezza centrale */
+            gap: 20px; /* Spazio tra viewer e comandi */
+            margin-top: 20px;
         }
 
-        /* -- VISORE 3D PS1 STYLE -- */
+        /* -- VISORE 3D PS1 STYLE (GRANDE E CENTRALE) -- */
         .viewer-container {
-            width: 300px;
-            height: 400px;
+            width: 100%; /* Usa tutta la larghezza del layout */
+            height: 480px; /* Molto più grande */
             background: #1a1a1a;
             border: 4px solid #444;
             border-top-color: #888;
             border-left-color: #888;
-            box-shadow: inset 0 0 20px #000, 10px 10px 0 rgba(0,0,0,0.8);
+            box-shadow: inset 0 0 30px #000, 10px 10px 0 rgba(0,0,0,0.8);
             position: relative;
             display: flex;
             flex-direction: column;
@@ -234,11 +236,11 @@
             font-size: 14px;
         }
 
-        /* CSS 3D Scene */
+        /* CSS 3D Scene (Ingrandita) */
         .scene {
-            width: 140px;
-            height: 200px;
-            perspective: 800px;
+            width: 200px; /* Più larga */
+            height: 280px; /* Più alta */
+            perspective: 1000px; /* Perspective adjusted for larger scene */
         }
 
         .torso-3d {
@@ -246,58 +248,57 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transform: translateZ(-35px);
+            transform: translateZ(-50px); /* adjusted for larger size */
             animation: rotate3D 6s infinite linear;
         }
 
         @keyframes rotate3D {
-            from { transform: translateZ(-35px) rotateY(0deg); }
-            to { transform: translateZ(-35px) rotateY(360deg); }
+            from { transform: translateZ(-50px) rotateY(0deg); }
+            to { transform: translateZ(-50px) rotateY(360deg); }
         }
 
         .face {
             position: absolute;
             border: 1px solid #000;
-            /* Texture a pixel per fare effetto low-poly/ps1 */
             background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 2px, transparent 2px, transparent 4px);
             image-rendering: pixelated;
         }
 
-        /* Dimensioni e posizioni delle facce del busto */
-        .front, .back { width: 140px; height: 200px; }
-        .right, .left { width: 70px; height: 200px; left: 35px; }
-        .top, .bottom { width: 140px; height: 70px; top: 65px; }
+        /* Dimensioni e posizioni delle facce ingrandite */
+        .front, .back { width: 200px; height: 280px; }
+        .right, .left { width: 100px; height: 280px; left: 50px; }
+        .top, .bottom { width: 200px; height: 100px; top: 90px; }
 
-        .front  { transform: rotateY(  0deg) translateZ(35px); }
-        .right  { transform: rotateY( 90deg) translateZ(70px); }
-        .back   { transform: rotateY(180deg) translateZ(35px); }
-        .left   { transform: rotateY(-90deg) translateZ(70px); }
-        .top    { transform: rotateX( 90deg) translateZ(100px); }
-        .bottom { transform: rotateX(-90deg) translateZ(100px); }
+        .front  { transform: rotateY(  0deg) translateZ(50px); }
+        .right  { transform: rotateY( 90deg) translateZ(100px); }
+        .back   { transform: rotateY(180deg) translateZ(50px); }
+        .left   { transform: rotateY(-90deg) translateZ(100px); }
+        .top    { transform: rotateX( 90deg) translateZ(140px); }
+        .bottom { transform: rotateX(-90deg) translateZ(140px); }
 
-        /* Colori dinamici in base all'oggetto selezionato */
+        /* Colori dinamici */
         .item-theme-1 .face { background-color: #d82b00; } /* Felpa Fuoco */
         .item-theme-2 .face { background-color: #222222; } /* T-Shirt Nera */
         .item-theme-3 .face { background-color: #4ade80; } /* Giacca Camo */
 
-        /* Aggiunta di finte "pieghe" o loghi in CSS puro sui fronti */
         .front::after {
             content: "FF";
             position: absolute;
             top: 40%; left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 40px;
+            font-size: 50px; /* Logo più grande */
             font-weight: bold;
             color: rgba(0,0,0,0.5);
             text-shadow: 2px 2px 0 rgba(255,255,255,0.2);
         }
 
-        /* -- PANNELLO CONTROLLI -- */
-        .controls-container {
+        /* -- PANNELLO CONTROLLI (SOTTO IL VIEWER) -- */
+        .controls-container-stacked {
             display: flex;
-            flex-direction: column;
-            gap: 30px;
-            width: 350px;
+            flex-direction: column; /* Incolonna i comandi */
+            gap: 15px; /* Spazio ridotto */
+            width: 100%; /* Usa tutta la larghezza disponibile */
+            max-width: 600px;
         }
 
         .item-selector {
@@ -325,20 +326,24 @@
             color: #fff;
             text-align: center;
             flex-grow: 1;
+            text-transform: uppercase;
         }
 
         .size-section {
             background: #111;
-            padding: 15px;
+            padding: 10px;
             border: 2px solid #333;
             box-shadow: 4px 4px 0 #000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .size-section p { margin: 0 0 10px 0; color: #aaa; }
+        .size-section p { margin: 0; color: #aaa; font-size: 16px; text-transform: uppercase; }
 
         .size-grid {
             display: flex;
-            gap: 10px;
+            gap: 5px;
         }
 
         .size-btn {
@@ -350,7 +355,7 @@
             font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
             font-size: 18px;
-            width: 40px; height: 40px;
+            width: 40px; height: 35px;
             cursor: pointer;
         }
 
@@ -358,7 +363,7 @@
             background: #ffcc00;
             color: #000;
             border-color: #fff;
-            box-shadow: inset 0 0 10px #cc8800;
+            box-shadow: inset 0 0 8px #cc8800;
         }
 
         #buy-btn {
@@ -367,14 +372,14 @@
             font-family: 'Courier New', Courier, monospace;
             font-size: 24px;
             font-weight: bold;
-            padding: 15px;
+            padding: 12px;
             border: 3px solid #fff;
             border-bottom-color: #1a5e20;
             border-right-color: #1a5e20;
             cursor: pointer;
             text-align: center;
             box-shadow: 5px 5px 0 #000;
-            transition: transform 0.1s;
+            text-transform: uppercase;
         }
 
         #buy-btn:active {
@@ -414,12 +419,12 @@
 
     <div id="PAGINA-STORE" class="sub-page">
         <div class="bg-overlay"></div>
-        <h1 class="page-header">ITEM INVENTORY</h1>
+        <h1 class="page-header">STORE EQUIP.</h1>
         
-        <div class="store-layout">
+        <div class="store-layout-centered">
             
             <div class="viewer-container">
-                <div class="viewer-ui-text">OBJ_VIEWER_v1.0</div>
+                <div class="viewer-ui-text">ITEM_VIEWER_v2.0</div>
                 <div class="scene">
                     <div class="torso-3d item-theme-1" id="3d-model">
                         <div class="face front"></div>
@@ -432,7 +437,7 @@
                 </div>
             </div>
 
-            <div class="controls-container">
+            <div class="controls-container-stacked">
                 <div class="item-selector">
                     <button onclick="changeItem(-1)">◀</button>
                     <div id="item-name-display">FELPA FLAME</div>
@@ -440,7 +445,7 @@
                 </div>
 
                 <div class="size-section">
-                    <p>SELECT SIZE:</p>
+                    <p>SIZE:</p>
                     <div class="size-grid">
                         <button class="size-btn active" onclick="selectSize(this)">S</button>
                         <button class="size-btn" onclick="selectSize(this)">M</button>
@@ -512,7 +517,6 @@
         // LOGICA DELLO STORE
         // ==========================================
         
-        // Array dei prodotti simulati
         const storeItems = [
             { name: "FELPA FLAME", themeClass: "item-theme-1" },
             { name: "T-SHIRT NERA", themeClass: "item-theme-2" },
@@ -521,41 +525,27 @@
         
         let currentItemIndex = 0;
 
-        // Cambia articolo (freccette destra/sinistra)
         function changeItem(direction) {
             currentItemIndex += direction;
-            
-            // Gestione del loop dell'array
             if (currentItemIndex < 0) currentItemIndex = storeItems.length - 1;
             if (currentItemIndex >= storeItems.length) currentItemIndex = 0;
 
             const newItem = storeItems[currentItemIndex];
-            
-            // Aggiorna il nome
             document.getElementById("item-name-display").innerText = newItem.name;
-            
-            // Aggiorna il modello 3D cambiandogli la classe del tema (cambia colore/texture in CSS)
             const model3D = document.getElementById("3d-model");
             model3D.className = `torso-3d ${newItem.themeClass}`;
         }
 
-        // Selezione Taglia
         function selectSize(btnElement) {
-            // Rimuove la classe 'active' da tutti i bottoni
             const allSizeBtns = document.querySelectorAll('.size-btn');
             allSizeBtns.forEach(btn => btn.classList.remove('active'));
-            
-            // Aggiunge 'active' solo a quello cliccato
             btnElement.classList.add('active');
         }
 
-        // Tasto Acquista
         function buyItem() {
             const activeSize = document.querySelector('.size-btn.active').innerText;
             const currentItemName = storeItems[currentItemIndex].name;
-            
-            // Al posto di un alert standard, potresti inserire l'aggiunta al carrello Shopify o simile.
-            alert(`Hai aggiunto: ${currentItemName} (Taglia: ${activeSize}) al tuo equipaggiamento.`);
+            alert(`Acquisto simulato: ${currentItemName} (Taglia: ${activeSize}).`);
         }
 
     </script>
