@@ -13,10 +13,9 @@
             overflow: hidden; font-family: 'Courier New', Courier, monospace; 
         }
 
-        /* TEXTURE CRT GLOBALE ESTESA (Copre sempre tutto) */
+        /* TEXTURE CRT GLOBALE ESTESA */
         #crt-overlay {
-            position: fixed; /* Risolve problemi di scorrimento, fissa al viewport */
-            top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; pointer-events: none; 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; pointer-events: none; 
             box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
                         linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
@@ -62,22 +61,24 @@
         /* STRUTTURA SUB-PAGES */
         .sub-page {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #000;
-            background-size: cover; background-position: center; /* Condivisi */
+            background-color: #000; background-size: cover; background-position: center; 
             z-index: 10; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 40px;
             overflow-y: auto; overflow-x: hidden; 
         }
 
         /* SFONDI SPECIFICI */
         #PAGINA-STORE, #PAGINA-MUSIC, #PAGINA-CONTACTS {
-            background-image: url('momifire_bg.png'); /* Sfondo originale condiviso */
+            background-image: url('momifire_bg.png'); 
         }
-
         #PAGINA-PICTURES {
-            background-image: url('bakeka.jpg'); /* NUOVO SFONDO SPECIFICO */
+            background-image: url('bakeka.jpg'); 
         }
 
         .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; }
+        
+        /* FIX SFONDO SCURO: Rimuoviamo l'overlay nero dalla pagina Pictures per mostrare bene bakeka.jpg */
+        #PAGINA-PICTURES .bg-overlay { display: none; }
+
         .back-btn {
             position: fixed; bottom: 30px; right: 30px; font-family: 'Courier New', Courier, monospace; font-size: 20px; font-weight: bold;
             background: #111; color: #fff; padding: 10px 20px; border: 2px solid #666; cursor: pointer; box-shadow: 4px 4px 0px #000; z-index: 50;
@@ -111,8 +112,9 @@
         }
         #buy-btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 #000; }
 
-        /* PAGINA PICTURES - POLAROID INTERATTIVE CON bakeka.jpg DIETRO */
-        .polaroid-area { position: relative; width: 100%; height: 80vh; max-width: 800px; margin: 0 auto; z-index: 5;}
+        /* PAGINA PICTURES - POLAROID INTERATTIVE */
+        /* FIX POLAROID SCURA: Rimosso z-index dal contenitore per permettere alla polaroid di scavalcare lo sfondo nero */
+        .polaroid-area { position: relative; width: 100%; height: 80vh; max-width: 800px; margin: 0 auto; }
         
         #polaroid-backdrop {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -125,7 +127,6 @@
         }
         .polaroid-inner { 
             background: #111; width: 160px; height: 160px; box-shadow: inset 2px 2px 5px #000; border: 1px solid #000; 
-            /* Qui potrai inserire background-image: url('tuafoto.jpg'); background-size: cover; */
         }
         
         .pol-1 { top: 10%; left: 10%; transform: rotate(-8deg); }
@@ -133,7 +134,7 @@
         .pol-3 { top: 15%; left: 65%; transform: rotate(-5deg); }
         .pol-4 { top: 55%; left: 15%; transform: rotate(4deg); }
 
-        /* Stato "Ingrandito" della polaroid */
+        /* La polaroid ingrandita scavalca tutto grazie allo z-index 100 (superiore all'80 del backdrop) */
         .polaroid.zoomed {
             position: fixed;
             top: 50% !important; left: 50% !important;
