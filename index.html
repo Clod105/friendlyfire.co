@@ -4,246 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Friendly Fire - PS1 Experience</title>
+    
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
     <style>
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            overflow: hidden;
-            font-family: 'Courier New', Courier, monospace; 
+            margin: 0; padding: 0; width: 100%; height: 100%; background-color: #000;
+            overflow: hidden; font-family: 'Courier New', Courier, monospace; 
         }
 
         /* TEXTURE CRT GLOBALE */
         #crt-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 100; 
-            pointer-events: none; 
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 100; pointer-events: none; 
             box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
                         linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 3px, 3px 100%;
-            animation: flicker 0.15s infinite;
+            background-size: 100% 3px, 3px 100%; animation: flicker 0.15s infinite;
         }
-
-        @keyframes flicker {
-            0% { opacity: 0.95; }
-            50% { opacity: 0.85; }
-            100% { opacity: 0.95; }
-        }
+        @keyframes flicker { 0% { opacity: 0.95; } 50% { opacity: 0.85; } 100% { opacity: 0.95; } }
 
         /* SCHERMATA PRINCIPALE */
         #game-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background-image: url('momifire.png'); 
-            background-size: cover;
-            background-position: center;
-            display: block;
+            position: relative; width: 100%; height: 100%;
+            background-image: url('momifire.png'); background-size: cover; background-position: center; display: block;
         }
 
-        /* BARRA DI CARICAMENTO */
-        #loading-wrapper {
-            position: absolute;
-            bottom: 12%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 20; 
-        }
-
+        #loading-wrapper { position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%); z-index: 20; }
         .loading-bar-container {
-            display: flex;
-            gap: 2px;
-            padding: 4px;
-            background-color: #2b2b2b;
+            display: flex; gap: 2px; padding: 4px; background-color: #2b2b2b;
             background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, #1a1a1a 2px, #1a1a1a 4px);
-            border-top: 3px solid #666;
-            border-left: 3px solid #666;
-            border-bottom: 3px solid #111;
-            border-right: 3px solid #111;
+            border-top: 3px solid #666; border-left: 3px solid #666; border-bottom: 3px solid #111; border-right: 3px solid #111;
         }
-
         .segment { width: 24px; height: 32px; background-color: #050505; border: 1px solid #000; }
-        .segment.lit-1 { background-color: #630000; }
-        .segment.lit-2 { background-color: #990000; }
-        .segment.lit-3 { background-color: #cc0000; }
-        .segment.lit-4 { background-color: #d82b00; }
-        .segment.lit-5 { background-color: #e65c00; }
-        .segment.lit-6 { background-color: #f28c00; }
-        .segment.lit-7 { background-color: #ffb300; }
-        .segment.lit-8 { background-color: #ffcc00; }
-        .segment.lit-9 { background-color: #ffe666; }
-        .segment.lit-10{ background-color: #fff9b3; }
+        .segment.lit-1 { background-color: #630000; } .segment.lit-2 { background-color: #990000; }
+        .segment.lit-3 { background-color: #cc0000; } .segment.lit-4 { background-color: #d82b00; }
+        .segment.lit-5 { background-color: #e65c00; } .segment.lit-6 { background-color: #f28c00; }
+        .segment.lit-7 { background-color: #ffb300; } .segment.lit-8 { background-color: #ffcc00; }
+        .segment.lit-9 { background-color: #ffe666; } .segment.lit-10{ background-color: #fff9b3; }
 
-        /* TASTO START */
         #start-btn {
-            display: none; 
-            position: absolute;
-            bottom: 12%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 20; 
-            background: transparent;
-            color: #ffffff;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 28px;
-            font-weight: bold;
-            border: none;
-            text-shadow: 3px 3px 0px #000; 
-            cursor: pointer;
-            animation: blink 1s steps(2, start) infinite;
+            display: none; position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%);
+            z-index: 20; background: transparent; color: #ffffff; font-size: 28px; font-weight: bold; border: none;
+            text-shadow: 3px 3px 0px #000; cursor: pointer; animation: blink 1s steps(2, start) infinite;
         }
-
         @keyframes blink { to { visibility: hidden; } }
 
         /* MENU PRINCIPALE */
         #main-menu {
-            display: none; 
-            position: absolute;
-            bottom: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 20;
-            flex-direction: column;
-            align-items: flex-start; 
-            gap: 15px;
+            display: none; position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
+            z-index: 20; flex-direction: column; align-items: flex-start; gap: 15px;
         }
-
-        .menu-item {
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 26px;
-            font-weight: bold;
-            text-shadow: 3px 3px 0px #000;
-            position: relative;
-            cursor: pointer;
-        }
-
+        .menu-item { color: #ffffff; text-decoration: none; font-size: 26px; font-weight: bold; text-shadow: 3px 3px 0px #000; position: relative; cursor: pointer; }
         .menu-item:hover { color: #ffcc00; }
-        .menu-item:hover::before {
-            content: "▶";
-            position: absolute;
-            left: -30px;
-            top: 2px;
-            color: #ffcc00;
-        }
+        .menu-item:hover::before { content: "▶"; position: absolute; left: -30px; top: 2px; color: #ffcc00; }
 
-        /* =========================================
-           STRUTTURA SUB-PAGES
-           ========================================= */
+        /* STRUTTURA SUB-PAGES */
         .sub-page {
-            display: none; 
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: #000; 
-            background-image: url('momifire_bg.png'); 
-            background-size: cover;
-            background-position: center;
-            z-index: 10;
-            flex-direction: column;
-            align-items: center; 
-            justify-content: flex-start; 
-            padding-top: 40px;
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000; background-image: url('momifire_bg.png'); background-size: cover; background-position: center;
+            z-index: 10; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 40px;
         }
-
-        .bg-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7); z-index: -1;
-        }
-
+        .bg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; }
         .back-btn {
-            position: absolute;
-            bottom: 30px; right: 30px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 20px; font-weight: bold;
-            background: #111; color: #fff;
-            padding: 10px 20px; border: 2px solid #666;
-            cursor: pointer; box-shadow: 4px 4px 0px #000;
+            position: absolute; bottom: 30px; right: 30px; font-family: 'Courier New', Courier, monospace; font-size: 20px; font-weight: bold;
+            background: #111; color: #fff; padding: 10px 20px; border: 2px solid #666; cursor: pointer; box-shadow: 4px 4px 0px #000;
         }
         .back-btn:hover { background: #ffcc00; color: #000; border-color: #fff; }
 
-        /* =========================================
-           LAYOUT DELLO STORE
-           ========================================= */
-        .store-layout-centered {
-            display: flex; flex-direction: column; align-items: center;
-            width: 90%; max-width: 600px; gap: 20px; margin-top: 20px;
-        }
-
+        /* LAYOUT DELLO STORE - VERO 3D */
+        .store-layout-centered { display: flex; flex-direction: column; align-items: center; width: 90%; max-width: 600px; gap: 20px; margin-top: 20px; }
+        
         .viewer-container {
-            width: 100%; height: 480px;
-            background: #1a1a1a;
+            width: 100%; height: 480px; background: #1a1a1a;
             border: 4px solid #444; border-top-color: #888; border-left-color: #888;
             box-shadow: inset 0 0 30px #000, 10px 10px 0 rgba(0,0,0,0.8);
-            position: relative; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
+            position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-
-        .scene { width: 200px; height: 280px; perspective: 1000px; }
-        .torso-3d {
-            width: 100%; height: 100%; position: relative;
-            transform-style: preserve-3d; transform: translateZ(-50px);
-            animation: rotate3D 6s infinite linear;
-        }
-
-        @keyframes rotate3D {
-            from { transform: translateZ(-50px) rotateY(0deg); }
-            to { transform: translateZ(-50px) rotateY(360deg); }
-        }
-
-        .face {
-            position: absolute; border: 1px solid #000;
-            background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 2px, transparent 2px, transparent 4px);
-            image-rendering: pixelated;
-        }
-
-        .front, .back { width: 200px; height: 280px; }
-        .right, .left { width: 100px; height: 280px; left: 50px; }
-        .top, .bottom { width: 200px; height: 100px; top: 90px; }
-
-        .front  { transform: rotateY(  0deg) translateZ(50px); }
-        .right  { transform: rotateY( 90deg) translateZ(100px); }
-        .back   { transform: rotateY(180deg) translateZ(50px); }
-        .left   { transform: rotateY(-90deg) translateZ(100px); }
-        .top    { transform: rotateX( 90deg) translateZ(140px); }
-        .bottom { transform: rotateX(-90deg) translateZ(140px); }
-
-        .item-theme-1 .face { background-color: #d82b00; }
-        .item-theme-2 .face { background-color: #222222; }
-        .item-theme-3 .face { background-color: #4ade80; }
         
-        .item-theme-shorts .face { 
-            background-color: #7c8e6c; 
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, #b9b081 2px, #b9b081 4px), repeating-linear-gradient(-45deg, transparent, transparent 2px, #4d5b40 2px, #4d5b40 4px), repeating-linear-gradient(0deg, transparent, transparent 2px, #1a1a1a 2px, #1a1a1a 4px);
-            background-size: 10px 10px; 
-        }
-        .item-theme-shorts .front::after {
-            content: "🔥"; 
-            position: absolute; top: 40%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 50px; 
-            font-weight: bold;
-            color: rgba(255,0,0,0.8);
-            text-shadow: 2px 2px 0 #000;
+        model-viewer {
+            width: 100%; height: 100%; --poster-color: transparent; image-rendering: pixelated; 
         }
 
         .controls-container-stacked { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 600px; }
         .item-selector { display: flex; align-items: center; justify-content: space-between; background: #222; border: 2px solid #555; padding: 10px; box-shadow: 4px 4px 0 #000; }
         .item-selector button { background: transparent; border: none; color: #ffcc00; font-size: 24px; cursor: pointer; }
         .item-selector button:hover { color: #fff; }
-        #item-name-display { font-size: 20px; font-weight: bold; color: #fff; text-align: center; flex-grow: 1; }
-
+        #item-name-display { font-size: 20px; font-weight: bold; color: #fff; text-align: center; flex-grow: 1; text-transform: uppercase; }
         .size-section { background: #111; padding: 10px; border: 2px solid #333; box-shadow: 4px 4px 0 #000; display: flex; align-items: center; justify-content: space-between; }
         .size-section p { margin: 0; color: #aaa; font-size: 16px; }
-
         .size-grid { display: flex; gap: 5px; }
         .size-btn { background: #2b2b2b; color: #fff; border: 2px solid #000; border-top-color: #555; border-left-color: #555; font-weight: bold; font-size: 18px; width: 40px; height: 35px; cursor: pointer; }
         .size-btn.active { background: #ffcc00; color: #000; border-color: #fff; box-shadow: inset 0 0 8px #cc8800; }
-
         #buy-btn {
             background: #ff00ff; color: #40E0D0; font-family: 'Courier', monospace; font-size: 24px; font-weight: bold;
             padding: 12px; border: 3px solid #fff; border-bottom-color: #8b008b; border-right-color: #8b008b;
@@ -251,9 +102,7 @@
         }
         #buy-btn:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 #000; }
 
-        /* =========================================
-           PAGINA PICTURES
-           ========================================= */
+        /* PAGINA PICTURES */
         .polaroid-area { position: relative; width: 100%; height: 80vh; max-width: 800px; margin: 0 auto; }
         .polaroid { background: #eaeaea; padding: 10px 10px 35px 10px; box-shadow: 6px 6px 0px rgba(0,0,0,0.8); position: absolute; border: 1px solid #999; }
         .polaroid-inner { background: #111; width: 160px; height: 160px; box-shadow: inset 2px 2px 5px #000; border: 1px solid #000; }
@@ -262,64 +111,50 @@
         .pol-3 { top: 15%; left: 65%; transform: rotate(-5deg); }
         .pol-4 { top: 55%; left: 15%; transform: rotate(4deg); }
 
-        /* =========================================
-           PAGINA MUSIC - PS1-IPOD
-           ========================================= */
-        .music-layout {
-            display: flex; flex-direction: column; align-items: center; gap: 40px; width: 100%; max-width: 600px;
-        }
-
-        .music-list {
-            display: flex; flex-direction: column; gap: 15px; width: 80%;
-            background: #111; padding: 20px; border: 4px solid #333; box-shadow: 5px 5px 0 #000;
-        }
+        /* PAGINA MUSIC E PS1-IPOD */
+        .music-layout { display: flex; flex-direction: column; align-items: center; gap: 40px; width: 100%; max-width: 600px; }
+        .music-list { display: flex; flex-direction: column; gap: 15px; width: 80%; background: #111; padding: 20px; border: 4px solid #333; box-shadow: 5px 5px 0 #000; text-align: center;}
         .music-track { color: #aaa; font-size: 18px; cursor: pointer; text-shadow: 2px 2px 0 #000; transition: 0.1s;}
         .music-track:hover { color: #fff; }
         .music-track.playing { color: #ffcc00; font-weight: bold; }
         .music-track.playing::before { content: "▶ "; color: #4ade80; }
-
+        
         .ps1-ipod {
             background: #7a7a7a; border: 4px solid #b3b3b3; border-bottom-color: #333; border-right-color: #333; border-radius: 10px;
             padding: 20px; width: 260px; display: flex; flex-direction: column; align-items: center; gap: 25px; box-shadow: 10px 10px 0px rgba(0,0,0,0.8);
         }
-
         .ipod-screen {
             width: 90%; height: 70px; background: #0f1c0f; border: 4px solid #444; border-top-color: #111; border-left-color: #111;
             box-shadow: inset 0 0 10px #000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px;
         }
         #ipod-status { color: #aaa; font-size: 12px; margin-bottom: 5px; }
-        #ipod-track-display { color: #4ade80; font-size: 16px; text-shadow: 2px 2px 0px #000; text-align: center; font-weight: bold; }
-
+        #ipod-track-display { color: #4ade80; font-size: 13px; text-shadow: 2px 2px 0px #000; text-align: center; font-weight: bold; }
+        
         .ipod-wheel {
             position: relative; width: 160px; height: 160px; background: #555; border-radius: 50%; border: 4px solid #333; border-top-color: #999; border-left-color: #999;
             display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
         }
-
-        .wheel-btn {
-            position: absolute; background: transparent; border: none; color: #ccc; font-family: 'Courier New', Courier, monospace; font-weight: bold; font-size: 18px;
-            cursor: pointer; text-shadow: 2px 2px 0 #000; padding: 10px;
+        .wheel-btn { 
+            position: absolute; background: transparent; border: none; color: #ccc; 
+            font-family: 'Courier New', Courier, monospace; font-weight: bold; font-size: 22px; 
+            cursor: pointer; text-shadow: 2px 2px 0 #000; padding: 10px; 
         }
         .wheel-btn:hover { color: #4ade80; }
         .wheel-btn:active { transform: scale(0.9); }
-
-        .btn-menu { top: 5px; } 
-        .btn-prev { left: 5px; }
-        .btn-next { right: 5px; }
-        .btn-play { bottom: 5px; font-size: 22px; color: #fff;}
-
-        .btn-center {
-            width: 60px; height: 60px; background: #888; border-radius: 50%; border: 3px solid #ccc; border-bottom-color: #333; border-right-color: #333; cursor: pointer; box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-        }
+        .btn-menu { top: 5px; font-size: 18px;} /* Stop / Quadrato */
+        .btn-prev { left: 5px; } /* Indietro */
+        .btn-next { right: 5px; } /* Avanti */
+        .btn-play { bottom: 5px; font-size: 20px; color: #fff;} /* Play/Pausa */
+        
+        .btn-center { width: 60px; height: 60px; background: #888; border-radius: 50%; border: 3px solid #ccc; border-bottom-color: #333; border-right-color: #333; cursor: pointer; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
         .btn-center:active { border-top-color: #333; border-left-color: #333; border-bottom-color: #ccc; border-right-color: #ccc; }
 
-        /* =========================================
-           PAGINA CONTACTS
-           ========================================= */
+        /* PAGINA CONTACTS */
         .contacts-container { display: flex; flex-direction: column; gap: 30px; margin-top: 100px; }
         .social-btn {
             background: #222; color: #4ade80; border: 3px solid #fff; border-bottom-color: #555; border-right-color: #555;
             padding: 20px 40px; font-size: 28px; text-decoration: none; text-align: center;
-            box-shadow: 6px 6px 0 #000; font-weight: bold; font-family: 'Courier New', Courier, monospace;
+            box-shadow: 6px 6px 0 #000; font-weight: bold;
         }
         .social-btn:hover { background: #ffcc00; color: #000; border-color: #fff; }
 
@@ -330,24 +165,16 @@
     <div id="crt-overlay"></div>
 
     <div id="game-container">
-        
         <div id="loading-wrapper">
             <div class="loading-bar-container" id="loading-bar">
-                <div class="segment" id="seg-1"></div>
-                <div class="segment" id="seg-2"></div>
-                <div class="segment" id="seg-3"></div>
-                <div class="segment" id="seg-4"></div>
-                <div class="segment" id="seg-5"></div>
-                <div class="segment" id="seg-6"></div>
-                <div class="segment" id="seg-7"></div>
-                <div class="segment" id="seg-8"></div>
-                <div class="segment" id="seg-9"></div>
-                <div class="segment" id="seg-10"></div>
+                <div class="segment" id="seg-1"></div><div class="segment" id="seg-2"></div>
+                <div class="segment" id="seg-3"></div><div class="segment" id="seg-4"></div>
+                <div class="segment" id="seg-5"></div><div class="segment" id="seg-6"></div>
+                <div class="segment" id="seg-7"></div><div class="segment" id="seg-8"></div>
+                <div class="segment" id="seg-9"></div><div class="segment" id="seg-10"></div>
             </div>
         </div>
-        
         <button id="start-btn">PRESS START</button>
-        
         <nav id="main-menu">
             <div class="menu-item" onclick="openPage('PAGINA-STORE')">STORE</div>
             <div class="menu-item" onclick="openPage('PAGINA-PICTURES')">PICTURES</div>
@@ -359,27 +186,24 @@
     <div id="PAGINA-STORE" class="sub-page">
         <div class="bg-overlay"></div>
         <div class="store-layout-centered">
-            
             <div class="viewer-container">
-                <div class="scene">
-                    <div class="torso-3d item-theme-1" id="3d-model">
-                        <div class="face front"></div>
-                        <div class="face back"></div>
-                        <div class="face right"></div>
-                        <div class="face left"></div>
-                        <div class="face top"></div>
-                        <div class="face bottom"></div>
-                    </div>
-                </div>
+                <model-viewer id="real-3d-model" 
+                              src="shorts.glb" 
+                              alt="Modello 3D PS1" 
+                              auto-rotate 
+                              camera-controls 
+                              disable-zoom 
+                              interaction-prompt="none"
+                              shadow-intensity="0"
+                              exposure="1">
+                </model-viewer>
             </div>
-
             <div class="controls-container-stacked">
                 <div class="item-selector">
                     <button onclick="changeItem(-1)">◀</button>
-                    <div id="item-name-display">FELPA FLAME</div>
+                    <div id="item-name-display">PANTALONCINI FIRE</div>
                     <button onclick="changeItem(1)">▶</button>
                 </div>
-
                 <div class="size-section">
                     <p>SIZE:</p>
                     <div class="size-grid">
@@ -389,66 +213,41 @@
                         <button class="size-btn" onclick="selectSize(this)">XL</button>
                     </div>
                 </div>
-
                 <button id="buy-btn" onclick="buyItem()">ACQUISTA</button>
             </div>
         </div>
         <button class="back-btn" onclick="closePage()">BACK</button>
     </div>
 
-    <div id="PAGINA-PICTURES" class="sub-page">
-        <div class="bg-overlay"></div>
-        <div class="polaroid-area">
-            <div class="polaroid pol-1"><div class="polaroid-inner"></div></div>
-            <div class="polaroid pol-2"><div class="polaroid-inner"></div></div>
-            <div class="polaroid pol-3"><div class="polaroid-inner"></div></div>
-            <div class="polaroid pol-4"><div class="polaroid-inner"></div></div>
-        </div>
-        <button class="back-btn" onclick="closePage()">BACK</button>
-    </div>
-
+    <div id="PAGINA-PICTURES" class="sub-page"><div class="bg-overlay"></div><div class="polaroid-area"><div class="polaroid pol-1"><div class="polaroid-inner"></div></div><div class="polaroid pol-2"><div class="polaroid-inner"></div></div><div class="polaroid pol-3"><div class="polaroid-inner"></div></div><div class="polaroid pol-4"><div class="polaroid-inner"></div></div></div><button class="back-btn" onclick="closePage()">BACK</button></div>
+    
     <div id="PAGINA-MUSIC" class="sub-page">
         <div class="bg-overlay"></div>
-        
         <div class="music-layout">
             <div class="music-list">
-                <div class="music-track playing" onclick="selectTrack(0)">01. THE_TRENCHES</div>
-                <div class="music-track" onclick="selectTrack(1)">02. MUD_AND_BLOOD</div>
-                <div class="music-track" onclick="selectTrack(2)">03. VICTORY_THEME</div>
-                <div class="music-track" onclick="selectTrack(3)">04. SAVE_ROOM</div>
+                <div class="music-track playing" onclick="selectTrack(0)">Tyrell - Marijuana Miracle or MYTH</div>
             </div>
-
             <div class="ps1-ipod">
                 <div class="ipod-screen">
                     <div id="ipod-status">PAUSED</div>
-                    <div id="ipod-track-display">01. THE_TRENCHES</div>
+                    <div id="ipod-track-display">Tyrell - Marijuana Miracle or MYTH</div>
                 </div>
-                
                 <div class="ipod-wheel">
-                    <button class="wheel-btn btn-menu" onclick="stopTrack()">STOP</button>
-                    <button class="wheel-btn btn-prev" onclick="prevTrack()">|&lt;&lt;</button>
-                    <button class="wheel-btn btn-next" onclick="nextTrack()">&gt;&gt;|</button>
-                    <button class="wheel-btn btn-play" onclick="togglePlay()">►||</button>
-                    
+                    <button class="wheel-btn btn-menu" onclick="stopTrack()">■</button>
+                    <button class="wheel-btn btn-prev" onclick="prevTrack()">⏮</button>
+                    <button class="wheel-btn btn-next" onclick="nextTrack()">⏭</button>
+                    <button class="wheel-btn btn-play" onclick="togglePlay()">▶❚❚</button>
                     <button class="btn-center" onclick="togglePlay()"></button>
                 </div>
             </div>
         </div>
-
         <button class="back-btn" onclick="closePage()">BACK</button>
     </div>
 
-    <div id="PAGINA-CONTACTS" class="sub-page">
-        <div class="bg-overlay"></div>
-        <div class="contacts-container">
-            <a href="#" class="social-btn">INSTAGRAM</a>
-            <a href="#" class="social-btn">X (TWITTER)</a>
-        </div>
-        <button class="back-btn" onclick="closePage()">BACK</button>
-    </div>
+    <div id="PAGINA-CONTACTS" class="sub-page"><div class="bg-overlay"></div><div class="contacts-container"><a href="#" class="social-btn">INSTAGRAM</a><a href="#" class="social-btn">X (TWITTER)</a></div><button class="back-btn" onclick="closePage()">BACK</button></div>
 
     <script>
-        // LOGICA DI CARICAMENTO RIPRISTINATA
+        // LOGICA DI CARICAMENTO E MENU
         document.addEventListener("DOMContentLoaded", () => {
             let currentSegment = 1;
             const totalSegments = 10;
@@ -473,23 +272,18 @@
             document.getElementById('game-container').style.display = 'none';
             document.getElementById(pageId).style.display = 'flex';
         }
-
         function closePage() {
             const pages = document.querySelectorAll('.sub-page');
             pages.forEach(p => p.style.display = 'none');
             document.getElementById('game-container').style.display = 'block';
         }
 
-        // ==========================================
-        // LOGICA DELLO STORE
-        // ==========================================
+        // LOGICA DELLO STORE VERO 3D
         const storeItems = [
-            { name: "FELPA FLAME", themeClass: "item-theme-1" },
-            { name: "T-SHIRT NERA", themeClass: "item-theme-2" },
-            { name: "GIACCA CAMO", themeClass: "item-theme-3" },
-            { name: "PANTALONCINI FIRE", themeClass: "item-theme-shorts" } 
+            { name: "PANTALONCINI FIRE", modelSrc: "shorts.glb" },
+            { name: "FELPA FLAME", modelSrc: "felpa.glb" },
+            { name: "GIACCA CAMO", modelSrc: "giacca.glb" }
         ];
-        
         let currentItemIndex = 0;
 
         function changeItem(direction) {
@@ -499,31 +293,34 @@
 
             const newItem = storeItems[currentItemIndex];
             document.getElementById("item-name-display").innerText = newItem.name;
-            const model3D = document.getElementById("3d-model");
-            model3D.className = `torso-3d ${newItem.themeClass}`;
+            document.getElementById("real-3d-model").src = newItem.modelSrc;
         }
 
         function selectSize(btnElement) {
-            const allSizeBtns = document.querySelectorAll('.size-btn');
-            allSizeBtns.forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
         }
-
         function buyItem() {
             const activeSize = document.querySelector('.size-btn.active').innerText;
             const currentItemName = storeItems[currentItemIndex].name;
-            alert(`Acquisto simulato: ${currentItemName} (Taglia: ${activeSize}).`);
+            alert(`Acquisto simulato: ${currentItemName} (${activeSize})`);
         }
 
         // ==========================================
-        // LOGICA MUSIC PLAYER (PS1-iPod)
+        // VERA LOGICA MUSIC PLAYER (MP3 integrato)
         // ==========================================
-        const tracks = ["01. THE_TRENCHES", "02. MUD_AND_BLOOD", "03. VICTORY_THEME", "04. SAVE_ROOM"];
+        const playlist = [
+            { title: "Tyrell - Marijuana Miracle or MYTH", file: "marijuana.mp3" }
+        ];
+        
         let currentTrack = 0;
         let isPlaying = false; 
         
+        let audioPlayer = new Audio(playlist[currentTrack].file);
+        audioPlayer.addEventListener('ended', nextTrack);
+
         function updatePlayerUI() {
-            document.getElementById('ipod-track-display').innerText = tracks[currentTrack];
+            document.getElementById('ipod-track-display').innerText = playlist[currentTrack].title;
             document.getElementById('ipod-status').innerText = isPlaying ? "PLAYING..." : "PAUSED";
             
             const trackElements = document.querySelectorAll('.music-track');
@@ -534,31 +331,51 @@
         }
 
         function togglePlay() {
+            if (isPlaying) {
+                audioPlayer.pause();
+            } else {
+                audioPlayer.play(); 
+            }
             isPlaying = !isPlaying;
             updatePlayerUI();
         }
 
         function stopTrack() {
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0; 
             isPlaying = false;
             updatePlayerUI();
         }
 
-        function nextTrack() {
-            currentTrack = (currentTrack + 1) % tracks.length;
+        function loadAndPlayNewTrack() {
+            audioPlayer.pause(); 
+            audioPlayer = new Audio(playlist[currentTrack].file); 
+            audioPlayer.addEventListener('ended', nextTrack);
+            if (isPlaying) {
+                audioPlayer.play();
+            }
             updatePlayerUI();
+        }
+
+        function nextTrack() {
+            currentTrack = (currentTrack + 1) % playlist.length;
+            loadAndPlayNewTrack();
         }
 
         function prevTrack() {
-            currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
-            updatePlayerUI();
+            currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+            loadAndPlayNewTrack();
         }
 
         function selectTrack(index) {
+            if (currentTrack === index) {
+                togglePlay();
+                return;
+            }
             currentTrack = index;
             isPlaying = true;
-            updatePlayerUI();
+            loadAndPlayNewTrack();
         }
-
     </script>
 </body>
 </html>
