@@ -154,23 +154,14 @@
         .btn-center { width: 60px; height: 60px; background: #888; border-radius: 50%; border: 3px solid #ccc; border-bottom-color: #333; border-right-color: #333; cursor: pointer; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
         .btn-center:active { border-top-color: #333; border-left-color: #333; border-bottom-color: #ccc; border-right-color: #ccc; }
 
-        /* PAGINA CONTACTS - FORM DIRETTO */
+        /* PAGINA CONTACTS - FORM DIRETTO PULITO */
         .contacts-container { display: flex; flex-direction: column; align-items: center; gap: 30px; margin-top: 50px; width: 100%; padding-bottom: 80px;}
         
-        .social-buttons { display: flex; gap: 20px; }
-        .social-btn {
-            background: #222; color: #4ade80; border: 3px solid #fff; border-bottom-color: #555; border-right-color: #555;
-            padding: 15px 30px; font-family: 'Courier New', Courier, monospace; font-size: 20px; text-decoration: none; text-align: center;
-            box-shadow: 4px 4px 0 #000; font-weight: bold;
-        }
-        .social-btn:hover { background: #ffcc00; color: #000; border-color: #fff; }
-
         .memo-paper {
             background: #dcdcdc; padding: 20px 30px; width: 85%; max-width: 500px;
             border: 2px solid #000; box-shadow: 10px 10px 0px rgba(0,0,0,0.9);
             display: flex; flex-direction: column; gap: 15px;
         }
-        .memo-paper h2 { margin: 0; color: #000; border-bottom: 3px solid #000; padding-bottom: 5px; font-size: 24px; text-transform: uppercase;}
         
         .memo-form { display: flex; flex-direction: column; gap: 15px; }
         .memo-input {
@@ -277,20 +268,14 @@
     <div id="PAGINA-CONTACTS" class="sub-page">
         <div class="bg-overlay"></div>
         <div class="contacts-container">
-            <div class="social-buttons">
-                <a href="#" class="social-btn">INSTAGRAM</a>
-                <a href="#" class="social-btn">X</a>
-            </div>
-
             <div class="memo-paper">
-                <h2>INVIA_MEMO</h2>
                 <form class="memo-form" action="https://formsubmit.co/info@friendlyfireclo.com" method="POST">
                     <input type="hidden" name="_captcha" value="false">
                     
-                    <input type="text" name="ID_Giocatore" id="contact-name" class="memo-input" placeholder="ID GIOCATORE / NOME..." required>
-                    <textarea name="Messaggio" id="contact-msg" class="memo-input" placeholder="MESSAGGIO_TRASMISSIONE..." required></textarea>
+                    <input type="text" name="ID_Giocatore" id="contact-name" class="memo-input" placeholder="ID NAME" required>
+                    <textarea name="Messaggio" id="contact-msg" class="memo-input" placeholder="Scrivi qui...." required></textarea>
                     
-                    <button type="submit" class="memo-submit">INVIA TRASMISSIONE</button>
+                    <button type="submit" class="memo-submit">INVIA</button>
                 </form>
             </div>
         </div>
